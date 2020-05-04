@@ -8,5 +8,6 @@ GIT_PS1_SHOWUPSTREAM="auto"
 GIT_PS1_SHOWCOLORHINTS="true"
 GIT_PS1_HIDE_IF_PWD_IGNORED="true"
 
-# Add git completion to path.
-fpath=(~/.dotfiles/zsh/git/git-completion.zsh $fpath)
+# Configure git completion.
+zstyle ':completion:*:*:git:*' script ~/.dotfiles/zsh/git/git-completion.bash
+fpath=(~/.dotfiles/zsh/git $fpath)
