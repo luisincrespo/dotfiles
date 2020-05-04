@@ -1,2 +1,2 @@
-# dotfiles
+# .dotfiles
 Personal interactive shell config.
