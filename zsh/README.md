@@ -10,7 +10,7 @@ Follow [these](https://github.com/ohmyzsh/ohmyzsh#basic-installation) instructio
 
 Replace the `plugins` value in the `~/.zshrc` with:
 ```shell
-plugins=(git nvm npm yarn)
+plugins=(git nvm npm yarn jump)
 ```
 
 This will enable the following plugins:
@@ -18,3 +18,4 @@ This will enable the following plugins:
 - [nvm](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm)
 - [npm](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/npm)
 - [yarn](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/yarn)
+- [jump](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/jump)
