@@ -39,4 +39,4 @@ This will enable the following plugins:
 - [npm](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/npm)
 - [yarn](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/yarn)
 - [autojump](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/autojump)
-- [pyenv] (https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/pyenv)
+- [pyenv](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/pyenv)
