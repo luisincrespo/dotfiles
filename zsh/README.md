@@ -40,3 +40,14 @@ This will enable the following plugins:
 - [yarn](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/yarn)
 - [autojump](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/autojump)
 - [pyenv](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/pyenv)
+
+#### Further configuration for specific plugins
+
+##### Pyenv
+
+Run the following commands to enable python shims with `pyenv`:
+```
+echo 'eval "$(pyenv init --path)"' >> ~/.zshrc
+
+echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+```
