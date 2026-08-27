@@ -3,15 +3,43 @@
 Personal [Claude Code](https://claude.com/claude-code) config: skills, global instructions and
 settings, kept portable so they can be installed on any machine.
 
-## Install
+## Setting up a new machine
 
 ```shell
-./claude/install.sh            # add --dry-run to preview
+git clone git@github.com:luisincrespo/.dotfiles.git ~/code/.dotfiles
+cd ~/code/.dotfiles
+./claude/install.sh
 ```
 
-It symlinks each skill and the config files into `~/.claude`, so edits made from any machine land
+Then restart Claude Code, and fill in the two machine-local files it seeded — neither is ever
+committed:
+
+| File | What goes in it |
+|---|---|
+| `~/.claude/local/config.json` | This machine's repo id, SonarQube host, protected branches, reviewer bots — see [Machine-local overrides](#machine-local-overrides) |
+| `~/.claude/local/commit-denylist.txt` | Employer, product and service names the [leak guard](#leak-guard) must keep out of commits |
+
+The skills work unconfigured, so filling these in can wait until you know the new setup: SonarQube
+is skipped, no extra branches are protected, and `pr-review` derives the repo from `git remote`.
+
+Plugins aren't linked — Claude Code owns its own cache, so install those separately (see
+[Plugins](#plugins)).
+
+## Install, preview, roll back
+
+```shell
+./claude/install.sh              # link into ~/.claude
+./claude/install.sh --dry-run    # show what would change, touch nothing
+./claude/install.sh --uninstall  # drop the symlinks, restore the last backup
+```
+
+Install symlinks each skill and config file into `~/.claude`, so edits made from any machine land
 back in this repo ready to commit. Anything real it would replace is moved to
-`~/.claude/.dotfiles-backup/<timestamp>/` first. Restart Claude Code afterwards to pick up skills.
+`~/.claude/.dotfiles-backup/<timestamp>/` first, and `--uninstall` puts it back. Restart Claude Code
+after any of these to pick up the change.
+
+Both local files are only ever *seeded* — an existing one is never overwritten, so re-running
+install is safe.
 
 ## What's here
 
@@ -20,7 +48,9 @@ back in this repo ready to commit. Anything real it would replace is moved to
 | `skills/` | Nine skills — the `deliver` MR/PR lifecycle family, plus `self-review`, `understand-task`, `pr-review` and `voice` |
 | `CLAUDE.md` | Global instructions applied to every project |
 | `settings.json` | Model, effort level, permission mode, enabled plugins |
-| `local/config.example.json` | Schema for the machine-local overrides (see below) |
+| `local/config.example.json` | Schema for the machine-local skill overrides (see below) |
+| `local/commit-denylist.example.txt` | Starting point for the machine-local leak-guard denylist |
+| `install.sh` | Links it all into `~/.claude`; `--dry-run` and `--uninstall` supported |
 
 ### The skills
 

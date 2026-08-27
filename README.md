@@ -10,8 +10,16 @@ Personal `zsh` config: `ohmyzsh` setup and plugins. Follow the instructions [her
 
 ### Claude Code
 
-Skills, global instructions and settings for [Claude Code](https://claude.com/claude-code),
-installed with `./claude/install.sh`. Follow the instructions [here](./claude/README.md).
+Skills, global instructions and settings for [Claude Code](https://claude.com/claude-code).
+Follow the instructions [here](./claude/README.md). On a new machine:
+
+```shell
+git clone git@github.com:luisincrespo/.dotfiles.git ~/code/.dotfiles
+cd ~/code/.dotfiles && ./claude/install.sh
+```
+
+Everything committed here is employer-neutral; machine-specific values live in
+`~/.claude/local/` and are never committed. Roll back with `./claude/install.sh --uninstall`.
 
 ## Leak guard
 
