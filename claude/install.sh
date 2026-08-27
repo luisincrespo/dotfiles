@@ -7,7 +7,9 @@
 # Machine-specific values are NOT linked: they live in ~/.claude/local/config.json,
 # which this script only ever seeds, never overwrites.
 #
-# Usage: ./claude/install.sh [--dry-run]
+# Usage:
+#   ./claude/install.sh [--dry-run]     link the repo into ~/.claude
+#   ./claude/install.sh --uninstall     drop the symlinks and restore the last backup
 
 set -euo pipefail
 
@@ -15,8 +17,14 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="${HOME}/.claude"
 BACKUP_DIR="${CLAUDE_DIR}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 DRY_RUN=0
+UNINSTALL=0
 TILDE='~'
-[[ "${1:-}" == "--dry-run" ]] && DRY_RUN=1
+case "${1:-}" in
+  --dry-run)   DRY_RUN=1 ;;
+  --uninstall) UNINSTALL=1 ;;
+  "")          ;;
+  *) echo "unknown option: $1" >&2; exit 2 ;;
+esac
 
 log()  { printf '  %s\n' "$*"; }
 run()  { if (( DRY_RUN )); then printf '  would: %s\n' "$*"; else "$@"; fi; }
@@ -39,6 +47,45 @@ link() {
   run ln -s "$src" "$dest"
   log "linked    ${dest/#$HOME/$TILDE}"
 }
+
+# Remove any symlink under ~/.claude that points into this repo, then put the
+# most recent backup back. Leaves ~/.claude/local/* alone — that is machine
+# state, not repo content.
+if (( UNINSTALL )); then
+  echo "Unlinking Claude config from ${REPO_DIR}"
+  echo
+  for target in "${CLAUDE_DIR}/skills/"* "${CLAUDE_DIR}/CLAUDE.md" "${CLAUDE_DIR}/settings.json"; do
+    [[ -L "$target" ]] || continue
+    case "$(readlink "$target")" in
+      "${REPO_DIR}"/*) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
+    esac
+  done
+
+  LATEST="$(ls -1d "${CLAUDE_DIR}/.dotfiles-backup/"*/ 2>/dev/null | sort | tail -1 || true)"
+  if [[ -n "$LATEST" && -d "$LATEST" ]]; then
+    echo
+    echo "Restoring ${LATEST/#$HOME/$TILDE}"
+    if [[ -d "${LATEST}skills" ]]; then
+      mkdir -p "${CLAUDE_DIR}/skills"
+      for backup in "${LATEST}skills/"*; do
+        [[ -e "$backup" ]] || continue
+        dest="${CLAUDE_DIR}/skills/$(basename "$backup")"
+        [[ -e "$dest" ]] && continue
+        cp -R "$backup" "$dest" && log "restored  ${dest/#$HOME/$TILDE}"
+      done
+    fi
+    for file in CLAUDE.md settings.json; do
+      [[ -e "${LATEST}${file}" && ! -e "${CLAUDE_DIR}/${file}" ]] || continue
+      cp -R "${LATEST}${file}" "${CLAUDE_DIR}/${file}" && log "restored  ~/.claude/${file}"
+    done
+  else
+    echo
+    log "no backup found — nothing to restore"
+  fi
+  echo
+  echo "Done. Restart Claude Code."
+  exit 0
+fi
 
 (( DRY_RUN )) && echo "DRY RUN — nothing will be changed"
 echo "Linking Claude config from ${REPO_DIR}"
