@@ -1,0 +1,4 @@
+# Machine-local Claude overrides — names private repos, hosts and bot accounts.
+# The schema lives in claude/local/config.example.json; the filled-in copy belongs
+# in ~/.claude/local/config.json and must never be committed.
+claude/local/config.json

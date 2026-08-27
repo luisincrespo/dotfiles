@@ -1,0 +1,32 @@
+{
+  "//": "Machine-local overrides for the deliver/pr-* skill family. Copy to ~/.claude/local/config.json and fill in. Never commit the filled-in copy: it names private repos, hosts and bot accounts.",
+
+  "//protected_branches_extra": "Branch names that are ALSO protected, on top of the built-in main/master and any stage-*. Used by deliver, pr-open, pr-babysit, pr-merge.",
+  "protected_branches_extra": [],
+
+  "//pr_review_default_repo": "owner/repo that pr-review targets when the cwd has no useful origin remote. Omit to always derive from git remote get-url origin.",
+  "pr_review_default_repo": "",
+
+  "//rebase_sync_repos": "owner/repo entries whose CLAUDE.md mandates rebase-before-push. For these, pr-babysit/pr-merge rebase onto the target and force-push with --force-with-lease instead of merging forward.",
+  "rebase_sync_repos": [],
+
+  "//ai_reviewer_usernames_gitlab": "GitLab usernames of AI reviewers, added to the built-in list. Comments from these are auto-addressed; everything else batches as human.",
+  "ai_reviewer_usernames_gitlab": [],
+
+  "//ai_reviewer_usernames_github": "GitHub usernames of AI reviewers, added to the built-in [\"cursor\"]. The [bot] suffix is stripped before matching.",
+  "ai_reviewer_usernames_github": [],
+
+  "//sonar_host_url": "SonarQube base URL. Omit or leave empty to skip the SonarQube phase entirely.",
+  "sonar_host_url": "",
+
+  "//bot_noise_body_markers_extra": "Extra HTML-comment markers that identify a bot comment as noise, added to the built-in list.",
+  "bot_noise_body_markers_extra": [],
+
+  "//verification_addenda": "Extra verification commands for repos whose nested apps own a separate pipeline. Run by self-review and pr-merge when a changed path starts with when_paths_under.",
+  "verification_addenda": [
+    {
+      "when_paths_under": "apps/example/",
+      "run": "cd apps/example && pnpm install && pnpm lint && pnpm test && pnpm build"
+    }
+  ]
+}

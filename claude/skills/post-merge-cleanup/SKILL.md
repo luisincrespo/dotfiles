@@ -1,0 +1,135 @@
+---
+name: post-merge-cleanup
+description: >-
+  Clean up after a merged MR/PR — the final stage of the `deliver` pipeline,
+  extended with deferred-follow-up raising. It advances any stacked dependents
+  (retarget off the disappearing base, merge the new target forward, promote the
+  next PR out of draft), deletes the merged source branch and its worktree from the
+  main root, removes the per-PR state file, moves the task's tracker ticket to Done, and turns the `deliver` task's
+  deferred-items ledger into concrete follow-ups (proposing them and getting your
+  approval before filing anything). Normally invoked by `pr-merge` right after a
+  confirmed merge; also usable directly ("clean up after this merged PR"). Prefer
+  `deliver` for the full lifecycle.
+allowed-tools:
+  - Bash(glab api:*)
+  - Bash(glab mr list:*)
+  - Bash(glab mr update:*)
+  - Bash(gh api:*)
+  - Bash(gh pr list:*)
+  - Bash(gh pr edit:*)
+  - Bash(gh pr ready:*)
+  - Bash(gh issue create:*)
+  - Bash(git remote get-url:*)
+  - Bash(git worktree list:*)
+  - Bash(git worktree remove:*)
+  - Bash(git worktree unlock:*)
+  - Bash(git worktree prune:*)
+  - Bash(git branch -D:*)
+  - Bash(git push origin --delete:*)
+  - Bash(git ls-remote:*)
+  - Bash(git show-ref:*)
+  - Bash(git for-each-ref:*)
+  - Bash(git status:*)
+  - Bash(git rev-parse:*)
+  - Bash(git merge origin/:*)
+  - Bash(git merge --no-edit:*)
+  - Bash(git commit --no-edit)
+  - Bash(git push)
+  - Bash(git -C:*)
+  - Bash(jq:*)
+  - Bash(cat:*)
+  - Bash(rm -f ~/.claude/cache/deliver/:*)
+  - Read
+  - ExitWorktree
+  - Skill(voice)
+  - mcp__claude_ai_Atlassian__getJiraIssue
+  - mcp__claude_ai_Atlassian__getTransitionsForJiraIssue
+  - mcp__claude_ai_Atlassian__transitionJiraIssue
+---
+
+# post-merge-cleanup
+
+Runs after a **confirmed merge**. This is the last stage of the `deliver` pipeline (create → `pr-open`, babysit → `pr-babysit`, merge → `pr-merge`). Platform detected from `git remote get-url origin`. Write **"PR"** on GitHub, **"MR"** on GitLab.
+
+Do everything from the **main worktree root**, never from inside the worktree being removed.
+
+## Args
+
+- `<source_branch>`: the merged branch to clean up (required; `pr-merge` passes it). If omitted, resolve from the merged MR/PR ref.
+- `<target_branch>`: the branch it merged into (the new base for any dependents; usually the default branch).
+- `<number>`: the merged MR/PR number (for the state-file name).
+- `--task-slug <slug>`: the `deliver` task, so its deferred-items ledger can be turned into follow-ups.
+
+## Config
+
+> **Local overrides.** Values below are portable defaults. If `~/.claude/local/config.json` exists,
+> its keys override or extend them (schema: `~/.claude/local/config.example.json`); any key absent
+> there keeps the default. `config.json` is machine-local and never committed.
+
+- **PR state file**: `~/.claude/cache/deliver/pr-<platform>-<repo-with-slashes-as-dashes>-<number>.json`
+- **Task ledger**: `~/.claude/cache/deliver/task-<repo-with-slashes-as-dashes>-<slug>.json`
+
+## Step 0: Identify the main worktree root
+First entry of `git worktree list` → `<main_root>`. Run every git command below as `git -C <main_root> …` so it doesn't depend on the (possibly about-to-be-deleted) current directory.
+
+**Worktree-isolated sessions.** If this session is sandboxed to the worktree being cleaned up, `git -C <main_root> …` is refused. Do the non-git steps first (remote branch, state file, ticket, follow-ups), then call `ExitWorktree` — it drops the session to the main root, lifts the sandbox, and can delete the worktree + branch in one move.
+
+**`ExitWorktree` only handles worktrees `EnterWorktree` created *in this session*.** When the worktree is simply the session's launch directory (the common case for a session started with `cwd` already inside one), `ExitWorktree` returns `No-op: there is no active EnterWorktree session to exit` and changes nothing. That is not an error to work around — fall through to the ordinary Step 3/4 removal below. A squash-merged branch will be reported as having N unmerged commits: verify the squash commit is on the target and the change is present there, then confirm with the user before `discard_changes: true`.
+
+## Step 1: Stacked-PR guard — retarget, merge forward, promote
+When a PR in a stack merges, the rest of the stack must be advanced **before** deleting `<source_branch>` (deleting a base branch **closes** dependents on GitHub with no auto-retarget, and you can't reopen while the base is gone):
+- **Retarget dependents.** GitHub: `gh pr list --base <source_branch> --state open --json number` → each `gh pr edit <number> --base <target_branch>`. GitLab: `glab mr list --target-branch <source_branch> --state opened` → `glab mr update <iid> --target-branch <target_branch>`.
+- **Merge the target forward into each dependent's head** so its diff is clean against the new base. If the pre-commit hook fails only on files dragged in from the target that belong to a separate toolchain (e.g. `apps/extension`'s own lint) and are already CI-green, commit the forward-merge with `--no-verify` (the **only** sanctioned `--no-verify`; CI re-runs on push).
+- **Promote the new front-of-stack** out of draft: `gh pr ready <number>` / `glab mr update <iid> --ready`. It's now up for review → draft (don't send) its review-request ping via `Skill(voice)`, per `pr-open` Step 7.
+- Only after all dependents are retargeted is it safe to delete `<source_branch>`. (Recovery if you slipped: recreate the branch at its last sha `git push origin <sha>:refs/heads/<source_branch>`, reopen the closed PR, retarget, then delete.)
+
+## Step 2: Delete the remote branch
+If it still exists (`git ls-remote --exit-code --heads origin <source_branch>`): `git push origin --delete <source_branch>`. Some repos auto-delete on merge — already gone → skip without error.
+
+## Step 3: Remove the worktree
+`git worktree list --porcelain` → the worktree whose branch is `<source_branch>`. If a separate worktree `<wt_path>` exists (not `<main_root>`):
+- **Removing the session's own worktree (current cwd) is fine and expected** once its PRs are done. Run from `<main_root>`. The shell survives: the harness re-resolves the working directory after every command and falls back to the repo root once the worktree is gone (`Shell cwd was reset to <repo root>`), so you can keep running commands afterwards. Do not warn the user that removal will end the session.
+- **Chain this one.** The cwd reset happens *between* invocations, so `cd <main_root> && worktree remove && branch -D && worktree prune && <verification>` in a single call is what lets you confirm the result while the shell is still somewhere valid. This is the documented exception to the separate-commands rule below.
+- Locked (session/dev worktrees usually are) → `git -C <main_root> worktree unlock <wt_path>` first.
+- Remove: `git -C <main_root> worktree remove --force <wt_path>` (keep `--force` — clears the checkout guard and untracked `node_modules`/`dist`/`.nx`).
+- **Fallback** if it still errors `Directory not empty`: `rm -rf <wt_path>` then `git -C <main_root> worktree prune`. Scope `rm -rf` to the exact `<wt_path>` (may need a one-time approval — expected).
+- Run destructive steps as **separate commands** (worktree remove → local branch → remote branch), not chained — a combined destructive command is more likely to trip the permission classifier.
+
+## Step 4: Delete the local branch
+If it still exists (`git -C <main_root> show-ref --verify --quiet refs/heads/<source_branch>`): `git -C <main_root> branch -D <source_branch>` (the merge is confirmed on the server, so `-D` is correct even if `<main_root>` hasn't pulled the merge commit).
+
+**Also delete the `worktree-<name>` placeholder branch.** Creating a worktree leaves a second branch named after the *directory* (e.g. `worktree-abc-2357-init-starter-agents`) alongside the real `<source_branch>`. It holds none of the work and survives Step 4, so `git -C <main_root> branch --list "worktree-*"` and delete the one matching the worktree just removed. Leave the others — they belong to live worktrees.
+
+**Never touch stashes.** `git stash` is repo-global, not per-worktree, so a stash listed here probably belongs to unrelated work. Check `git -C <main_root> stash list` only to confirm you have not disturbed it; never drop one during cleanup.
+
+## Step 5: Remove the PR state file
+`rm -f ~/.claude/cache/deliver/pr-<platform>-<repo-dashes>-<number>.json`.
+
+## Step 5.5: Ticket → Done (last unit)
+Run only when `--task-slug` is set, this was the **last** unit (all `units[]` in the ledger `status:"merged"`), and `ticket_sync.enabled == true` with a `task_ref` ticket. The task is now fully merged → move its ticket to Done: Read `refs/ticket-status.md` and follow it with target intent **`done`** (forward-only — skips silently if already Done, or if the tracker MCP is absent this session). Autonomous by default; if the ledger's `ticket_sync` carries a done-confirm flag, propose the transition and wait for approval instead. This is the definitive completion moment — `deliver` can't do it (the merge happened detached inside `pr-babysit`'s `/loop`), so it lives here.
+
+## Step 6: Raise deferred follow-ups (NEW — approval-gated)
+This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when `--task-slug` is set AND this was the **last** unit of the task (all `units[]` in the ledger are `status:"merged"`). If earlier units remain open, skip for now — the last unit's cleanup will do it.
+
+1. Read `deferred_items` from the task ledger. Empty → announce `No deferred follow-ups for this task.` and skip.
+2. For each item, draft a concise follow-up (title + one-line why + risk + suggested owner). **Propose the full list to the user and ask which to file** — filing tickets/issues is outward-facing and often cross-team, so it always needs explicit approval (never auto-file; ties to the user's "scope: low-lift only, document the rest" and "no outward action without approval" habits).
+3. On approval, file the approved ones and skip the rest:
+   - GitHub issue: `gh issue create --title "<title>" --body "<body>"`.
+   - Jira/Linear, or a repo that ships its own ticket skill: delegate to that skill / MCP rather than guessing field values (the harness will surface any needed tool). Do NOT invent tracker field values.
+   - If the user prefers no ticket: leave a written hand-off note (a short markdown block they can paste), don't file.
+4. Announce what was filed with links; leave the un-filed items in the note. Then clear the filed items from the ledger (keep the un-filed ones for later).
+
+## Step 7: Announce + housekeeping
+- `🧹 Deleted branch <source_branch> and worktree <wt_path>.` (omit the worktree clause if there wasn't one).
+- **Heads-up if the session ran inside the removed worktree**: that dir no longer exists, so tell the user to `/loop stop` and `cd <main_root>`.
+- Once every unit's PR is merged and cleaned, mark the task ledger done (or delete it if no un-filed follow-ups remain).
+
+**Session / integration worktree.** The same recipe (Steps 3–4) applies to the worktree this session runs in once all its PRs are merged/closed — remove it decisively even though it's the current cwd; that's normal end-of-session cleanup. Hard prerequisite: no *unpushed, unmerged* work — verify `git -C <wt> status --porcelain` is empty and its HEAD is merged or still on a remote branch (`git -C <wt> for-each-ref --format='%(upstream:short)' refs/heads/<branch>`) before removing.
+
+## Hard constraints
+
+- Branch/worktree deletion happens ONLY here, only after a confirmed merge, only for the merged `<source_branch>`, always from `<main_root>`. Never delete an unmerged branch. Retarget stacked dependents (Step 1) **before** deleting the base.
+- Never `--force` a push. `--no-verify` only for the sanctioned Step-1 forward-merge case. Leave `rm -rf` out of any broad allowlist — `worktree remove --force` covers the normal case; the `rm -rf` fallback stays prompt-gated.
+- **Never file a follow-up ticket/issue without explicit user approval** (Step 6). Never send Slack messages.
+- The **Done** ticket transition (Step 5.5) is forward-only and gated on `ticket_sync.enabled` — never move a ticket backward or fight a manual status; skip silently if the tracker MCP is absent.
+- **Permissions note.** `git push origin --delete`, `git worktree unlock`, `git worktree prune`, and `gh issue create` may prompt the first time — expected; an agent can't self-grant them. Add Bash rules yourself for zero-prompt cleanup if desired; keep `rm -rf` out.
