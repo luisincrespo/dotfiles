@@ -51,15 +51,15 @@ The **verify** stage: put your own diff through the same scrutiny a reviewer wou
 
 ## Step 1 — Scope the diff
 - Compute the changeset: `git diff --name-only <base>...HEAD` plus any uncommitted changes (`git status --porcelain`). List the affected packages.
-- Flag whether **frontend** files changed (`*.tsx`/`*.jsx`/`*.css`/`*.scss`/`*.html`) — gates the accessibility pass.
+- Flag whether **frontend** files changed (`*.tsx`/`*.jsx`/`*.vue`/`*.svelte`/`*.css`/`*.scss`/`*.html`, or the repo's equivalent templates) — gates the accessibility pass.
 - Note new components: a new `*.tsx` component in a package that has Storybook (`.storybook/` or existing `*.stories.*`) **must** have a story when the repo's `CLAUDE.md` requires one — flag if missing.
 
 ## Step 2 — Automated gates (fix failures)
 Run the repo-appropriate checks scoped to the change (don't reformat the world):
-- **nx monorepos:** `npx nx affected --target=eslint:lint|build|test --base=<base> --head=HEAD` (fall back to `lint` if `eslint:lint` isn't the target). Typecheck via **IDE diagnostics first** (`mcp__ide__getDiagnostics`), falling back to scoped `npx tsc --noEmit`.
+- **Read the repo first** — its `CLAUDE.md`/docs name the real lint, build, test and typecheck commands. Never assume a build system.
+- **nx monorepos** (one common case): `npx nx affected --target=eslint:lint|build|test --base=<base> --head=HEAD` (fall back to `lint` if `eslint:lint` isn't the target). Typecheck via **IDE diagnostics first** (`mcp__ide__getDiagnostics`), falling back to scoped `npx tsc --noEmit`.
 - **Repo addenda:** run any `verification_addenda` from `~/.claude/local/config.json` whose `when_paths_under` prefix matches a changed path — e.g. a nested app that owns a separate pipeline.
-- Other repos: use their documented targets (don't hardcode a build system — read the repo `CLAUDE.md`).
-Fix failures at the source (preferred) or test. Format **only the changed files** (`npx prettier --write <files>` / scoped `nx eslint:lint --fix`), never `format:write --all`.
+Fix failures at the source (preferred) or test. Run the formatter over **only the changed files** (`npx prettier --write <files>`, `ruff format`, `gofmt -w`, `cargo fmt --`, whatever the repo uses), never a format-everything target — it reformats unrelated code and buries the real diff.
 
 ## Step 3 — Compose the review passes
 Run these over the diff and collect findings:

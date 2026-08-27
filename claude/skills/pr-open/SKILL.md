@@ -106,7 +106,7 @@ Opens **one** MR/PR for the current branch and returns. This is the create stage
 
 Give reviewers Storybook screenshots. **Capture at create time (interactive — permission prompts are fine).**
 
-**Gate — only run when all hold:** there are changed component files (`*.tsx`/`*.jsx` in the diff that are NOT `*.stories.*`/`*.spec.*`/`*.test.*`); at least one has a co-located story (`Foo.tsx` → `Foo.stories.tsx`) — scope = the stories of those changed components only; Playwright MCP is available. Gate fails → skip silently and open without them (one-line note if Playwright was the blocker).
+**Gate — only run when all hold:** there are changed component files (`*.tsx`/`*.jsx`/`*.vue`/`*.svelte` in the diff that are NOT `*.stories.*`/`*.spec.*`/`*.test.*`); at least one has a co-located story (`Foo.tsx` → `Foo.stories.tsx`) — scope = the stories of those changed components only; Playwright MCP is available. Gate fails → skip silently and open without them (one-line note if Playwright was the blocker).
 
 Gate passes → Read `refs/storybook-screenshots.md` and follow it. Delivery differs by platform:
 - **GitHub** (manual attach): capture in-scope stories to `~/Desktop/pr-screenshots-<branch>/` with descriptive filenames, create the PR **without** embedding, then tell the user where the folder is and that they drag-drop the images in. **Then arm a `Monitor` polling the PR body every 60s that emits when the `<img>` count rises** (`gh pr view <n> --json body --jq .body | grep -c '<img'`). On that event, fold the new images into the `## Screenshots` section without waiting to be asked, and stop the monitor once every captured file is accounted for. Tell him it's armed so he knows not to prompt.

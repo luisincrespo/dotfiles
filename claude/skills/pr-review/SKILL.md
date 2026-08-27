@@ -118,9 +118,11 @@ relocates the problem instead of fixing it.
 Present each round's draft comments with `file:line` + exact text. Let the user cut, reword,
 re-home points between rounds, and request code examples. Lock wording before moving on.
 
-**Verify any code you hand over the way CI will.** For a lib that means `nx build <package>` —
-vitest transpiles with esbuild and never typechecks, so a passing scratch test proves nothing about
-types. A snippet that doesn't compile costs the author a CI round and the comment its credibility.
+**Verify any code you hand over the way CI will**, not just the way that's quickest. Know which of
+your local commands actually enforce what you're claiming: a test runner that strips types instead of
+checking them (vitest via esbuild, say) will happily pass code that fails the build, so a green scratch
+test proves nothing about types — run the real build/typecheck (`nx build <package>`, `tsc --noEmit`,
+`mypy`, `cargo check`, …). A snippet that doesn't compile costs the author a CI round and the comment its credibility.
 
 ### 5. Post — inline, via `gh api`
 - Get the **full 40-char head SHA** (a short SHA returns HTTP 422):

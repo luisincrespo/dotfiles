@@ -103,12 +103,17 @@ CI passed on the source alone; a semantic conflict with the current target can s
 2. **Pre-merge local verification**:
    - Preconditions: clean working tree, current branch == `source_branch`. Else announce and return (don't merge).
    - `git merge-base --is-ancestor origin/<target_branch> HEAD` exit 0 → up-to-date, skip to checks. Else `git merge --no-ff --no-commit origin/<target_branch>` (`merged_locally = true`); unexpected conflict → `git merge --abort`, go to Phase 3.
-   - Run affected checks against the target (fall back to `lint` if `eslint:lint` isn't the target name):
+   - Run the repo's lint, build and test gates against the merged state, scoped to what the merge
+     touched. Read the repo's `CLAUDE.md`/docs for the real commands; don't assume a build system.
+     Where the repo has affected-graph tooling, scope with it — for an nx monorepo (falling back to
+     `lint` if `eslint:lint` isn't the target name):
      ```bash
      npx nx affected --target=eslint:lint --base=origin/<target_branch> --head=HEAD
      npx nx affected --target=build       --base=origin/<target_branch> --head=HEAD
      npx nx affected --target=test        --base=origin/<target_branch> --head=HEAD
      ```
+     Where it doesn't, run the documented suite (`pytest`, `go test ./...`, `cargo test`, `make
+     check`, …), narrowed to the affected packages if the repo makes that easy.
    - Repo addenda: for each `verification_addenda` entry in local config whose `when_paths_under` prefix matches a changed path, also run its `run` command (separate child pipeline).
    - Any failure → batch `Pre-merge verification failed on merged state: <target> in <pkg>. <20-line error>. CI passed on source alone; likely semantic conflict.` and return (don't merge).
    - If `merged_locally`: `git merge --abort` (always, pass or fail).

@@ -12,7 +12,7 @@ The **file-classification rules and the typecheck gate are identical** for both 
 ## File classification (shared by both strategies)
 
 When a conflict stops the merge/rebase, `git diff --name-only --diff-filter=U` lists the conflicted files. Classify each:
-- **Lockfile** (`pnpm-lock.yaml`, `package-lock.json`, `yarn.lock`): `git checkout --ours <file>` → `pnpm install` at root → `git add <file>`.
+- **Lockfile** — never hand-merge one. Take either side, then **regenerate it from the manifest**: `git checkout --ours <file>` → run the ecosystem's install/resolve at the root → `git add <file>`. (`pnpm-lock.yaml`/`package-lock.json`/`yarn.lock` → `pnpm|npm|yarn install`; `poetry.lock` → `poetry lock`; `Cargo.lock` → `cargo build`; `Gemfile.lock` → `bundle install`; `go.sum` → `go mod tidy`.)
 - **Changeset** (`.changeset/*.md`, except README/config) and **`CHANGELOG.md`** (any depth): union merge — strip markers, keep both halves verbatim. Use `Read` + `Edit`. `git add <file>`.
 - **Source code** (`.ts`/`.tsx`/`.js`/`.json`/`.css`/`.scss`/etc.): auto-resolvable ONLY if (a) both sides added different non-overlapping lines (keep both in original order), or (b) diff is purely whitespace/import-ordering/formatting (take ours, plan to re-run formatter). Anything else → **COMPLICATED**.
 - **Anything else** (binaries, unfamiliar configs) → **COMPLICATED**.
@@ -38,7 +38,7 @@ When a conflict stops the merge/rebase, `git diff --name-only --diff-filter=U` l
 
 **If all resolved:**
 - `git grep -l "<<<<<<< HEAD" || true` — must be empty (else `git merge --abort`, batch, return).
-- If any "whitespace/ordering" resolutions: format only the changed files (`npx prettier --write <changed files>` or `npx nx eslint:lint <pkg> --fix`), re-stage. (Do NOT `format:write --all` — it reformats unrelated packages.)
+- If any "whitespace/ordering" resolutions: run the repo's formatter over **only the changed files**, then re-stage (e.g. `npx prettier --write <files>` / `nx eslint:lint <pkg> --fix`, `ruff format`, `gofmt -w`, `cargo fmt --`). Never run a format-everything target — it reformats unrelated code and buries the real diff.
 - `npx tsc --noEmit` scoped to packages with changed files. If fails → `git merge --abort`, batch as `Auto-resolved conflicts but typecheck failed: <summary>`, return. (If the only failures are pre-existing on the target — same errors present on `origin/<target_branch>` untouched by this branch — they are not merge-induced: leave them, note them, and proceed.)
 - `git commit --no-edit` (default merge message).
 - `git push`.
