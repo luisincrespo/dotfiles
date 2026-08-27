@@ -38,9 +38,15 @@ the next review goes better.
 > **Local overrides.** If `~/.claude/local/config.json` exists, its keys override the defaults
 > below (schema: `~/.claude/local/config.example.json`). `config.json` is machine-local and never committed.
 
-- `<repo>`: `pr_review_default_repo`, else `<owner>/<repo>` derived from `git remote get-url origin`
-  in the current directory. Always pass it explicitly as `--repo <repo>` so the review can't drift
-  onto the wrong project.
+- `<repo>`: resolve in this order, first hit wins — **most specific beats most general**:
+  1. An owner/repo named in the invocation: a pasted PR URL (`github.com/<owner>/<repo>/pull/<N>`)
+     or an explicit `--repo`.
+  2. `<owner>/<repo>` derived from `git remote get-url origin` in the current directory.
+  3. `pr_review_default_repo` — the last-resort fallback for when the cwd isn't a git repo (or has
+     no origin), **not** an override. Where you're standing beats a machine-wide default.
+
+  Then always pass the result explicitly as `--repo <repo>` so the review can't drift onto the
+  wrong project mid-run.
 
 ## Hard rules (these are why the user uses this skill, not the built-in `/review`)
 
