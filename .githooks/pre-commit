@@ -14,6 +14,8 @@
 set -uo pipefail
 
 DENYLIST="${HOME}/.claude/local/commit-denylist.txt"
+ROSTER="$(git rev-parse --show-toplevel)/.githooks/placeholder-roster.txt"
+VOICE_REFS="claude/skills/voice/refs/"
 SELF='.githooks/pre-commit'
 FOUND=0
 
@@ -79,6 +81,41 @@ if [[ -r "$DENYLIST" ]]; then
       hits="$(printf '%s\n' "$ADDED" | grep -iF -- "$term" || true)"
       [[ -n "$hits" ]] && report "Denylisted term: ${term}" "$hits"
     done <<< "$TERMS"
+  fi
+fi
+
+# --- Unknown people in the voice corpus -------------------------------------
+# The voice examples are anonymized by contract, so every person in them is
+# invented. Anything person-shaped that is not on the roster is therefore a real
+# name that slipped in — caught the first time, without predicting it.
+VERBS='asked|approved|flagged|replied|said|wanted|proposed|corrected|noticed|pointed|cut|trimmed|rewrote|edited'
+if [[ -r "$ROSTER" ]]; then
+  KNOWN="$(grep -vE '^[[:space:]]*(#|$)' "$ROSTER" | sed 's/[[:space:]]*$//' | tr 'A-Z' 'a-z')"
+  known() { printf '%s\n' "$KNOWN" | grep -qxF "$(printf '%s' "$1" | tr 'A-Z' 'a-z')"; }
+
+  VOICE_ADDED="$(printf '%s\n' "$ADDED" | grep -F "$VOICE_REFS" || true)"
+  if [[ -n "$VOICE_ADDED" ]]; then
+    unknown=""
+    # 1. @mentions: @handle, @first.last, @Firstname Lastname
+    # 2. Narrative: "Firstname asked", "Firstname Lastname approved", ...
+    cands="$(printf '%s\n' "$VOICE_ADDED" \
+      | grep -oE "@[A-Za-z][A-Za-z0-9._-]*( [A-Z][a-z]+)?|[A-Z][a-z]{2,}( [A-Z][a-z]+)? ($VERBS)" \
+      | sed -E "s/^@//; s/ ($VERBS)\$//" \
+      | sort -u)"
+    while IFS= read -r c; do
+      [[ -z "$c" ]] && continue
+      known "$c" && continue
+      known "${c%% *}" && continue   # known first name + new surname is fine
+      unknown="${unknown}    ${c}"$'\n'
+    done <<< "$cands"
+    if [[ -n "$unknown" ]]; then
+      printf '\n  \033[1;31m%s\033[0m\n' "Unrecognized person in the voice corpus"
+      printf '%s' "$unknown"
+      printf '\n  %s\n  %s\n' \
+        "Every person in claude/skills/voice/refs/ must be invented." \
+        "Replace with a placeholder, or add it to .githooks/placeholder-roster.txt if it is one."
+      FOUND=1
+    fi
   fi
 fi
 

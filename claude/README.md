@@ -112,6 +112,14 @@ employer:
 | Internal hostname | `*.internal`/`*.corp`/`*.lan`, and `sonarqube.`/`gitlab.`/`jira.`/`jenkins.`… on a real domain |
 | Real-looking ticket id | any `[A-Z]{2,}-\d+` that isn't the `ABC-1234` placeholder |
 | Denylisted term | anything in `~/.claude/local/commit-denylist.txt` |
+| Unrecognized person | in `skills/voice/refs/` only — any person not on `.githooks/placeholder-roster.txt` |
+
+That last check works the other way round from the rest. The voice corpus is anonymized by contract,
+so every person in it is invented; the hook therefore keeps an **allowlist** of placeholders and
+flags anything person-shaped that isn't on it — `@mentions` and narrative references like
+`Firstname asked`. A real name is caught the first time it appears, with nobody having to predict
+it, which a denylist can't do. Coined a new placeholder? Add it to the roster. The roster is
+committed, since fake names are safe to share and it should work on a fresh machine with no setup.
 
 The denylist is where employer, product and service names go. It's **machine-local on purpose** — a
 denylist naming your employer would itself be the leak it prevents. `install.sh` copies

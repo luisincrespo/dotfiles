@@ -1,0 +1,35 @@
+# People who are ALLOWED to appear in claude/skills/voice/refs/.
+#
+# The voice corpus is anonymized by contract: every person in it is invented.
+# So this is an allowlist, not a denylist — the hook flags any person-shaped
+# reference that is NOT listed here, which catches a real name the first time
+# it appears without anyone having to predict it.
+#
+# Safe to commit: these are fake. Add a new placeholder here when you coin one.
+# One entry per line, case-insensitive. # = comment.
+
+# The repo owner, who is legitimately named throughout.
+Luis
+
+# Placeholder people.
+Sam
+Jordan
+Alex
+Taylor
+Morgan
+Morgan Lee
+Riley
+Riley Shaw
+Nadia
+Nadia Haas
+Oscar
+Oscar Lund
+Casey
+casey.blake
+Dana
+dana.ruiz
+
+# Placeholder handles that are teams/orgs rather than people.
+web-eng
+acme-org
+handle
