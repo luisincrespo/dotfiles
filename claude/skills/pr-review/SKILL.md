@@ -146,13 +146,16 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
 
 ### 6. Re-review after the author pushes changes (and monitor until fully addressed)
 - `git fetch … --force`, look at the new commit, and **map each of your comments to a concrete
-  change** in a small table (addressed / partially / missed). Re-read the changed files. Also
-  check thread replies (`gh api repos/.../pulls/<N>/comments`) — a reasoned "won't do" reply
+  change** in a small table (addressed / partially / missed). Also check thread replies
+  (`gh api repos/.../pulls/<N>/comments`) — a reasoned "won't do" reply
   counts as addressed; a question back to you is yours to relay, not to silently resolve. Judge an
   ack against the head, not its tense, and give a silent comment one cycle before calling it punted
   — partial pushes often land ahead of the replies on the rest.
 - `git grep` for stale references after renames (the only legit leftover is a domain *type* that
   legitimately keeps the old name).
+- **After a force-push, read the base change too.** A rebase can land upstream work in the very
+  files you commented on, which can moot a finding or change whether a fix is still correct.
+  Re-verify each comment against the new base, not just the author's delta.
 - **Check authorship before crediting the author** — `git log --format='%h %an %s'`. Fixes are often
   written by a bot agent (`Cursor Agent`, via an AI reviewer's "fix this" button), not the person.
   That matters beyond attribution: in a bot-fix-bot loop each agent patch draws the next finding, so
@@ -167,7 +170,11 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
   feedback is slow) and re-run this step on each new push or reply until all comments are
   resolved, then do Step 7. Surface anything that needs the user (a reply asking a question, a
   pushback you don't buy, CI gone red) instead of forcing resolution. Stop polling only when
-  approved or the user calls it off.
+  approved or the user calls it off. Watch commits and comments, not CI state — a red check on an
+  unchanged SHA is noise — and verify any alarm your own tooling raises against the PR before
+  relaying it. If the PR goes quiet for a day or more, say so and offer to stop rather than
+  accruing silent ticks, especially when every prior fix came from one bot answering another:
+  ordinary human-review threads have nothing automated to pick them up.
 
 ### 7. Approve (when asked, or once Step 6's loop clears every comment)
 `gh pr review <N> --repo <repo> --approve --body "<short note>"`

@@ -22,6 +22,13 @@ next one better. It applies to:
 
 The skill's own folder is the base dir for the relative paths below.
 
+> **Standing rule — this skill's files are public-shaped.** `SKILL.md` and everything in `refs/`
+> live in a portable dotfiles repo that travels between machines and employers. **Nothing
+> identifying may be written into them, ever** — not a real person's name or handle, org, repo,
+> product, internal host, channel, ticket id, or proprietary identifier. Anonymize as you write
+> (see Step 4.3); never append raw and plan to clean it later. This applies even when the message
+> you're capturing was itself perfectly fine to send.
+
 ## Step 1 — Load the ground truth (always, before drafting)
 
 Read these first:

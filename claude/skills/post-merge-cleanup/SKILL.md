@@ -95,6 +95,19 @@ If it still exists (`git ls-remote --exit-code --heads origin <source_branch>`):
 - **Fallback** if it still errors `Directory not empty`: `rm -rf <wt_path>` then `git -C <main_root> worktree prune`. Scope `rm -rf` to the exact `<wt_path>` (may need a one-time approval — expected).
 - Run destructive steps as **separate commands** (worktree remove → local branch → remote branch), not chained — a combined destructive command is more likely to trip the permission classifier.
 
+**Stop the worktree's build daemon before removing it (Bazel especially).** `git worktree remove` does not touch it, so it survives as an orphan pointing at a path that no longer exists — a multi-GB JVM holding thousands of file descriptors until its idle timeout (`--max_idle_secs` is 3h). Before removing, from the workspace dir inside the worktree, run the repo's env setup if it has one, then `bazelisk shutdown` (or `bazel shutdown`). If the worktree is already gone, find and stop it by workspace:
+
+```bash
+pgrep -f bazel | while read p; do
+  ws=$(ps -o args= -p "$p" | grep -o '\-\-workspace_directory=[^ ]*' | cut -d= -f2)
+  [ -n "$ws" ] && [ ! -d "$ws" ] && kill -TERM "$p"
+done
+```
+
+Killing a Bazel server loses nothing — the disk cache lives in `~/Library/Caches/bazel`, not the server. Nx has the same shape but is cheap; Bazel is the one worth the step.
+
+**Enough open file descriptors will make removal fail partway.** `git worktree remove` reports `Too many open files in system` and leaves the directory behind, deregistered but intact — and `rm -rf` then also fails. That is a *system-wide* limit, so the cause is usually not this repo: check `lsof | awk '{print $1}' | sort | uniq -c | sort -rn | head` before blaming the worktree. A wedged VM (Docker Desktop's `com.apple.Virtualization.VirtualMachine.xpc`) once held 237k of 262k descriptors. Fix the hog, then retry — do not force-delete around it.
+
 ## Step 4: Delete the local branch
 If it still exists (`git -C <main_root> show-ref --verify --quiet refs/heads/<source_branch>`): `git -C <main_root> branch -D <source_branch>` (the merge is confirmed on the server, so `-D` is correct even if `<main_root>` hasn't pulled the merge commit).
 

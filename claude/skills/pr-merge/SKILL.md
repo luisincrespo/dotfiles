@@ -102,7 +102,26 @@ CI passed on the source alone; a semantic conflict with the current target can s
 1. Announce: `✅ !<number> looks mergeable. Running pre-merge local verification...`
 2. **Pre-merge local verification**:
    - Preconditions: clean working tree, current branch == `source_branch`. Else announce and return (don't merge).
+   - **Scope the risk first: intersect the two changed-file sets.** `merge-tree` only finds *textual*
+     conflicts, and the dangerous ones are semantic — `CLEAN` + approved + green and still wrong.
+     ```bash
+     MB=$(git merge-base HEAD origin/<target_branch>)
+     comm -12 <(git diff --name-only $MB..HEAD | sort) \
+              <(git diff --name-only $MB..origin/<target_branch> | sort)
+     ```
+     Non-empty → the target changed a file you changed; read those commits before trusting anything.
+     Empty → still check whether the target touched machinery your diff *registers into* (shared
+     service bags, DI containers, enum-to-implementation maps, generated manifests): two PRs adding
+     an entry to the same list never conflict textually and routinely break a registry test.
+     Real cases: a PR flipped `await` to `void` on a function under test, silently racing the other
+     PR's assertions; two PRs each added a service to the builder's lists.
    - `git merge-base --is-ancestor origin/<target_branch> HEAD` exit 0 → up-to-date, skip to checks. Else `git merge --no-ff --no-commit origin/<target_branch>` (`merged_locally = true`); unexpected conflict → `git merge --abort`, go to Phase 3.
+   - **Always abort the probe merge before returning, on every path.** An interrupted run otherwise
+     leaves the worktree mid-merge with hundreds of staged files; the next session must
+     `git merge --abort` before anything else. Check `MERGE_HEAD` when resuming.
+   - **Re-run the intersection immediately before merging, not once at the start.** On a busy repo
+     the target can move materially between verification and merge — one branch went from +73 to
+     +165 commits, and its overlap from 2 files to 14, in a single overnight gap.
    - Run the repo's lint, build and test gates against the merged state, scoped to what the merge
      touched. Read the repo's `CLAUDE.md`/docs for the real commands; don't assume a build system.
      Where the repo has affected-graph tooling, scope with it — for an nx monorepo (falling back to
