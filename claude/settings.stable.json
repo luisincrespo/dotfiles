@@ -1,0 +1,34 @@
+{
+  "//": [
+    "Durable preferences, MERGED into ~/.claude/settings.json every time install.sh runs.",
+    "",
+    "Only put a key here if it should be true on every machine you work on. The merge is",
+    "key-by-key and additive: anything already in ~/.claude/settings.json that isn't named",
+    "here is left completely alone, so this file cannot clobber machine-specific settings.",
+    "",
+    "DELIBERATELY NOT HERE — set these per machine, via /model and /config:",
+    "  model            Claude Code rewrites it at runtime (a /model switch strips it), so",
+    "                   tracking it produced spurious deletions in the repo. It also encodes a",
+    "                   model id ('opus[1m]') that ages out as new models ship.",
+    "  modelSettings    Keyed by model id (e.g. 'claude-opus-5'), so it goes stale the same way.",
+    "                   The intent worth carrying is 'newest Opus, xhigh effort', not the string.",
+    "",
+    "WHAT EACH KEY BELOW DOES:",
+    "  permissions.defaultMode  'auto' = act without prompting for routine tool calls.",
+    "  effortLevel              Reasoning effort. 'xhigh' trades latency for depth.",
+    "  tui                      'fullscreen' takes over the terminal instead of scrolling inline.",
+    "  skipAutoPermissionPrompt Suppresses the automatic permission prompt on startup.",
+    "  enabledPlugins           Plugins to turn on. Only public-marketplace ones belong here;",
+    "                           install them first (see README), an unknown one is a no-op."
+  ],
+
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "effortLevel": "xhigh",
+  "tui": "fullscreen",
+  "skipAutoPermissionPrompt": true,
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
+  }
+}

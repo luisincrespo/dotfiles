@@ -100,19 +100,27 @@ echo
 echo "Config:"
 link "${REPO_DIR}/CLAUDE.md" "${CLAUDE_DIR}/CLAUDE.md"
 
-# settings.json is deliberately NOT linked — Claude Code rewrites it at runtime
-# (a /model switch strips the model pin), so each machine owns its own copy.
-run cp "${REPO_DIR}/settings.example.json" "${CLAUDE_DIR}/settings.example.json"
-log "copied    ~/.claude/settings.example.json"
+# settings.json is NOT linked — Claude Code rewrites it at runtime, so the machine
+# owns the file. The repo's durable preferences are merged into it key-by-key;
+# volatile keys (model, modelSettings) are never touched. See settings.stable.json.
+# A symlink here is legacy, from an install before settings became machine-owned.
+# Replace it with a real file, preserving the content it currently resolves to.
 if [[ -L "${CLAUDE_DIR}/settings.json" ]]; then
+  legacy="$(cat "${CLAUDE_DIR}/settings.json")"
   run rm "${CLAUDE_DIR}/settings.json"
-  run cp "${REPO_DIR}/settings.example.json" "${CLAUDE_DIR}/settings.json"
-  log "unlinked  ~/.claude/settings.json — now machine-owned"
-elif [[ -e "${CLAUDE_DIR}/settings.json" ]]; then
-  log "kept      ~/.claude/settings.json (already present, left untouched)"
+  (( DRY_RUN )) || printf '%s\n' "$legacy" > "${CLAUDE_DIR}/settings.json"
+  log "unlinked  ~/.claude/settings.json — now machine-owned, content preserved"
+fi
+
+if command -v python3 >/dev/null 2>&1; then
+  log "merging   durable preferences into ~/.claude/settings.json"
+  if (( DRY_RUN )); then
+    python3 "${REPO_DIR}/merge-settings.py" "${REPO_DIR}/settings.stable.json" "${CLAUDE_DIR}/settings.json" --dry-run
+  else
+    python3 "${REPO_DIR}/merge-settings.py" "${REPO_DIR}/settings.stable.json" "${CLAUDE_DIR}/settings.json"
+  fi
 else
-  run cp "${REPO_DIR}/settings.example.json" "${CLAUDE_DIR}/settings.json"
-  log "seeded    ~/.claude/settings.json from the example"
+  log "SKIPPED   settings merge — python3 not found; copy settings.stable.json by hand"
 fi
 
 echo

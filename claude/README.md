@@ -16,7 +16,7 @@ committed:
 
 | File | What goes in it |
 |---|---|
-| `~/.claude/settings.json` | Model, effort level, permission mode — seeded from `settings.example.json`, then owned by this machine |
+| `~/.claude/settings.json` | Model choice — the durable preferences are merged in by `install.sh`, the rest is yours |
 | `~/.claude/local/config.json` | This machine's repo id, SonarQube host, protected branches, reviewer bots — see [Machine-local overrides](#machine-local-overrides) |
 | `~/.claude/local/commit-denylist.txt` | Employer, product and service names the [leak guard](#leak-guard) must keep out of commits |
 
@@ -39,19 +39,28 @@ back in this repo ready to commit. Anything real it would replace is moved to
 `~/.claude/.dotfiles-backup/<timestamp>/` first, and `--uninstall` puts it back. Restart Claude Code
 after any of these to pick up the change.
 
-### What is linked, and what isn't
+### What is linked, what is merged, what is yours
 
-**Linked** (edits flow back to the repo): the skills and `CLAUDE.md`.
+| Mode | Files | Why |
+|---|---|---|
+| **Linked** | `skills/`, `CLAUDE.md` | Edited deliberately; writing back to the repo is the point |
+| **Merged on install** | the five keys in `settings.stable.json` | Preferences that should hold on every machine |
+| **Yours alone** | everything else in `settings.json`; `local/config.json`; `local/commit-denylist.txt` | Rewritten by the tool, or machine-specific by nature |
 
-**Seeded, then machine-owned**: `settings.json`, `local/config.json`, `local/commit-denylist.txt`.
-Claude Code rewrites `settings.json` at runtime — a `/model` switch strips the `model` pin — so
-linking it meant the repo kept showing spurious deletions and losing the pin. Each machine owns its
-copy instead, and the repo ships `settings.example.json` as the starting point. An existing file is
-never overwritten, so re-running install is safe; a legacy symlink from an earlier install is
-replaced with a real file.
+`settings.json` can't be linked: Claude Code rewrites it at runtime, and a `/model` switch strips the
+`model` pin — which showed up here as spurious deletions and two pointless restore commits. But most
+of what's in it *is* worth carrying, so the durable half lives in `settings.stable.json` and
+`install.sh` merges it in key-by-key. Anything not named there is left untouched, so `model`,
+`modelSettings` and anything Claude Code writes later all survive.
 
-Change a setting with `/config` or by editing `~/.claude/settings.json`. Update
-`settings.example.json` only when you want the default to change for *future* machines.
+**`model` and `modelSettings` are deliberately excluded.** Both encode a model id (`opus[1m]`,
+`claude-opus-5`) that ages out as new models ship, so the intent worth carrying is "newest Opus,
+1M context, xhigh effort" rather than the literal strings. Set them per machine with `/model`.
+
+Two consequences of merging rather than seeding: re-running install **re-asserts** those five keys,
+so a local `/config` change to one of them gets overwritten — set machine-specific preferences on
+keys outside the stable set. And the merge needs `python3`; without it the step is skipped with a
+warning and you copy the values by hand.
 
 ## What's here
 
@@ -59,7 +68,8 @@ Change a setting with `/config` or by editing `~/.claude/settings.json`. Update
 |---|---|
 | `skills/` | Nine skills — the `deliver` MR/PR lifecycle family, plus `self-review`, `understand-task`, `pr-review` and `voice` |
 | `CLAUDE.md` | Global instructions applied to every project |
-| `settings.example.json` | Starting point for `~/.claude/settings.json` — seeded, not linked (see below) |
+| `settings.stable.json` | Durable preferences, merged into `~/.claude/settings.json` on install (see below) |
+| `merge-settings.py` | Does that merge, key-by-key |
 | `local/config.example.json` | Schema for the machine-local skill overrides (see below) |
 | `local/commit-denylist.example.txt` | Starting point for the machine-local leak-guard denylist |
 | `install.sh` | Links it all into `~/.claude`; `--dry-run` and `--uninstall` supported |
