@@ -107,7 +107,7 @@ For each unit:
 
 ### B1. Execute
 - **Risk gate** before starting: stop and check with the user before public-API changes, auth/security-sensitive or PII paths, destructive/irreversible actions, anything on a protected branch, or clearly cross-team/higher-risk work (the user's habit: do the low-lift part now, hand off the rest → log the hand-off to `deferred_items`).
-- Create the unit's branch off its `base` in the task worktree. Implement the smallest change that satisfies this unit, following repo `CLAUDE.md` + memories (JSDoc, strict equality, no non-null assertions, AAA tests, changesets for `libs/*`, SCSS modules + Origin tokens, one component per file, Storybook stories for new components, …). Anything you consciously punt → append to `deferred_items`. Commit (ticket-prefixed if the task has an id). Update the unit `status:"executing"`.
+- Create the unit's branch off its `base` in the task worktree. Implement the smallest change that satisfies this unit, following the repo's own `CLAUDE.md` (its versioning, styling and file-layout conventions) plus the user's global rules and memories (doc comments, strict equality, no non-null assertions, AAA tests, …). Anything you consciously punt → append to `deferred_items`. Commit (ticket-prefixed if the task has an id). Update the unit `status:"executing"`.
 
 ### B2. Verify
 - Invoke `Skill(self-review)` with `--base <unit base>` and `--task-slug <slug>`. Address its fix-now items; relay its batch. **Loop B1↔B2** until the gates are green and no clear findings remain.

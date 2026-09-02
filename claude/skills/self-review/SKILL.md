@@ -76,7 +76,7 @@ Triage fix-now vs batch:
 - After applying fixes, **re-review the changed areas** — don't stop at one pass; a fix can introduce a new issue. Loop Steps 2–4 until the automated gates are green and no clear findings remain.
 
 ## Step 5 — Convention sweep (reference, don't restate)
-Confirm the diff honors the repo `CLAUDE.md` + the user's feedback memories rather than re-deriving them: JSDoc coverage on new/edited interfaces/types/functions + their members; changesets for `libs/*` changes (one per lib, via the CLI); AAA structure in new/edited tests; strict equality (`!== undefined`, not `!= null`); no non-null assertions / no `void`-operator fire-and-forget; SCSS modules + Origin tokens over inline styles; one component per file. Flag anything off as a fix-now or batch item.
+Confirm the diff honors the repo's own `CLAUDE.md` and the user's global rules + feedback memories, rather than re-deriving them. **Read the repo's `CLAUDE.md` for its conventions** — versioning/changeset rules, styling and design-system preferences, file-layout rules — instead of assuming another project's. From the user's global rules, the recurring ones are: doc comments on new/edited types, functions and their members; AAA structure in new/edited tests; strict equality (`!== undefined`, not `!= null`); no non-null assertions or `void`-operator fire-and-forget. Flag anything off as a fix-now or batch item.
 
 ## Output
 When the loop settles, report: gates status (green/what's red), what you fixed, and the batch (unresolved items for the user). If `--task-slug` was set, fold unresolved items into the task ledger's notes. This stage does **not** commit, push, or open a PR — it leaves a clean, reviewed diff for the next stage (`pr-open`).

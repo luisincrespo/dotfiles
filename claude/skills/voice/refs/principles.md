@@ -17,6 +17,7 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   - **"gotcha" as a NOUN** — not for a tricky/catch part of something (avoid "the gotcha is…", "one gotcha…"); say "the catch is" / "the tricky part is" or just state the thing plainly. As an *interjection* of understanding ("Oh, gotcha!") he *can* use it, but rarely — he'd usually go with "Got it!" / "Oh, got it!".
   - **"shout"** — never "shout if you'd rather…". Use **"let me know"** or something similar.
   - **"bolt" / "bolt on"** — not for tacking something onto a change. Say it plainly: "not part of this change", "not something to add here".
+  - **"nah"** — reads impolite in an outward message, even when the answer really is no. Open with a plain "I don't think we need it" / "I don't think so" instead.
 
 ## Punctuation
 - **No em dashes (`—`).** Luis rarely uses them, so an em dash is a dead giveaway the text was

@@ -13,7 +13,7 @@ The **file-classification rules and the typecheck gate are identical** for both 
 
 When a conflict stops the merge/rebase, `git diff --name-only --diff-filter=U` lists the conflicted files. Classify each:
 - **Lockfile** — never hand-merge one. Take either side, then **regenerate it from the manifest**: `git checkout --ours <file>` → run the ecosystem's install/resolve at the root → `git add <file>`. (`pnpm-lock.yaml`/`package-lock.json`/`yarn.lock` → `pnpm|npm|yarn install`; `poetry.lock` → `poetry lock`; `Cargo.lock` → `cargo build`; `Gemfile.lock` → `bundle install`; `go.sum` → `go mod tidy`.)
-- **Changeset** (`.changeset/*.md`, except README/config) and **`CHANGELOG.md`** (any depth): union merge — strip markers, keep both halves verbatim. Use `Read` + `Edit`. `git add <file>`.
+- **Append-only changelog files** — `CHANGELOG.md` at any depth, and per-change fragments (`.changeset/*.md`, `changelog.d/*`, `newsfragments/*`), excluding their README/config: union merge — strip markers, keep both halves verbatim. Both sides are additions, so neither is wrong. Use `Read` + `Edit`. `git add <file>`.
 - **Source code** (`.ts`/`.tsx`/`.js`/`.json`/`.css`/`.scss`/etc.): auto-resolvable ONLY if (a) both sides added different non-overlapping lines (keep both in original order), or (b) diff is purely whitespace/import-ordering/formatting (take ours, plan to re-run formatter). Anything else → **COMPLICATED**.
 - **Anything else** (binaries, unfamiliar configs) → **COMPLICATED**.
 
