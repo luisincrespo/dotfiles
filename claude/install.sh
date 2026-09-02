@@ -54,7 +54,7 @@ link() {
 if (( UNINSTALL )); then
   echo "Unlinking Claude config from ${REPO_DIR}"
   echo
-  for target in "${CLAUDE_DIR}/skills/"* "${CLAUDE_DIR}/CLAUDE.md" "${CLAUDE_DIR}/settings.json"; do
+  for target in "${CLAUDE_DIR}/skills/"* "${CLAUDE_DIR}/CLAUDE.md"; do
     [[ -L "$target" ]] || continue
     case "$(readlink "$target")" in
       "${REPO_DIR}"/*) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
@@ -74,7 +74,7 @@ if (( UNINSTALL )); then
         cp -R "$backup" "$dest" && log "restored  ${dest/#$HOME/$TILDE}"
       done
     fi
-    for file in CLAUDE.md settings.json; do
+    for file in CLAUDE.md; do
       [[ -e "${LATEST}${file}" && ! -e "${CLAUDE_DIR}/${file}" ]] || continue
       cp -R "${LATEST}${file}" "${CLAUDE_DIR}/${file}" && log "restored  ~/.claude/${file}"
     done
@@ -98,8 +98,22 @@ done
 
 echo
 echo "Config:"
-link "${REPO_DIR}/CLAUDE.md"     "${CLAUDE_DIR}/CLAUDE.md"
-link "${REPO_DIR}/settings.json" "${CLAUDE_DIR}/settings.json"
+link "${REPO_DIR}/CLAUDE.md" "${CLAUDE_DIR}/CLAUDE.md"
+
+# settings.json is deliberately NOT linked — Claude Code rewrites it at runtime
+# (a /model switch strips the model pin), so each machine owns its own copy.
+run cp "${REPO_DIR}/settings.example.json" "${CLAUDE_DIR}/settings.example.json"
+log "copied    ~/.claude/settings.example.json"
+if [[ -L "${CLAUDE_DIR}/settings.json" ]]; then
+  run rm "${CLAUDE_DIR}/settings.json"
+  run cp "${REPO_DIR}/settings.example.json" "${CLAUDE_DIR}/settings.json"
+  log "unlinked  ~/.claude/settings.json — now machine-owned"
+elif [[ -e "${CLAUDE_DIR}/settings.json" ]]; then
+  log "kept      ~/.claude/settings.json (already present, left untouched)"
+else
+  run cp "${REPO_DIR}/settings.example.json" "${CLAUDE_DIR}/settings.json"
+  log "seeded    ~/.claude/settings.json from the example"
+fi
 
 echo
 echo "Machine-local overrides:"

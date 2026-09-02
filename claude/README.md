@@ -16,6 +16,7 @@ committed:
 
 | File | What goes in it |
 |---|---|
+| `~/.claude/settings.json` | Model, effort level, permission mode — seeded from `settings.example.json`, then owned by this machine |
 | `~/.claude/local/config.json` | This machine's repo id, SonarQube host, protected branches, reviewer bots — see [Machine-local overrides](#machine-local-overrides) |
 | `~/.claude/local/commit-denylist.txt` | Employer, product and service names the [leak guard](#leak-guard) must keep out of commits |
 
@@ -33,13 +34,24 @@ Plugins aren't linked — Claude Code owns its own cache, so install those separ
 ./claude/install.sh --uninstall  # drop the symlinks, restore the last backup
 ```
 
-Install symlinks each skill and config file into `~/.claude`, so edits made from any machine land
+Install symlinks each skill and `CLAUDE.md` into `~/.claude`, so edits made from any machine land
 back in this repo ready to commit. Anything real it would replace is moved to
 `~/.claude/.dotfiles-backup/<timestamp>/` first, and `--uninstall` puts it back. Restart Claude Code
 after any of these to pick up the change.
 
-Both local files are only ever *seeded* — an existing one is never overwritten, so re-running
-install is safe.
+### What is linked, and what isn't
+
+**Linked** (edits flow back to the repo): the skills and `CLAUDE.md`.
+
+**Seeded, then machine-owned**: `settings.json`, `local/config.json`, `local/commit-denylist.txt`.
+Claude Code rewrites `settings.json` at runtime — a `/model` switch strips the `model` pin — so
+linking it meant the repo kept showing spurious deletions and losing the pin. Each machine owns its
+copy instead, and the repo ships `settings.example.json` as the starting point. An existing file is
+never overwritten, so re-running install is safe; a legacy symlink from an earlier install is
+replaced with a real file.
+
+Change a setting with `/config` or by editing `~/.claude/settings.json`. Update
+`settings.example.json` only when you want the default to change for *future* machines.
 
 ## What's here
 
@@ -47,7 +59,7 @@ install is safe.
 |---|---|
 | `skills/` | Nine skills — the `deliver` MR/PR lifecycle family, plus `self-review`, `understand-task`, `pr-review` and `voice` |
 | `CLAUDE.md` | Global instructions applied to every project |
-| `settings.json` | Model, effort level, permission mode, enabled plugins |
+| `settings.example.json` | Starting point for `~/.claude/settings.json` — seeded, not linked (see below) |
 | `local/config.example.json` | Schema for the machine-local skill overrides (see below) |
 | `local/commit-denylist.example.txt` | Starting point for the machine-local leak-guard denylist |
 | `install.sh` | Links it all into `~/.claude`; `--dry-run` and `--uninstall` supported |
