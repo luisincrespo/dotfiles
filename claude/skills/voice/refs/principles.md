@@ -42,6 +42,10 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 ## Substance
 - **Frame the ask honestly.** Don't downplay a real decision/clarification as a "sanity check" or a
   "quick question" — if you're asking someone to decide something, say that.
+- **Don't rank your own findings.** Skip "the big one", "the critical thing",
+  "most importantly". State each finding plainly and let the reader weigh it.
+  Dramatizing a routine one spends credibility you'll want for the ones that
+  actually matter.
 - **Concrete over abstract.** When explaining how something works, name the actual things (the agents,
   the tiers, the features) instead of describing them in the abstract — specifics give the reader
   clarity. "a Student gets Summarizer, Humanizer, AI Detector" beats "a set that varies by persona".
