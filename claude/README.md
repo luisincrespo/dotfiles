@@ -121,12 +121,16 @@ Not linked by this repo (Claude Code manages its own plugin cache), so install t
 
 ```shell
 /plugin marketplace add anthropics/claude-plugins-official
-/plugin marketplace add nrwl/nx-ai-agents-config
 /plugin install frontend-design@claude-plugins-official
 ```
 
 `settings.json` enables `frontend-design` once it's installed. Work marketplaces and their plugins
 are per-machine and intentionally not listed here.
+
+On an Nx monorepo, add `/plugin marketplace add nrwl/nx-ai-agents-config` as well — but only
+there. `marketplace add` registers a source without installing anything from it, so anywhere the
+codebase isn't Nx the line is inert. Check for an `nx.json`, or an `nx` dependency, first: a
+yarn/pnpm workspaces monorepo is still not an Nx one.
 
 ## Leak guard
 
