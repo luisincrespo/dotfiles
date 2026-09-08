@@ -42,7 +42,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 > its keys override or extend them (schema: `~/.claude/local/config.example.json`); any key absent
 > there keeps the default. `config.json` is machine-local and never committed.
 
-- `PROTECTED_BRANCHES`: `["main", "master"]` + `protected_branches_extra` + any `stage-*`
+- `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.
 - **Task ledger**: `~/.claude/cache/deliver/task-<repo-with-slashes-as-dashes>-<task-slug>.json`
   ```json
   {"task_ref":null,"requirements":null,"acceptance":null,"plan_summary":null,"phase":"understand",
@@ -155,7 +155,7 @@ Fold each real lesson into the **right** place: spine/gate/breakdown lessons her
 ## Hard constraints
 
 - Carry no conventions of your own — defer to repo `CLAUDE.md`, module `AGENTS.md`, and the user's memories at every step. Don't duplicate them here.
-- Never start execution on a `PROTECTED_BRANCHES`/`stage-*` branch. Never merge outside `pr-merge`; never delete a branch/worktree outside `post-merge-cleanup`.
+- Never start execution on a `PROTECTED_BRANCHES` branch. Never merge outside `pr-merge`; never delete a branch/worktree outside `post-merge-cleanup`.
 - Respect every sub-skill's own hard constraints (rebase/force-push rules, `--no-verify` limits, never touching human threads, no Slack without approval, no follow-up filed without approval).
 - Outward-facing written content — PR titles/descriptions (`pr-open`) and review-thread replies (`pr-babysit`) — is written in Luis's voice via the `voice` skill (see their **Voice** notes); a reply to a human still needs his approval.
 - Stop at the gates; otherwise keep the task moving to done.

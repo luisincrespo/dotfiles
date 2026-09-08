@@ -1,7 +1,7 @@
 {
   "//": "Machine-local overrides for the deliver/pr-* skill family. Copy to ~/.claude/local/config.json and fill in. Never commit the filled-in copy: it names private repos, hosts and bot accounts.",
 
-  "//protected_branches_extra": "Branch names that are ALSO protected, on top of the built-in main/master and any stage-*. Used by deliver, pr-open, pr-babysit, pr-merge.",
+  "//protected_branches_extra": "Branch patterns that are ALSO protected, on top of the built-in main, master and stage-*. Entries are glob patterns: a bare name matches exactly, * matches any run of characters, so \"rc-*\" covers every dated release candidate. Used by deliver, pr-open, pr-babysit, pr-merge.",
   "protected_branches_extra": [],
 
   "//pr_review_default_repo": "owner/repo that pr-review targets when the cwd has no useful origin remote. Omit to always derive from git remote get-url origin.",

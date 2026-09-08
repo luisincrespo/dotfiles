@@ -107,7 +107,7 @@ from it on first run only — an existing one is never overwritten.
 
 | Key | Effect when set |
 |---|---|
-| `protected_branches_extra` | More branches to refuse to work from, on top of `main`/`master`/`stage-*` |
+| `protected_branches_extra` | More branches to refuse to work from, on top of `main`/`master`/`stage-*`. Glob patterns — `*` matches any run of characters, so `rc-*` covers a dated release-candidate series |
 | `pr_review_default_repo` | Repo `pr-review` targets when the cwd has no useful origin remote |
 | `rebase_sync_repos` | Repos that require rebase-before-push, enabling lease-only force-push there |
 | `ai_reviewer_usernames_gitlab` / `_github` | Reviewer bots whose comments get auto-addressed rather than batched |

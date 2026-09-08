@@ -60,14 +60,14 @@ Opens **one** MR/PR for the current branch and returns. This is the create stage
 > its keys override or extend them (schema: `~/.claude/local/config.example.json`); any key absent
 > there keeps the default. `config.json` is machine-local and never committed.
 
-- `PROTECTED_BRANCHES`: `["main", "master"]` + `protected_branches_extra` + any `stage-*`
+- `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.
 - `SCREENSHOT_WIDTH_PX`: `400` (reviewer-friendly default; ~640 for full-page/wide layouts)
 - `SCREENSHOT_MARKER`: `<!-- pr:screenshots:start -->` … `<!-- pr:screenshots:end -->` (skill-owned, delimited region)
 
 ## Step 0: Platform + already-open guard
 
 1. `git remote get-url origin` → contains `github.com` ⇒ `github`; contains `gitlab` ⇒ `gitlab`; else announce and stop.
-2. `branch = git branch --show-current`. If `branch` ∈ `PROTECTED_BRANCHES` or matches `stage-*` → announce and stop (never open from a protected branch).
+2. `branch = git branch --show-current`. If `branch` matches `PROTECTED_BRANCHES` → announce and stop (never open from a protected branch).
 3. Already-open check:
    - **GitLab**: `glab mr list --source-branch <branch> --state opened --output json`.
    - **GitHub**: `gh pr list --head <branch> --state open --json number,url`.
@@ -140,7 +140,7 @@ Then **return to the caller** — do not loop or babysit. `deliver` (or the user
 
 ## Hard constraints
 
-- Never open from a `PROTECTED_BRANCHES`/`stage-*` branch. Never auto-commit uncommitted work — stop and ask.
+- Never open from a `PROTECTED_BRANCHES` branch. Never auto-commit uncommitted work — stop and ask.
 - GitHub screenshots go to `~/Desktop/pr-screenshots-<branch>/` for manual attach — never push an assets branch or embed raw-URL images in a GitHub PR body.
 - The Step 7 review-request is **generated, not sent** — Luis sends it himself; send it yourself only if he explicitly instructs it this run.
 - Follow the repo `CLAUDE.md` and the user's feedback memories (ticket-in-summary-not-title, changeset conventions, reviewer-facing testing section) rather than re-deriving them.

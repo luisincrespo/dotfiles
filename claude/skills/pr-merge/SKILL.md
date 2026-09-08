@@ -70,7 +70,7 @@ Merges one open MR/PR **only when every condition holds**, after a local verific
 > its keys override or extend them (schema: `~/.claude/local/config.example.json`); any key absent
 > there keeps the default. `config.json` is machine-local and never committed.
 
-- `PROTECTED_BRANCHES`: `["main", "master"]` + `protected_branches_extra` + any `stage-*`
+- `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.
 - `REBASE_SYNC_REPOS`: `[]` + `rebase_sync_repos` — derive `SYNC_STRATEGY = "rebase"` if `repo_id` matches, else `"merge"` (only relevant if a conflict surfaces here).
 - **State file**: `~/.claude/cache/deliver/pr-<platform>-<repo-with-slashes-as-dashes>-<number>.json` (shared with `pr-babysit`; read `last_pipeline_id`).
 
@@ -78,7 +78,7 @@ Merges one open MR/PR **only when every condition holds**, after a local verific
 
 1. **Platform**: `git remote get-url origin` → `github`/`gitlab` (else stop).
 2. **Resolve** the MR/PR and map to unified fields (same shape as `pr-babysit` 0.1): `number`, `repo_id`, `source_branch`, `target_branch`, `web_url`, `state`, `head_sha`, `is_draft`, `has_conflicts`, `mergeable`. GitHub: `gh pr view [<arg>] --json number,headRefName,baseRefName,url,state,headRefOid,isDraft,mergeable,mergeStateStatus,reviewDecision`. GitLab: `glab mr view [<arg>] --output json`.
-3. **Branch guard**: abort if `source_branch` ∈ `PROTECTED_BRANCHES` / matches `stage-*`.
+3. **Branch guard**: abort if `source_branch` matches `PROTECTED_BRANCHES`.
 4. **Terminal**: `state != opened` → announce (already merged/closed) and return; if merged and `--task-slug` set, still invoke `Skill(post-merge-cleanup)` once to finish any pending cleanup + follow-ups.
 
 ## Phase 1: Merge conditions (ALL must hold; else return "not ready")
@@ -149,7 +149,7 @@ Entered from Phase 1 condition 6 (local conflict) or an unexpected conflict duri
 
 ## Hard constraints
 
-- Never merge unless **every** Phase 1 condition holds and the pre-merge local verification passed. Never merge a draft or a `PROTECTED_BRANCHES`/`stage-*` source branch.
+- Never merge unless **every** Phase 1 condition holds and the pre-merge local verification passed. Never merge a draft or a `PROTECTED_BRANCHES` source branch.
 - Merge via this skill only. Respect the repo's enforced merge strategy — never impose one, never pass an unsupported mode.
 - **Never rebase or force-push by default** — only the `REBASE_SYNC_REPOS` conflict path in `refs/conflict-resolution.md`, `--force-with-lease` only, discard-and-batch on a rejected lease.
 - Never pass `--delete-branch` to the merge — branch/worktree deletion happens only in `post-merge-cleanup`, after retargeting any stacked dependents.

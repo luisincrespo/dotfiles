@@ -100,7 +100,7 @@ Polls an open MR/PR and drives it toward merge. This is the babysit stage of the
 
 - `AI_REVIEWER_USERNAMES_GITLAB`: `[]` + `ai_reviewer_usernames_gitlab` (empty ⇒ every comment batches as human)
 - `AI_REVIEWER_USERNAMES_GITHUB`: `["cursor"]` + `ai_reviewer_usernames_github` (`cursor[bot]` = Cursor Bugbot; the 2.1 pre-filter strips the `[bot]` suffix before matching)
-- `PROTECTED_BRANCHES`: `["main", "master"]` + `protected_branches_extra` + any `stage-*`
+- `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.
 - `AUTO_FIX_CATEGORIES`: `["lint", "format", "typecheck", "build", "unit-test"]`
 - `SONAR_HOST_URL`: `sonar_host_url` (unset ⇒ skip the SonarQube step entirely)
 - `SONAR_TOKEN_FILE`: `~/.claude/secrets/sonar.env` (exports `SONAR_TOKEN`; never echo it)
@@ -147,7 +147,7 @@ when any API call in the loop fails, **skip the cycle** rather than substituting
 | `mergeable` | `merge_status=="can_be_merged"` | `mergeable=="MERGEABLE"` AND `mergeStateStatus=="CLEAN"` |
 
 ### 0.2 Branch guard
-Abort if `source_branch` ∈ `PROTECTED_BRANCHES` or matches `stage-*`.
+Abort if `source_branch` matches `PROTECTED_BRANCHES`.
 
 ### 0.3 Terminal state
 A merged/closed MR/PR won't be revisited — **delete its state file and stop** (`pr-merge`/`post-merge-cleanup` handle in-skill merges; this catches merges/closes done elsewhere):
@@ -284,7 +284,7 @@ Runs every cycle. Read `refs/storybook-screenshots.md` (Step 7) for the sizing a
 
 ## Hard constraints
 
-- Never push to `PROTECTED_BRANCHES`/`stage-*`. **Never rebase or force-push by default** — the sole exception is a `REBASE_SYNC_REPOS` repo via the 0.5b / `conflict-resolution.md` rebase path: `--force-with-lease` only, discard-and-batch on a rejected lease. Every other repo is merge-only.
+- Never push to `PROTECTED_BRANCHES`. **Never rebase or force-push by default** — the sole exception is a `REBASE_SYNC_REPOS` repo via the 0.5b / `conflict-resolution.md` rebase path: `--force-with-lease` only, discard-and-batch on a rejected lease. Every other repo is merge-only.
 - Never approve, close, or comment on human threads. Allowed actions: commit, push (and, only in `REBASE_SYNC_REPOS`, `git push --force-with-lease` after a rebase), reply to AI-reviewer threads, resolve threads. Merging and cleanup are delegated to `pr-merge`/`post-merge-cleanup`.
 - Never mark a thread resolved unless the commit actually pushed.
 - Never bypass pre-commit hooks except the sanctioned large cross-toolchain sync case (0.5b / `conflict-resolution.md`) where the hook fails only on CI-green files from the target.
