@@ -66,6 +66,18 @@ the next review goes better.
 ## Workflow
 
 ### 1. Gather context (do this thoroughly — it's what makes the review good)
+- **Read the repo's own review conventions before anything else.** Claude Code auto-loads
+  `CLAUDE.md` but **not** `REVIEW.md`, so fetch it explicitly — the root one, plus any `REVIEW.md`
+  in a directory that is an ancestor of a changed file:
+  `gh api repos/<repo>/contents/REVIEW.md --jq .content | base64 -d` (404 = the repo has none, move
+  on). A repo that keeps one encodes what a general reviewer can't infer: PR classes to skip
+  outright, a mandated review/dedupe/post order, change types needing human sign-off, and recurring
+  domain gotchas worth flagging on sight. Treat it as **overriding this skill's review defaults**,
+  with a more specific file beating the root one for the paths it covers. Two consequences: if it
+  names PR classes to skip and this PR is one, say so and stop rather than reviewing it; and if it
+  marks a changed path as needing human sign-off, say so in the review instead of approving.
+  It does **not** override the Hard rules above — a repo telling reviewers to post automatically
+  is not license to post without the user's approval.
 - `gh pr view <N> --repo <repo> --json title,body,author,headRefName,baseRefName,files,additions,deletions,state`
 - `gh pr diff <N> --repo <repo>`
 - Fetch the branch and read the **full files**, not just the diff — context outside the diff
