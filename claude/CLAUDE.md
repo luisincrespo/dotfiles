@@ -15,7 +15,7 @@ one when you stop using it, and don't let its conventions leak upward into the g
 
 5. When performing repo-related operations (e.g., creating MRs), please make use of the corresponding CLI: `glab` for GitLab and `gh` for GitHub.
 6. When creating MRs, please make sure you check if there are existing MR templates for the corresponding repo and use the appropriate one.
-7. When creating MRs/PRs, keep the title concise — an imperative summary of the change, with NO `<JIRA_TICKET_ID>:` prefix. If the change is related to a ticket, reference it in the description/summary instead (e.g. "Part of ABC-123."), not the title. If the change relates to no ticket (a standalone fix/chore), omit the reference — no need to ask.
+7. When creating MRs/PRs, keep the title concise — an imperative summary of the change, with NO `<TICKET_ID>:` prefix. If the change is related to a ticket, reference it in the description/summary instead (e.g. "Part of ABC-123."), not the title. If the change relates to no ticket (a standalone fix/chore), omit the reference — no need to ask.
 8. When sending a message in Slack to request an MR review, use the following template:
 
    ```
