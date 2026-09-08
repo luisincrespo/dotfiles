@@ -11,7 +11,7 @@ cd ~/code/.dotfiles
 ./claude/install.sh
 ```
 
-Then restart Claude Code, and fill in the two machine-local files it seeded — neither is ever
+Then restart Claude Code, and fill in the three machine-local files below — none of them is ever
 committed:
 
 | File | What goes in it |
@@ -22,6 +22,14 @@ committed:
 
 The skills work unconfigured, so filling these in can wait until you know the new setup: SonarQube
 is skipped, no extra branches are protected, and `pr-review` derives the repo from `git remote`.
+The denylist is the exception worth doing on day one — until it names the new employer, the leak
+guard is only catching the generic patterns, and the whole point of it is the employer-specific
+words. Confirm it works with a throwaway staged line:
+
+```shell
+echo "<denylisted term>" > leaktest.md && git add leaktest.md && .githooks/pre-commit
+git reset -q leaktest.md && rm leaktest.md
+```
 
 Plugins aren't linked — Claude Code owns its own cache, so install those separately (see
 [Plugins](#plugins)).

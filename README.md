@@ -2,6 +2,39 @@
 
 Personal interactive shell and AI tooling config.
 
+## New machine
+
+Roughly in order — each step has something later that depends on it.
+
+1. **Xcode Command Line Tools** — `xcode-select --install`. Ships `git` and `curl`, and
+   Homebrew won't install without them.
+2. **SSH key** — `ssh-keygen -t ed25519`, add the public half to GitHub, confirm with
+   `ssh -T git@github.com`.
+3. **Clone this repo:**
+
+   ```shell
+   git clone git@github.com:luisincrespo/.dotfiles.git ~/code/.dotfiles
+   ```
+
+4. **Shell** — Homebrew, `ohmyzsh`, the plugins and their prerequisites:
+   [`zsh/README.md`](./zsh/README.md). Do this before the Claude install, which needs
+   `python3` to merge settings.
+5. **Git identity** — a fresh Mac has no `~/.gitconfig` at all, so nothing commits until:
+
+   ```shell
+   git config --global user.name  "<name>"
+   git config --global user.email "<email>"
+   git config --global pull.rebase false   # CLAUDE.md rule 10 — default to merge, not rebase
+   ```
+
+6. **Claude Code** — `cd ~/code/.dotfiles && ./claude/install.sh`, then fill in the
+   machine-local files and install plugins: [`claude/README.md`](./claude/README.md).
+7. **Forge CLIs** — `gh auth login`, plus `glab auth login` if the job uses GitLab. Both
+   need a real terminal for the browser handshake.
+
+Anything that prompts for `sudo` or opens a browser needs a TTY, so run it in a terminal
+window rather than through a pipe or an agent's shell.
+
 ## Usage
 
 ### ZSH
@@ -11,12 +44,7 @@ Personal `zsh` config: `ohmyzsh` setup and plugins. Follow the instructions [her
 ### Claude Code
 
 Skills, global instructions and settings for [Claude Code](https://claude.com/claude-code).
-Follow the instructions [here](./claude/README.md). On a new machine:
-
-```shell
-git clone git@github.com:luisincrespo/.dotfiles.git ~/code/.dotfiles
-cd ~/code/.dotfiles && ./claude/install.sh
-```
+Installed with `./claude/install.sh`; follow the instructions [here](./claude/README.md).
 
 Everything committed here is employer-neutral; machine-specific values live in
 `~/.claude/local/` and are never committed. Roll back with `./claude/install.sh --uninstall`.

@@ -28,9 +28,13 @@ added() {
         /^\+[^+]/        { print file ": " substr($0, 2) }
       '
 }
-# `git@host.tld:` is an SSH remote, not an address. Blank it out here rather than
-# excluding the whole line, so a real address beside one still gets caught.
-ADDED="$(added | sed 's|git@[A-Za-z0-9.-]*\.[A-Za-z][A-Za-z]*:|<ssh-remote>:|g')"
+# `git@host.tld`, with or without a trailing `:path`, is an SSH remote rather than an
+# address — `git clone git@github.com:owner/repo` and `ssh -T git@github.com` both. Blank
+# it out here rather than excluding the whole line, so a real address beside one still
+# gets caught. The leading-character guard keeps `build-git@vendor.com` a real address.
+ADDED="$(added | sed -E \
+  -e 's|^git@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|<ssh-remote>|g' \
+  -e 's|([^A-Za-z0-9._%+-])git@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\1<ssh-remote>|g')"
 [[ -z "$ADDED" ]] && exit 0
 
 report() {
