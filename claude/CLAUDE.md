@@ -27,7 +27,7 @@ one when you stop using it, and don't let its conventions leak upward into the g
 9. When working inside a git worktree, please work with the files inside that worktree, for both reading and writing. Also make sure that if you spin up agents or other tasks like "Explore", they're also instructed to work with files inside the corresponding git worktree.
 10. When performing a git merge between to branches, please default to using git merge instead of git rebase.
 11. The `deliver` skill family owns the MR/PR lifecycle (it replaced `manage-mr`). When I ask you to create / open / raise / put up / submit an MR or PR, or say a branch is ready to ship/land, **invoke `/deliver` to do it** — it opens the PR via `pr-open` (following the CLI, MR-template and title rules above) and babysits it through merge + cleanup via `pr-babysit` → `pr-merge` → `post-merge-cleanup`, and can adopt an already-open PR by entering at the babysit stage. When I just want an existing MR/PR watched, `/deliver` (auto-detects and babysits) or `/pr-babysit` directly is fine. Do NOT call `glab mr create` / `gh pr create` directly. Skip these skills only if I explicitly say not to use them for a given MR/PR.
-12. When creating worktrees, always create the worktree under `<current_repo_root>/.claude/worktrees`.
+12. When creating worktrees, default to `<current_repo_root>/.claude/worktrees`. If the repo has its own worktree convention — a skill or script that creates them, or a documented location — follow that instead, and say which one you're using and why. A repo that ships worktree tooling usually encodes setup steps you'd otherwise rediscover the hard way.
 
 ## TypeScript
 
