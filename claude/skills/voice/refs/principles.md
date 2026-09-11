@@ -97,6 +97,6 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   itself stays context-free (no CI/status/caveats). Anything worth adding goes on a line **after the
   link**, which may or may not cc someone. For a **multi-PR stack**, open with "Here's a PR stack for
   <what>", one line per PR as `<purpose> — <link>` (mark draft/stacked inline), and a sentence or two
-  of context is fine here (unlike the single-PR form). **No JIRA ticket** in team Slack.
+  of context is fine here (unlike the single-PR form). **No JIRA ticket** in team Slack. **Broadcasting to a broad channel** — nobody addressed — takes a greeting and a sized ask instead of the `@handle` form: "Hey, team! Here's a small PR to <what it does>." Whoever picks it up is volunteering, so saying how big it is does the work the handle would have.
 - **In a dedicated review channel, drop the explicit "please review" ask** — the channel's purpose
   makes it implicit. (This is the one place the usual "end with a single ask" doesn't apply.)
