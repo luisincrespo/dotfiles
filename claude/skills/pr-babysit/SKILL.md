@@ -1,16 +1,11 @@
 ---
 name: pr-babysit
 description: >-
-  Babysit an already-open MR/PR through to merge-ready — the polling stage of the
-  `deliver` pipeline. Each cycle it brings the branch
-  current with its base, resolves conflicts, checks CI and auto-fixes safe failures
-  (lint, format, typecheck, build, unit tests), surfaces SonarQube issues, sweeps
-  all comment streams and auto-addresses clear AI-reviewer notes (batching anything
-  unclear or human-authored), and keeps the title/description/screenshots current as
-  commits land. When it's merge-ready with an empty batch it hands off to `pr-merge`
-  (which merges and triggers `post-merge-cleanup`). It self-wraps in `/loop`. It does
-  NOT create the MR/PR (that's `pr-open`). Normally invoked by `deliver`; also usable
-  directly on an existing MR/PR. Prefer `deliver` for the full lifecycle.
+  Babysit an already-open MR/PR through to merge-ready. Each cycle brings the branch current with
+  its base, resolves conflicts, auto-fixes safe CI failures (lint, format, typecheck, build, unit
+  tests), sweeps every comment stream and addresses clear AI-reviewer notes while batching
+  anything human-authored, and keeps the title and description current. Hands off to pr-merge when
+  ready, and self-wraps in /loop. It does not create the PR; that is pr-open.
 allowed-tools:
   - Bash(glab api:*)
   - Bash(glab mr view:*)

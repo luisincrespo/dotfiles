@@ -1,16 +1,11 @@
 ---
 name: self-review
 description: >-
-  Review your OWN uncommitted/branch changes before pushing or opening a PR — the
-  verify stage of the `deliver` pipeline, usable on its own. It runs the repo's
-  automated gates (lint, typecheck, build, tests), then composes the code-review
-  passes over the diff — `/code-review` for correctness/bugs, `simplify` for
-  reuse/simplification, `security-review` for security, and a native WCAG pass
-  for frontend changes — fixes the clear findings itself, and batches
-  anything unclear or judgment-heavy for you. Loops until the diff is clean. Use when
-  the user says "self-review", "review my changes before I push", "check my diff", or
-  before `pr-open`. This reviews *your* changes — for reviewing someone ELSE's PR use
-  `pr-review`; `/code-review` is one of the passes this composes, not a replacement.
+  Review your OWN branch or uncommitted changes before pushing or opening a PR. Runs the repo's
+  gates (lint, typecheck, build, tests), then correctness, simplification, security and, for
+  frontend changes, accessibility passes over the diff; fixes the clear findings and batches
+  judgment calls for you, looping until the diff is clean. Use for "self-review", "check my diff",
+  or before pr-open. For someone ELSE's PR use pr-review.
 allowed-tools:
   - Skill(simplify)
   - Skill(security-review)

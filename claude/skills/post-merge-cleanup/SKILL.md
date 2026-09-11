@@ -1,15 +1,11 @@
 ---
 name: post-merge-cleanup
 description: >-
-  Clean up after a merged MR/PR — the final stage of the `deliver` pipeline,
-  extended with deferred-follow-up raising. It advances any stacked dependents
-  (retarget off the disappearing base, merge the new target forward, promote the
-  next PR out of draft), deletes the merged source branch and its worktree from the
-  main root, removes the per-PR state file, moves the task's tracker ticket to Done, and turns the `deliver` task's
-  deferred-items ledger into concrete follow-ups (proposing them and getting your
-  approval before filing anything). Normally invoked by `pr-merge` right after a
-  confirmed merge; also usable directly ("clean up after this merged PR"). Prefer
-  `deliver` for the full lifecycle.
+  Clean up after a merged MR/PR. Advances stacked dependents (retarget off the disappearing base,
+  merge forward, promote the next out of draft), deletes the merged branch and its worktree,
+  clears the per-PR state file, moves the tracker ticket to Done, and turns the task's deferred
+  items into follow-ups, proposing them for approval before filing anything. Normally triggered by
+  pr-merge.
 allowed-tools:
   - Bash(glab api:*)
   - Bash(glab mr list:*)

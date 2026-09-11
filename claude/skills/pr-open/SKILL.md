@@ -1,16 +1,11 @@
 ---
 name: pr-open
 description: >-
-  Open a single MR/PR for the current branch — the create stage of the `deliver`
-  pipeline; also runnable on its own. It creates one
-  MR/PR following the user's conventions: a concise title (any related ticket
-  referenced in the summary, not the title), the repo's MR/PR template filled
-  reviewer-facing, draft-if-stacked, and Storybook screenshots for UI changes
-  (auto-embedded on GitLab; captured to a folder for you to attach on GitHub).
-  It does NOT poll, babysit, or merge — it creates and returns. Normally invoked
-  by `deliver` (once per unit, with the unit's base). Prefer `deliver` for the full
-  lifecycle (open → babysit → merge → cleanup); reach for this stage directly only
-  when you want create-without-babysit.
+  Open one MR/PR for the current branch. Follows the user's conventions: a concise title with any
+  ticket referenced in the summary rather than the title, the repo's template filled reviewer-
+  facing, draft-if-stacked, and Storybook screenshots for UI changes. It creates and returns; it
+  does not poll, babysit or merge. Use deliver for the full lifecycle, this directly when you want
+  create-without-babysit.
 allowed-tools:
   - Bash(glab api:*)
   - Bash(glab mr list:*)
@@ -96,7 +91,7 @@ Opens **one** MR/PR for the current branch and returns. This is the create stage
   - **Open the summary with one or two plain sentences saying what the change is**, then bullets only for what genuinely needs separate calling out — kept short. A stack of bold-lead bullets reads robotic: the lead is taxonomy, not information, and the reviewer never gets a sentence telling them what the PR does. A bullet that runs to a dense paragraph is the same failure in another shape.
   - **"Testing" / "Test plan" = numbered steps a reviewer can go and run** (e.g. "open the side panel, switch agents, confirm the card renders"), each saying what to do and what they should see. It must **never** describe what *you* did to validate ("added unit tests", "wrote a story", "ran e2e") — that's worthless to a reviewer. **This wins over a repo template that prescribes a different shape** for the section (a claim/evidence table, an assertion/proof pair): keep the repo's heading, fill it with reviewer steps. Nothing to manually check → say so briefly.
   - Leave checklist boxes unchecked.
-  - **Drop a template section this diff can't fill** — e.g. a `## Changeset` section when the change touches no versioned package. Check the repo's own layout for which paths those are; don't assume `libs/**`.
+  - **Drop a template section this diff can't fill** — e.g. a `## Changeset` section when the change touches no versioned package. Check the repo's own layout for which paths those are; don't assume `libs/**`. **When the repo's own instructions say to always follow the template, keep every section instead and write one line saying why it's empty** — a missing heading reads as not having followed the template, and that's what gets asked about in review.
   - Don't cite Figma nodes, design-source names, or sibling implementations ("mirrors X.tsx"); describe behavior so each line stands alone.
   - **Describe the change as it stands in the final diff — what it does and why — not how it got there.** Out: file-by-file maps, function lists, code-level references, "changed from X to Y" for decisions internal to *this* PR, alternatives you weighed, reasoning you worked through, and corrections to the ticket's premise. Explain a decision only when it is critical *and* a reader can't get it from the code and its comments; when the repo asks you to name a rejected alternative, that's one clause. Describing the prior behavior of already-shipped code this PR *fixes* is fine.
   - **Reference other PRs as full URLs, never bare `#123`** (stacked base, follow-up, etc.).

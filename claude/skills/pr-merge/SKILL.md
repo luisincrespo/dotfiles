@@ -1,15 +1,11 @@
 ---
 name: pr-merge
 description: >-
-  Merge one already-open, review-complete MR/PR — the merge stage of the `deliver`
-  pipeline. It re-verifies every merge condition
-  (approved, all threads resolved, CI green, platform-mergeable, not draft), runs a
-  pre-merge LOCAL verification against the merged state to catch semantic conflicts
-  CI missed, resolves an upstream conflict if one surfaces, then merges using the
-  repo's enforced strategy and hands off to `post-merge-cleanup`. If any condition
-  fails it no-ops and returns "not ready" — safe to call speculatively. Normally
-  invoked by `pr-babysit` when a cycle looks merge-ready; also usable directly
-  ("merge this PR"). Prefer `deliver` for the full lifecycle.
+  Merge one open, review-complete MR/PR. Re-verifies every condition (approved, threads resolved,
+  CI green, platform-mergeable, not draft), runs a local pre-merge check against the merged state
+  to catch semantic conflicts CI missed, merges with the repo's enforced strategy, then triggers
+  post-merge-cleanup. No-ops with "not ready" if any condition fails, so it is safe to call
+  speculatively.
 allowed-tools:
   - Bash(glab api:*)
   - Bash(glab mr view:*)

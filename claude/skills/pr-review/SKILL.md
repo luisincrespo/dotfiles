@@ -1,12 +1,10 @@
 ---
 name: pr-review
 description: >-
-  Review a GitHub PR the way Luis reviews — deep context-gathering, findings grouped into rounds, reviewed WITH
-  the user before anything is posted, then posted as INLINE comments only via `gh api`, in a
-  concise human voice. Use when the user asks to "review this PR", "pr-review", pastes a
-  github.com PR link and wants feedback, or wants help leaving review comments. This is for
-  REVIEWING someone else's PR (reading the diff, leaving inline comments, approving) — NOT for
-  creating/babysitting/merging your own MR/PR (that's `deliver`).
+  Review someone else's GitHub PR the way Luis reviews: deep context-gathering, findings grouped
+  into rounds, reviewed WITH the user before anything is posted, then posted as inline comments
+  via gh api in a concise human voice. Use for "review this PR" or a pasted github.com PR link.
+  This is for reviewing another person's PR; for your own PR lifecycle use deliver.
 allowed-tools:
   - Bash(gh pr view:*)
   - Bash(gh pr diff:*)

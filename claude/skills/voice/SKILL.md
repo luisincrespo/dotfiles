@@ -1,14 +1,11 @@
 ---
 name: voice
 description: >-
-  Draft and post outward-facing written content in Luis's voice — Slack messages, PR/MR review comments/replies, and PR/MR titles/descriptions.
-  Use whenever composing ANY outward-facing written message on Luis's behalf: a Slack DM or
-  channel post (review request, heads-up, question), or a comment/reply on a GitHub PR or GitLab
-  MR. It loads real past examples and learned tone principles so the first draft already sounds
-  like him — casual, first-person, plain prose, not a structured brief or "sophisticated"
-  phrasing — always shows the draft for approval before anything is sent, and folds each round of
-  his edits back into itself so it keeps improving. Prefer this over free-handing a message in a
-  generic assistant voice.
+  Draft outward-facing content in Luis's voice: Slack messages, PR/MR review comments and replies,
+  and PR/MR titles and descriptions. Use whenever composing ANY outward-facing message on his
+  behalf. Loads real past examples and learned tone principles so the first draft already sounds
+  like him, always shows the draft for approval before anything is sent, and folds each round of
+  his edits back in so it keeps improving.
 ---
 
 # voice — write the way Luis writes

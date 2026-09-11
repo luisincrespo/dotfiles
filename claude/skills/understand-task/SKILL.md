@@ -1,16 +1,12 @@
 ---
 name: understand-task
 description: >-
-  Build a grounded understanding of a task before any code is written — the first
-  stage of the `deliver` pipeline, usable on its own. Given a ticket (Jira / Linear /
-  GitHub issue), a Slack thread, or a plain-text ask, it reads the tracker item and
-  the relevant code, finds the existing patterns/utilities to reuse, then restates
-  the problem, acceptance criteria, constraints, affected packages, risks, and open
-  questions. It stops to ask ONLY when a wrong assumption would be expensive
-  (ambiguity gate); otherwise it hands a crisp brief back to the caller. Use when the
-  user says "understand this ticket", "get context before we build X", "scope this
-  task", or at the start of `deliver`. It does NOT write code, plan the
-  implementation, or file tickets — it only builds understanding.
+  Build a grounded brief before any code is written. Reads the ticket (Jira, Linear, GitHub),
+  Slack thread or plain ask plus the relevant code, finds the existing patterns and utilities to
+  reuse, and hands back the problem, acceptance criteria, constraints, affected packages, risks
+  and open questions. Stops to ask only when a wrong assumption would be expensive. Use for
+  "understand this ticket", "scope this task", or at the start of deliver. Writes no code and
+  files no tickets.
 allowed-tools:
   - Read
   - Grep

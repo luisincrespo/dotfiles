@@ -1,18 +1,12 @@
 ---
 name: deliver
 description: >-
-  Drive a whole task through its software development lifecycle — understand context
-  and requirements → plan → execute → verify → open PR → babysit to merge → clean up
-  → raise follow-ups — as one structured, mostly-autonomous flow. A task can be small
-  (one PR) or big (a stack of PRs); `deliver` decides the PR breakdown and drives each
-  unit. It's a thin CONDUCTOR that carries no rules of its own and composes the
-  sub-skills: `understand-task`, plan mode, `self-review`, `pr-open`, and `pr-babysit`
-  (which chains `pr-merge` → `post-merge-cleanup`). Use when the user says "deliver /
-  ship / take this task end to end", pastes a ticket and says "implement it", or wants
-  the full cycle run. It can also **adopt work already in flight** — via `--stage`, from this
-  session's own context, or by auto-detecting existing PRs/commits — and enter at the
-  right stage (e.g. babysit an already-open PR). For a single stage of the PR
-  lifecycle you can also invoke the individual `pr-*` skills directly.
+  Drive a whole task end to end: understand, plan, execute, verify, open the PR, babysit it to
+  merge, clean up, raise follow-ups. Handles one PR or a stack, deciding the breakdown itself. Use
+  for "deliver/ship this", a pasted ticket to implement, or the full cycle; it can also adopt work
+  already in flight and enter at the right stage. Composes understand-task, self-review, pr-open,
+  pr-babysit, pr-merge and post-merge-cleanup, so reach for those directly only when you want a
+  single stage.
 ---
 
 # deliver
@@ -106,7 +100,7 @@ Then, driven by the breakdown:
 For each unit:
 
 ### B1. Execute
-- **Risk gate** before starting: stop and check with the user before public-API changes, auth/security-sensitive or PII paths, destructive/irreversible actions, anything on a protected branch, or clearly cross-team/higher-risk work (the user's habit: do the low-lift part now, hand off the rest → log the hand-off to `deferred_items`).
+- **Risk gate** before starting: stop and check with the user before public-API changes, auth/security-sensitive or PII paths, destructive/irreversible actions, anything on a protected branch, or clearly cross-team/higher-risk work (the user's habit: do the low-lift part now, hand off the rest → log the hand-off to `deferred_items`). **A change that grants its own author access or privileges always stops here**, even when the user asked for it and it looks routine — confirm the access is actually needed before opening, not after.
 - Create the unit's branch off its `base` in the task worktree. Implement the smallest change that satisfies this unit, following the repo's own `CLAUDE.md` (its versioning, styling and file-layout conventions) plus the user's global rules and memories (doc comments, strict equality, no non-null assertions, AAA tests, …). Anything you consciously punt → append to `deferred_items`. Commit (ticket-prefixed if the task has an id). Update the unit `status:"executing"`.
 
 ### B2. Verify
