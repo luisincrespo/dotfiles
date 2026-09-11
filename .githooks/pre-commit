@@ -102,10 +102,15 @@ if [[ -r "$ROSTER" ]]; then
     unknown=""
     # 1. @mentions: @handle, @first.last, @Firstname Lastname
     # 2. Narrative: "Firstname asked", "Firstname Lastname approved", ...
+    # The placeholder email domains drop out: `@example.com` is a domain, not a handle,
+    # and the email check above already declares it safe. Deliberately narrow — a real
+    # bare `@domain.tld` has no local part for the email check to match, so staying
+    # person-shaped here is the only pass it gets.
     cands="$(printf '%s\n' "$VOICE_ADDED" \
       | grep -oE "@[A-Za-z][A-Za-z0-9._-]*( [A-Z][a-z]+)?|[A-Z][a-z]{2,}( [A-Z][a-z]+)? ($VERBS)" \
       | sed -E "s/^@//; s/ ($VERBS)\$//" \
-      | sort -u)"
+      | grep -ivE '^example\.(com|org|net)$' \
+      | sort -u || true)"
     while IFS= read -r c; do
       [[ -z "$c" ]] && continue
       known "$c" && continue
