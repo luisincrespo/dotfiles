@@ -32,6 +32,14 @@ allowed-tools:
   - Bash(pnpm test:*)
   - Bash(pnpm build:*)
   - Bash(pnpm install)
+  - Bash(yarn install)
+  - Bash(yarn lint:*)
+  - Bash(yarn test:*)
+  - Bash(yarn build:*)
+  - Bash(yarn workspace:*)
+  - Bash(bun install)
+  - Bash(bun run:*)
+  - Bash(bun test:*)
   - mcp__ide__getDiagnostics
 ---
 
@@ -51,8 +59,9 @@ The **verify** stage: put your own diff through the same scrutiny a reviewer wou
 
 ## Step 2 — Automated gates (fix failures)
 Run the repo-appropriate checks scoped to the change (don't reformat the world):
-- **Read the repo first** — its `CLAUDE.md`/docs name the real lint, build, test and typecheck commands. Never assume a build system.
-- **nx monorepos** (one common case): `npx nx affected --target=eslint:lint|build|test --base=<base> --head=HEAD` (fall back to `lint` if `eslint:lint` isn't the target). Typecheck via **IDE diagnostics first** (`mcp__ide__getDiagnostics`), falling back to scoped `npx tsc --noEmit`.
+- **Read the repo first** — its `CLAUDE.md`/docs name the real lint, build, test and typecheck commands, and the package manager that runs them. Never assume a build system or a package manager.
+- **A single command that bundles several gates is the whole gate.** When the repo says its one command already covers lint, types and formatting, run that and do **not** re-run the parts after it. A repo stating "type checking is included, don't run `tsc`/`check-types` separately" means it: the second pass costs minutes and can disagree with the bundled one.
+- **Only when the repo names nothing**, fall back by ecosystem. nx monorepos: `npx nx affected --target=eslint:lint|build|test --base=<base> --head=HEAD` (fall back to `lint` if `eslint:lint` isn't the target). Typecheck via **IDE diagnostics first** (`mcp__ide__getDiagnostics`), falling back to scoped `npx tsc --noEmit`.
 - **Repo addenda:** run any `verification_addenda` from `~/.claude/local/config.json` whose `when_paths_under` prefix matches a changed path — e.g. a nested app that owns a separate pipeline.
 Fix failures at the source (preferred) or test. Run the formatter over **only the changed files** (`npx prettier --write <files>`, `ruff format`, `gofmt -w`, `cargo fmt --`, whatever the repo uses), never a format-everything target — it reformats unrelated code and buries the real diff.
 
@@ -75,6 +84,23 @@ Confirm the diff honors the repo's own `CLAUDE.md` and the user's global rules +
 
 ## Output
 When the loop settles, report: gates status (green/what's red), what you fixed, and the batch (unresolved items for the user). If `--task-slug` was set, fold unresolved items into the task ledger's notes. This stage does **not** commit, push, or open a PR — it leaves a clean, reviewed diff for the next stage (`pr-open`).
+
+## Step 6 — Capture learnings (self-educate)
+After reporting, take one beat: did anything about *how this review ran* warrant a durable edit? Never invent one — "nothing to capture" is the common and correct answer, said in a line and moved past.
+
+What actually recurs here:
+- **A gate Step 2 got wrong** — the repo's real lint/test/build invocation, a bundled command whose parts shouldn't be re-run after it, a package manager the fallbacks don't cover.
+- **A finding the user waved off** — something flagged that this codebase does deliberately. Record it so the next run doesn't re-raise it.
+- **A pass that produced noise** instead of findings, or one that keeps earning its place.
+
+Route by **portability**, which decides the file:
+- **Repo- or employer-specific mechanics** (the actual command, a nested pipeline, a host) → `verification_addenda` or another key in `~/.claude/local/config.json`. This skill travels between jobs; a build command naming a private package doesn't belong in it.
+- **A lesson that would hold at any job** → the relevant section of this skill.
+- **A durable one-off fact** → a memory, not a rule.
+
+**Under `deliver`** (`--task-slug` set): don't edit a skill here. Hand the lesson up with the batch — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice.
+
+**Show the exact edit before applying it** — which file, which section, the new or changed wording — and apply only once the user confirms. Prefer refining an existing line to adding one; if a section grows, cut a sentence elsewhere.
 
 ## Hard constraints
 - Review *your* changes only; don't wander outside the diff hunting for unrelated issues (that's not the job, and it inflates scope).
