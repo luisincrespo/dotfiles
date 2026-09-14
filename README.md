@@ -51,9 +51,11 @@ Everything committed here is employer-neutral; machine-specific values live in
 
 ## Leak guard
 
-Commits are checked by `.githooks/pre-commit`, which blocks credentials, real email addresses,
-internal hostnames, ticket ids and any employer-specific term listed in
-`~/.claude/local/commit-denylist.txt`. Enabled by `./claude/install.sh`, or manually with:
+Commits are checked by two hooks in `.githooks/` — `pre-commit` over the lines a commit adds,
+`commit-msg` over its message — which block credentials, real email addresses, internal hostnames,
+ticket ids and any employer-specific term listed in `~/.claude/local/commit-denylist.txt`. That
+denylist stays outside the repo, since one naming your employer would be the leak it prevents.
+Enabled by `./claude/install.sh`, or manually with:
 
 ```shell
 git config core.hooksPath .githooks

@@ -1,4 +1,7 @@
-# Machine-local Claude overrides — names private repos, hosts and bot accounts.
-# The schema lives in claude/local/config.example.json; the filled-in copy belongs
-# in ~/.claude/local/config.json and must never be committed.
+# Machine-local Claude overrides. Both filled-in copies belong in ~/.claude/local/
+# and must never be committed — the repo ships only the .example templates beside
+# them. Ignored here as a backstop: neither file is written to this path in normal
+# use, so an appearance means something went wrong, and the denylist in particular
+# would be the leak it exists to prevent.
 claude/local/config.json
+claude/local/commit-denylist.txt

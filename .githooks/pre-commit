@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 #
-# Leak guard for a portable dotfiles repo.
+# Leak guard for a portable dotfiles repo — the lines a commit ADDS.
+# Its sibling `commit-msg` runs the same checks over the message.
 #
-# Scans the lines this commit ADDS for things that must not travel between machines
-# or employers: credentials, real email addresses, internal hostnames, ticket ids and
-# any term listed in the machine-local denylist.
+# Shared patterns live in leak-checks.sh. What's here is the part that only
+# applies to a diff: reading staged lines, and the voice-corpus person check,
+# which is scoped to specific paths and so has no meaning for a message.
 #
 # Company names live in ~/.claude/local/commit-denylist.txt, NOT in this repo — a
 # denylist naming an employer would itself be the leak it's meant to prevent.
@@ -13,80 +14,31 @@
 
 set -uo pipefail
 
-DENYLIST="${HOME}/.claude/local/commit-denylist.txt"
-ROSTER="$(git rev-parse --show-toplevel)/.githooks/placeholder-roster.txt"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+source "${REPO_ROOT}/.githooks/leak-checks.sh"
+
+ROSTER="${REPO_ROOT}/.githooks/placeholder-roster.txt"
 VOICE_REFS="claude/skills/voice/refs/"
-SELF='.githooks/pre-commit'
 FOUND=0
 
-# Added lines only, each prefixed with its file, excluding this hook
-# (whose own patterns would self-match).
+# The hook files carry these patterns as their own source, so scanning them
+# self-matches on every credential shape they know about. Excluded wholesale;
+# the roster beside them is a list of invented names and needs no scanning.
+HOOKS='.githooks/'
+
+# Added lines only, each prefixed with its file.
 added() {
-  git diff --cached --unified=0 --no-color -- . ":(exclude)${SELF}" \
+  git diff --cached --unified=0 --no-color -- . ":(exclude)${HOOKS}" \
     | awk '
         /^\+\+\+ b\// { file = substr($0, 7); next }
         /^\+[^+]/        { print file ": " substr($0, 2) }
       '
 }
-# `git@host.tld`, with or without a trailing `:path`, is an SSH remote rather than an
-# address — `git clone git@github.com:owner/repo` and `ssh -T git@github.com` both. Blank
-# it out here rather than excluding the whole line, so a real address beside one still
-# gets caught. The leading-character guard keeps `build-git@vendor.com` a real address.
-ADDED="$(added | sed -E \
-  -e 's|^git@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|<ssh-remote>|g' \
-  -e 's|([^A-Za-z0-9._%+-])git@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\1<ssh-remote>|g')"
+
+ADDED="$(added | normalize_ssh_remotes)"
 [[ -z "$ADDED" ]] && exit 0
 
-report() {
-  local label="$1" hits="$2"
-  printf '\n  \033[1;31m%s\033[0m\n' "$label"
-  printf '%s\n' "$hits" | sed 's/^/    /' | head -10
-  FOUND=1
-}
-
-# check <label> <pattern> [exclude-pattern] [case]
-#   case = "cs" for case-sensitive (default is case-insensitive).
-# POSIX ERE only (macOS grep has no -P), so exclusions are a second pass.
-check() {
-  local label="$1" pattern="$2" exclude="${3:-}" case="${4:-ci}"
-  local flags="-E" vflags="-vE"
-  if [[ "$case" != "cs" ]]; then flags="-iE"; vflags="-ivE"; fi
-  local hits
-  hits="$(printf '%s\n' "$ADDED" | grep $flags "$pattern" || true)"
-  [[ -n "$hits" && -n "$exclude" ]] && hits="$(printf '%s\n' "$hits" | grep $vflags "$exclude" || true)"
-  [[ -n "$hits" ]] && report "$label" "$hits"
-}
-
-check "Credential or token" \
-  '(ghp|gho|ghs|ghu)_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|glpat-[A-Za-z0-9_-]{15,}|sk-ant-[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|BEGIN [A-Z ]*PRIVATE KEY|Authorization: *Bearer +[A-Za-z0-9._-]{20,}'
-
-check "Real email address" \
-  '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' \
-  '@(example\.(com|org|net)|acme-org)|noreply@'
-
-check "Absolute home path" \
-  '/(Users|home)/[A-Za-z0-9._-]+/'
-
-check "Internal hostname" \
-  '[A-Za-z0-9-]+\.(internal|corp|intranet|lan)\b|(sonar|sonarqube|gitlab|jira|jenkins|artifactory|grafana|confluence)\.[A-Za-z0-9-]+\.[A-Za-z]{2,}'
-
-# Ticket ids: ABC- is the documented placeholder prefix.
-check "Real-looking ticket id (use ABC-1234 as the placeholder)" \
-  '(^|[^A-Za-z0-9])[A-Z]{2,}-[0-9]+' \
-  '(^|[^A-Za-z0-9])ABC-[0-9]+' \
-  cs
-
-# Machine-local company terms.
-if [[ -r "$DENYLIST" ]]; then
-  TERMS="$(grep -vE '^\s*(#|$)' "$DENYLIST" | sed 's/[[:space:]]*$//' || true)"
-  if [[ -n "$TERMS" ]]; then
-    while IFS= read -r term; do
-      [[ -z "$term" ]] && continue
-      hits="$(printf '%s\n' "$ADDED" | grep -iF -- "$term" || true)"
-      [[ -n "$hits" ]] && report "Denylisted term: ${term}" "$hits"
-    done <<< "$TERMS"
-  fi
-fi
+scan_common "$ADDED"
 
 # --- Unknown people in the voice corpus -------------------------------------
 # The voice examples are anonymized by contract, so every person in them is
@@ -103,8 +55,8 @@ if [[ -r "$ROSTER" ]]; then
     # 1. @mentions: @handle, @first.last, @Firstname Lastname
     # 2. Narrative: "Firstname asked", "Firstname Lastname approved", ...
     # The placeholder email domains drop out: `@example.com` is a domain, not a handle,
-    # and the email check above already declares it safe. Deliberately narrow — a real
-    # bare `@domain.tld` has no local part for the email check to match, so staying
+    # and the email check already declares it safe. Deliberately narrow — a real bare
+    # `@domain.tld` has no local part for the email check to match, so staying
     # person-shaped here is the only pass it gets.
     cands="$(printf '%s\n' "$VOICE_ADDED" \
       | grep -oE "@[A-Za-z][A-Za-z0-9._-]*( [A-Z][a-z]+)?|[A-Z][a-z]{2,}( [A-Z][a-z]+)? ($VERBS)" \
@@ -129,20 +81,7 @@ if [[ -r "$ROSTER" ]]; then
 fi
 
 if (( FOUND )); then
-  cat <<MSG
-
-  ────────────────────────────────────────────────────────────────
-  Commit blocked: this repo is portable, so the lines above would
-  follow you to another machine or employer.
-
-  Fix the content, or if it is a false positive:
-      git commit --no-verify
-
-  Company-specific terms are read from:
-      ~/.claude/local/commit-denylist.txt
-  ────────────────────────────────────────────────────────────────
-
-MSG
+  leak_blocked "lines"
   exit 1
 fi
 exit 0

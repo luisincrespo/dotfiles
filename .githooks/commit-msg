@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Leak guard for the commit MESSAGE.
+#
+# `pre-commit` scans what a commit changes; this scans what it says about it.
+# A message is every bit as public as a diff once pushed, and until this existed
+# nothing checked it — so the reasoning that explains a change was the one place
+# an employer name could walk out unchallenged.
+#
+# Override a false positive with:  git commit --no-verify  (skips both hooks)
+
+set -uo pipefail
+
+source "$(git rev-parse --show-toplevel)/.githooks/leak-checks.sh"
+
+FOUND=0
+
+# Drop the commented template git appends — those lines never reach the commit.
+MSG="$(grep -v '^#' "$1" | normalize_ssh_remotes || true)"
+
+scan_common "$MSG"
+
+if (( FOUND )); then
+  leak_blocked "commit message"
+  exit 1
+fi
+exit 0

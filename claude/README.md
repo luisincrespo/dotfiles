@@ -134,9 +134,11 @@ yarn/pnpm workspaces monorepo is still not an Nx one.
 
 ## Leak guard
 
-A `pre-commit` hook (`.githooks/pre-commit`, enabled by `install.sh` via `core.hooksPath`) scans the
-lines each commit **adds** and blocks anything that shouldn't follow this repo to another machine or
-employer:
+Two hooks in `.githooks/` (enabled by `install.sh` via `core.hooksPath`) block anything that
+shouldn't follow this repo to another machine or employer. `pre-commit` scans the lines a commit
+**adds**; `commit-msg` scans the **message** — equally public once pushed, and the one place the
+reasoning behind a change can name an employer. They share `leak-checks.sh` so the patterns can't
+drift apart:
 
 | Check | Catches |
 |---|---|
@@ -146,7 +148,10 @@ employer:
 | Internal hostname | `*.internal`/`*.corp`/`*.lan`, and `sonarqube.`/`gitlab.`/`jira.`/`jenkins.`… on a real domain |
 | Real-looking ticket id | any `[A-Z]{2,}-\d+` that isn't the `ABC-1234` placeholder |
 | Denylisted term | anything in `~/.claude/local/commit-denylist.txt` |
-| Unrecognized person | in `skills/voice/refs/` only — any person not on `.githooks/placeholder-roster.txt` |
+| Unrecognized person | **`pre-commit` only**, in `skills/voice/refs/` — any person not on `.githooks/placeholder-roster.txt` |
+
+Every check but the last runs over both a diff and a message. The person check is path-scoped, so it
+has no meaning for a message and stays in `pre-commit`.
 
 That last check works the other way round from the rest. The voice corpus is anonymized by contract,
 so every person in it is invented; the hook therefore keeps an **allowlist** of placeholders and
@@ -156,7 +161,11 @@ it, which a denylist can't do. Coined a new placeholder? Add it to the roster. T
 committed, since fake names are safe to share and it should work on a fresh machine with no setup.
 
 The denylist is where employer, product and service names go. It's **machine-local on purpose** — a
-denylist naming your employer would itself be the leak it prevents. `install.sh` copies
+denylist naming your employer would itself be the leak it prevents, so it lives in `~/.claude/local/`,
+outside this repo, and `.gitignore` blocks the in-repo path as a backstop. List what was named
+in-house rather than what was bought: a codename nobody coins by accident is worth catching, while a
+third-party product anyone might write about buys false positives instead. Previous employers belong
+on it too — the repo outlives the job. `install.sh` copies
 `local/commit-denylist.example.txt` as a starting point and seeds the real one only if absent.
 
 False positive? `git commit --no-verify`. Two self-amending skills — `voice` (Step 4) and `pr-review`

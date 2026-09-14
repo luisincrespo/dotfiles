@@ -1,12 +1,23 @@
-# Terms the .dotfiles pre-commit hook must never let into a commit.
+# Terms the .dotfiles leak-guard hooks must never let into a commit.
 #
 # Copy to ~/.claude/local/commit-denylist.txt and fill in. Keep it OUT of the repo:
 # a denylist naming your employer would itself be the leak it prevents.
 #
 # One term per line, case-insensitive, matched as a fixed substring. # = comment.
+# Read by both hooks, so a term is blocked in a commit's message as well as its diff.
 #
-# Good candidates: employer and product names, internal org/repo slugs, service
-# codenames, reviewer-bot accounts, internal domains.
+# List what was named IN-HOUSE, not what was bought. Employer and product names,
+# internal org/repo slugs, service codenames, internal branch conventions,
+# reviewer-bot accounts, internal domains — nobody coins those by accident, so a
+# hit is a real one. Third-party products the codebase merely uses are public
+# names anyone might write about: denylisting them buys false positives, not
+# protection.
+#
+# Include PREVIOUS employers too. The repo travels between jobs, so an old
+# employer's name leaking is the same failure as the current one's.
+#
+# A substring match covers derivatives for free: `acme` already catches
+# `acme-app`, `acme-bot` and `@acmetech/*`, so list the root, not every form.
 
 # acme-corp
 # acme-internal-monorepo
