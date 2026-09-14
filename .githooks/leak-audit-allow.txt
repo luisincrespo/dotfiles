@@ -1,0 +1,29 @@
+# Findings from leak-audit that have been reviewed and accepted.
+#
+# One fixed substring per line, matched against the audit's own output lines
+# (`<path>@<sha>: <text>` for file content, `<sha>: <text>` for messages).
+# Anything matching is dropped BEFORE the checks run.
+#
+# **Pin a file entry to its blob id (`path@sha`), never a bare path.** A path
+# prefix exempts that location permanently, so a real leak landing there later is
+# silently swallowed — the one outcome an allowlist must not produce. A blob id
+# covers exactly the content that was reviewed; change the file and the id
+# changes with it, and the new content is scanned like anything else.
+#
+# Always keep the reason with the entry. An unexplained line here can't be told
+# apart from a real leak somebody silenced to get a clean run, and this file only
+# works if it is trustworthy at a glance.
+#
+# Suppresses findings in HISTORY only. The hooks ignore it entirely, so new
+# content still has to pass them on the way in.
+
+# Vendored upstream git completion scripts, removed in b195cab and present only
+# in history. The addresses are public copyright headers from git's own
+# maintainers, and `CURRENT-1` is zsh arithmetic rather than a ticket id.
+zsh/git/git-prompt.zsh@5b1b52e
+zsh/git/git-completion.bash@b1d6e5e
+zsh/git/git-completion.zsh@cf69670
+
+# An invented address, written into a commit message to record that the email
+# check still fires on a real-looking one sitting beside an ssh remote.
+build-git@vendor.com

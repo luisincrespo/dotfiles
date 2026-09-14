@@ -62,3 +62,7 @@ git config core.hooksPath .githooks
 ```
 
 Override a false positive with `git commit --no-verify`.
+
+Hooks only catch content on the way in. `.githooks/leak-audit` scans what is already committed —
+every message and every blob on every ref — for the same patterns. Worth a run after adding denylist
+terms, since those are retroactively wrong about every earlier commit.

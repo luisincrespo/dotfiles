@@ -168,6 +168,27 @@ third-party product anyone might write about buys false positives instead. Previ
 on it too — the repo outlives the job. `install.sh` copies
 `local/commit-denylist.example.txt` as a starting point and seeds the real one only if absent.
 
+### Auditing what's already in
+
+The hooks only see content on its way in. `.githooks/leak-audit` covers the other half — every
+commit message and every blob ever committed, on all refs, including content added and later
+deleted:
+
+```shell
+.githooks/leak-audit           # all history
+.githooks/leak-audit --tree    # current tree only, fast
+```
+
+Run it after adding denylist terms, before making a repo public, and when changing employers. That
+first case is the one that matters: the denylist grows when you learn a new codename, and it is
+retroactively wrong about every commit made before it. Exits non-zero on a finding, so it can gate a
+release.
+
+Reviewed findings go in `.githooks/leak-audit-allow.txt`, **pinned to a blob id** (`path@sha`) rather
+than a bare path — a path prefix would exempt that location permanently and swallow a real leak
+landing there later. It suppresses history findings only; the hooks ignore it. The run prints how
+many exceptions were applied, so nothing is dropped invisibly.
+
 False positive? `git commit --no-verify`. Two self-amending skills — `voice` (Step 4) and `pr-review`
 (Step 8) — are also instructed to anonymize before writing anything to disk, so the hook is the
 backstop rather than the only defence.
