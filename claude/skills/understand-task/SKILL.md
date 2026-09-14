@@ -25,7 +25,10 @@ allowed-tools:
   - WebFetch
   - mcp__claude_ai_Atlassian__getJiraIssue
   - mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql
-  - mcp__claude_ai_Linear
+  - mcp__claude_ai_Linear__get_issue
+  - mcp__claude_ai_Linear__list_issues
+  - mcp__claude_ai_Linear__list_comments
+  - mcp__claude_ai_Linear__get_document
 ---
 
 # understand-task

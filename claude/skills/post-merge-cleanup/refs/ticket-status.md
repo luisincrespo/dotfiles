@@ -42,10 +42,10 @@ An unrecognized state name → treat as rank 0 (safe: still allows forward moves
 - Transitions here are usually pure status moves — leave labels and automation (e.g. `keep-active`) alone. The forward-only guard means we won't double-move if a Jira↔GitHub integration already advanced the status.
 
 ### Linear — Linear MCP
-- **read:** the issue's workflow state, and prefer its **`type`** over its name — teams rename states freely but the type is fixed: `triage`/`backlog`/`unstarted` → rank 0, `started` → rank 1+, `completed` → rank 3, `canceled` → terminal, skip per step 2.
+- **read:** `get_issue <id>` → the issue's workflow state, and prefer its **`type`** over its name — teams rename states freely but the type is fixed: `triage`/`backlog`/`unstarted` → rank 0, `started` → rank 1+, `completed` → rank 3, `canceled` → terminal, skip per step 2.
 - `started` covers **both** `in_progress` and `in_review`, so when the current or target rank is 1 vs 2, disambiguate among the team's `started` states by name via the synonym table.
-- **resolve:** states are **per-team** — list the states for *this issue's* team and pick the target there; never reuse ids seen on another team's issue.
-- **apply:** set the issue's state directly. Linear has no transition graph, so any state is reachable — which makes the forward-only guard in step 2 the only thing preventing a backward move. Do not skip it.
+- **resolve:** `list_issue_statuses` for *this issue's* team — states are **per-team**, so never reuse an id seen on another team's issue.
+- **apply:** `save_issue` with the target state id. Setting state directly. Linear has no transition graph, so any state is reachable — which makes the forward-only guard in step 2 the only thing preventing a backward move. Do not skip it.
 
 ### GitHub issues
 - No universal "status" — use the repo's convention (a `status:*` label via `gh issue edit`, or a Projects board column). Skip if the convention is unclear.

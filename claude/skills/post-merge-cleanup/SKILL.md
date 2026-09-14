@@ -41,7 +41,9 @@ allowed-tools:
   - mcp__claude_ai_Atlassian__getJiraIssue
   - mcp__claude_ai_Atlassian__getTransitionsForJiraIssue
   - mcp__claude_ai_Atlassian__transitionJiraIssue
-  - mcp__claude_ai_Linear
+  - mcp__claude_ai_Linear__get_issue
+  - mcp__claude_ai_Linear__list_issue_statuses
+  - mcp__claude_ai_Linear__save_issue
 ---
 
 # post-merge-cleanup
