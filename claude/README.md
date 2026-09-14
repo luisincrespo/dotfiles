@@ -96,6 +96,12 @@ warning and you copy the values by hand.
 | `pr-review` | Reviews someone else's PR, inline, in your voice, never posting without approval |
 | `voice` | Drafts outward-facing writing (Slack, PR comments, descriptions) in your voice |
 
+**Every one of them self-educates.** Each ends by asking whether the run warranted a durable edit,
+and routes what it finds by portability — repo- or employer-specific facts to `~/.claude/local/`, a
+lesson that holds anywhere into the skill, a one-off into a memory. Nothing is written without
+showing the exact edit first. Run under `deliver`, a skill hands its lesson up rather than editing,
+so `deliver`'s end-of-run reflection routes it once instead of two skills recording it twice.
+
 ## Machine-local overrides
 
 The skills in this repo are generic. Anything that names a private repo, host, bot account or

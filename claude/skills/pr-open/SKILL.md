@@ -134,6 +134,13 @@ Only for a **ready** PR (skip a draft/stacked unit — its review request happen
 
 Then **return to the caller** — do not loop or babysit. `deliver` (or the user) hands off to `pr-babysit` next.
 
+## Step 8: Capture learnings (self-educate)
+Once the PR is open, ask whether anything about how this ran warrants a durable edit. Never invent one — "nothing to capture" is the usual answer and deserves a line, not a paragraph.
+
+What recurs at this stage: a template section filled or dropped wrongly; a title or summary convention the user corrected; where a repo actually keeps its template, or which one it picks for a given path.
+
+Route it: repo- or employer-specific facts → `~/.claude/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+
 ## Hard constraints
 
 - Never open from a `PROTECTED_BRANCHES` branch. Never auto-commit uncommitted work — stop and ask.

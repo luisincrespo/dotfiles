@@ -69,6 +69,13 @@ Produce a crisp, scannable brief:
 ## Step 5 — Ambiguity gate
 Mostly autonomous: if the problem and acceptance criteria are clear enough to plan against, **finish and hand the brief back** — do not manufacture questions to seem thorough. Stop and ask (via `AskUserQuestion`) **only** when a wrong assumption would be expensive: the problem itself is unclear, or there's a material choice between genuinely different solutions that changes scope/approach. Investigate answerable questions from the code first; never choose a product/behavior decision for the user.
 
+## Step 6 — Capture learnings (self-educate)
+Once the brief is handed back, ask whether anything about how this ran warrants a durable edit. Never invent one — "nothing to capture" is the usual answer and deserves a line, not a paragraph.
+
+What recurs at this stage: where the real requirement actually lived (the ticket, a thread, or a person); a question that should have been asked before the code was written rather than after; where a repo keeps the patterns worth reusing.
+
+Route it: repo- or employer-specific facts → `~/.claude/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+
 ## Hard constraints
 - Read-only. No edits, no commits, no tickets **filed or transitioned**, no plan authored — those are later stages. (Recording the ticket's ref + current status in the ledger is fine; moving its status is `deliver`/`post-merge-cleanup`'s job.)
 - Evidence over inference: cite `file:line`; distinguish what you verified from what you're assuming.

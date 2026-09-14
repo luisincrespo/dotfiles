@@ -277,6 +277,13 @@ Runs every cycle. Read `refs/storybook-screenshots.md` (Step 7) for the sizing a
 - Skip (keep looping) if any of: `is_draft == true`, `state != opened`, batch non-empty this cycle (Phase 3 already gated), or `state.last_pipeline_id` status is not `success`.
 - Otherwise invoke `Skill(pr-merge)` with `<mr-ref>` (this MR/PR) and `--task-slug <slug>` if set. `pr-merge` re-verifies every condition and either merges (→ `post-merge-cleanup`) or returns "not ready — keep watching." Either way this cycle ends; `/loop` re-checks next cycle (a successful merge is caught by Phase 0.3's terminal check and stops the loop).
 
+## Phase 5: Capture learnings (self-educate)
+Once the PR hands off or you stop polling, ask whether anything about how this ran warrants a durable edit. Never invent one — "nothing to capture" is the usual answer and deserves a line, not a paragraph.
+
+What recurs at this stage: a CI failure class that was safely auto-fixable — or looked it and wasn't; a bot whose comments are noise (→ `bot_noise_body_markers_extra`) or a reviewer worth auto-addressing (→ `ai_reviewer_usernames_*`); a sync or conflict pattern that keeps recurring.
+
+Route it: repo- or employer-specific facts → `~/.claude/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+
 ## Hard constraints
 
 - Never push to `PROTECTED_BRANCHES`. **Never rebase or force-push by default** — the sole exception is a `REBASE_SYNC_REPOS` repo via the 0.5b / `conflict-resolution.md` rebase path: `--force-with-lease` only, discard-and-batch on a rejected lease. Every other repo is merge-only.

@@ -138,6 +138,13 @@ This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when
 
 **Session / integration worktree.** The same recipe (Steps 3–4) applies to the worktree this session runs in once all its PRs are merged/closed — remove it decisively even though it's the current cwd; that's normal end-of-session cleanup. Hard prerequisite: no *unpushed, unmerged* work — verify `git -C <wt> status --porcelain` is empty and its HEAD is merged or still on a remote branch (`git -C <wt> for-each-ref --format='%(upstream:short)' refs/heads/<branch>`) before removing.
 
+## Step 8: Capture learnings (self-educate)
+Once cleanup finishes, ask whether anything about how this ran warrants a durable edit. Never invent one — "nothing to capture" is the usual answer and deserves a line, not a paragraph.
+
+What recurs at this stage: a stacked-dependent step that needed doing by hand; a tracker state that wouldn't map to an intent; a follow-up that should have been raised earlier, or shouldn't have been raised at all.
+
+Route it: repo- or employer-specific facts → `~/.claude/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+
 ## Hard constraints
 
 - Branch/worktree deletion happens ONLY here, only after a confirmed merge, only for the merged `<source_branch>`, always from `<main_root>`. Never delete an unmerged branch. Retarget stacked dependents (Step 1) **before** deleting the base.

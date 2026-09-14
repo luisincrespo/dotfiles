@@ -143,6 +143,13 @@ CI passed on the source alone; a semantic conflict with the current target can s
 
 Entered from Phase 1 condition 6 (local conflict) or an unexpected conflict during pre-merge verification. Read `refs/conflict-resolution.md` and follow it (it branches on `SYNC_STRATEGY`: merge-forward for the default; rebase + `--force-with-lease` for `REBASE_SYNC_REPOS`). After it returns, **do not merge this cycle** — return so the caller re-verifies against the new pipeline next cycle.
 
+## Phase 4: Capture learnings (self-educate)
+Once the merge lands or returns not-ready, ask whether anything about how this ran warrants a durable edit. Never invent one — "nothing to capture" is the usual answer and deserves a line, not a paragraph.
+
+What recurs at this stage: a merge condition the platform reports differently than expected; a strategy the repo enforces; a semantic conflict the local pre-merge check caught — or missed, which is the one actually worth encoding.
+
+Route it: repo- or employer-specific facts → `~/.claude/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+
 ## Hard constraints
 
 - Never merge unless **every** Phase 1 condition holds and the pre-merge local verification passed. Never merge a draft or a `PROTECTED_BRANCHES` source branch.
