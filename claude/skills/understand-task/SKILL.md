@@ -50,7 +50,7 @@ This is about *your own* upcoming work. It is not a repo-specific ticket triage 
 ## Step 2 — Explore the code (find what to reuse)
 Trace how the current behavior works and where the change lands. **Prefer launching `Explore` (or `general-purpose`) agents in parallel** for breadth when the scope is uncertain — one per area (existing implementation, related components, tests/patterns). Actively hunt for existing functions, utilities, and patterns to reuse; the best change adds the least new code. Cite `file:line` for the load-bearing findings.
 
-When the task names a concrete entity (an id, flag, config key, feature name), grep for it first. If it isn't in the repo, treat "this may not be a code change at all" as the leading hypothesis and establish where the behavior actually lives — DB/admin state, another repo, runtime config — before tracing code or planning.
+When the task names a concrete entity (an id, flag, config key, feature name), grep for it first. If it isn't in the repo, treat "this may not be a code change at all" as the leading hypothesis and establish where the behavior actually lives — DB/admin state, another repo, runtime config — before tracing code or planning. If it *is* there and the behavior already works, that's a finding, not a dead end: date the implementation (`git log -S`, `git blame`) against when the task was filed, so an already-shipped fix is distinguishable from a premise that never held, and report it before scoping.
 
 ## Step 3 — Restate (the brief)
 Produce a crisp, scannable brief:

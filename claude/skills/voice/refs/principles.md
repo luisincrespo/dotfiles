@@ -11,7 +11,9 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   - "throws" not "rejects synchronously"
   - "get a log" not "a breadcrumb"
   - drop filler like "best-effort", "leverage", "utilize", "furthermore", "moreover".
-- **Low ceremony, friendly, direct.** A wave-emoji opener on Slack is fine ("Hey folks 👋").
+- **Low ceremony, friendly, direct.** A wave-emoji opener ("Hey folks 👋") is a Slack thing. A
+  tracker-ticket comment or PR/MR comment takes no greeting at all: lead with the @-mention and go
+  straight into the finding.
 - **Openers he actually uses:** "Yeah, …", "Hey folks 👋", "Heads up …".
 - **Words he doesn't use.** Keep this list growing as he corrects them.
   - **"gotcha" as a NOUN** — not for a tricky/catch part of something (avoid "the gotcha is…", "one gotcha…"); say "the catch is" / "the tricky part is" or just state the thing plainly. As an *interjection* of understanding ("Oh, gotcha!") he *can* use it, but rarely — he'd usually go with "Got it!" / "Oh, got it!".
@@ -59,8 +61,13 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   build") — it's noise. Trust them to infer it.
 - **Ask what you need to know, not why you're asking.** Keep your own constraints and reasoning out of
   an outward ask — a policy you're trying not to touch, a change you're keeping small, a deadline
-  you're working to. Give only the context the reader needs to answer; the rationale, and the
-  urgency, are yours, not theirs.
+  you're working to, a ticket that reached you with no description or repro. Give only the context
+  the reader needs to answer; the rationale, the urgency, and the state the work arrived in are
+  yours, not theirs.
+- **When your digging says the premise is wrong, say so and name the disposition.** State the finding
+  and what you'll do ("so unless X, I'll mark this one done"), and let the correction come back.
+  Handing the reader a menu of possible causes ("was it A, B, or something else?") makes them redo
+  the work you just did.
 - **Don't assert specifics you haven't verified.** Naming a concrete thing (a vendor, a URL, a
   system) reads as knowledge of their setup. Either verify it first or describe the shape generically.
 - **Don't put feelings or commitments in his mouth.** Warmth invented on his behalf is still
