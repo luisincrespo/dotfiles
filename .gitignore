@@ -5,3 +5,7 @@
 # would be the leak it exists to prevent.
 claude/local/config.json
 claude/local/commit-denylist.txt
+
+# Built plugin bundles. Reproducible from the tree by devin/package-plugin.sh,
+# so there is nothing to gain from committing one.
+dist/

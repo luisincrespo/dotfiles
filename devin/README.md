@@ -103,7 +103,7 @@ Two details make the packaging cost almost nothing:
 
 Skills arrive namespaced as `/dotfiles:<name>`.
 
-### Turn the Claude import off once it's installed
+### If you ever do install it: turn the Claude import off
 
 With both active, everything doubles — `/deliver` from the import and `/dotfiles:deliver`
 from the plugin, and `CLAUDE.md` loaded as a rule twice over. Same files either way, so
@@ -116,15 +116,70 @@ plugin is the source of truth, set:
 
 That is the one edit to this file that actually changes behaviour.
 
-### Known unknowns
+### Cloud needs the repo public, or an admin
 
-**The repo is private**, and cloud fetches a plugin through your Git integration — so a
-cloud session can only install it if that integration can reach a personal private repo.
-Untested, and the likeliest thing to block this.
+The manifest works — all nine skills and the rule load, and a git-sourced install is
+explicitly "added to your personal plugins, applying to your cloud sessions and other
+devices". **But a private repo can't be cloned by Devin Cloud here**, and the way out
+isn't in your hands.
 
-Verified here: the manifest loads all nine skills and the rule, a local install works, and
-the CLI states git sources sync to cloud. **Not** verified: that a cloud session actually
-lists them. Check with `devin plugins list` inside one before relying on it.
+The GitHub integration has two layers that are easy to conflate:
+
+| Layer | Grants | |
+|---|---|---|
+| Account link | Devin acts under **your identity** — authored PRs, review comments | attribution |
+| GitHub App installation | **Read access** to selected repositories | access |
+
+Linking your account is not access. Cloud clones through the **organization's** integration,
+so the org must hold read permission on the repo — and installing the app on your *personal*
+GitHub account doesn't help, because the org's integration never consults that installation.
+Granting it is admin-only: "ask an admin to grant the affected organization access… from
+Settings → Repositories". The repo showing up in a list means nothing; the docs call this
+out directly — confirm permission "even if it already appears in the repository list".
+
+What does work, all verified:
+
+- **A public source repo.** No grant, no integration, no admin — a public plugin installs
+  to personal scope and reaches cloud.
+- **A zip uploaded at personal scope.** Bypasses git entirely — see below. This is the
+  route in use here, since the repo is staying private.
+- **An admin grant**, if asking is reasonable where you work.
+
+What does **not** work, so nobody re-investigates:
+
+- Plugin environment variables and Devin Secrets. They configure command hooks at session
+  start — after the plugin loads, which is far too late to authenticate the fetch that
+  loads it. No documented way to hand git credentials to a plugin fetch at all.
+- Installing the GitHub App on your own account, as above.
+- The repo name. `.dotfiles` clones fine over HTTPS with a token; the leading dot is not
+  the problem.
+
+### Packaging it as a zip
+
+`./devin/package-plugin.sh` builds the bundle into `dist/` — the manifest, `AGENTS.md`
+with its symlink resolved to real content, and the nine skills — then verifies it, because
+a bundle that unpacks wrong fails silently in the web UI.
+
+**Uploading can't be automated.** The CLI installs only from a repo, a git URL or a local
+path, and the v3 API has 151 endpoints and not one for plugins or uploads. So the last step
+is by hand: Devin → Customize → Add plugin → upload, scope **Personal** (an org-scoped
+upload would install it for everyone in the org).
+
+Two consequences of a zip being a snapshot rather than a link:
+
+- **Re-run and re-upload after changing a skill.** Nothing propagates on its own.
+- **Don't edit the plugin in Devin's web editor.** It's allowed, and it silently forks the
+  copy there away from what's committed here. This repo stays the source of truth.
+
+### So: don't install this plugin locally
+
+It would add nothing. The Claude import above already serves all nine skills to the CLI
+and Desktop, and a local install merely duplicates them as `/dotfiles:*` and loads
+`CLAUDE.md` as a rule twice. The plugin's only value is cloud, which is blocked. That also
+makes `read_config_from.claude` moot — leave it alone.
+
+The manifest stays in the repo, working and ready, for whenever the source is public or an
+account can grant access.
 
 ## Verify
 
