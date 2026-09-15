@@ -102,6 +102,13 @@ lesson that holds anywhere into the skill, a one-off into a memory. Nothing is w
 showing the exact edit first. Run under `deliver`, a skill hands its lesson up rather than editing,
 so `deliver`'s end-of-run reflection routes it once instead of two skills recording it twice.
 
+## Also read by Devin
+
+The Devin CLI can consume this config directly — `CLAUDE.md` becomes an always-on rule and the
+skills become `/`-commands — so nothing here needs duplicating for it. What it can't see are the
+claude.ai connectors, which live on Anthropic's side rather than in `~/.claude/mcp_servers.json`.
+See [`devin/README.md`](../devin/README.md).
+
 ## Machine-local overrides
 
 The skills in this repo are generic. Anything that names a private repo, host, bot account or

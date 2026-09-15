@@ -31,6 +31,8 @@ Roughly in order — each step has something later that depends on it.
    machine-local files and install plugins: [`claude/README.md`](./claude/README.md).
 7. **Forge CLIs** — `gh auth login`, plus `glab auth login` if the job uses GitLab. Both
    need a real terminal for the browser handshake.
+8. **Devin**, if you use it — one key in `~/.config/devin/config.json` points it at the Claude
+   config, so the same rules and skills serve both: [`devin/README.md`](./devin/README.md).
 
 Anything that prompts for `sudo` or opens a browser needs a TTY, so run it in a terminal
 window rather than through a pipe or an agent's shell.
@@ -48,6 +50,11 @@ Installed with `./claude/install.sh`; follow the instructions [here](./claude/RE
 
 Everything committed here is employer-neutral; machine-specific values live in
 `~/.claude/local/` and are never committed. Roll back with `./claude/install.sh --uninstall`.
+
+### Devin
+
+The Devin CLI reads the Claude config above rather than duplicating it, so one copy of each rule
+and skill serves both tools. Follow the instructions [here](./devin/README.md).
 
 ## Leak guard
 

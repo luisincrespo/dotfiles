@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "devin": {
+    "org_id": "org-<written by `devin auth`; account-specific, never copy it between accounts>"
+  },
+  "shell": {
+    "setup_complete": true
+  },
+  "theme_mode": "dark",
+  "read_config_from": {
+    "claude": true
+  }
+}
