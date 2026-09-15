@@ -35,8 +35,18 @@ added() {
       '
 }
 
+# The identity this commit is about to carry. Checked first and regardless of what
+# the diff holds, because it is the one thing a later scan can never fix: rewriting
+# it changes every sha from here on. This is how three past employers' addresses
+# reached this history — each commit looked fine, and nothing was looking at who
+# was making it.
+scan_identity "author: $(git var GIT_AUTHOR_IDENT | sed -E 's/ [0-9]+ [+-][0-9]{4}$//')"
+
 ADDED="$(added | normalize_ssh_remotes)"
-[[ -z "$ADDED" ]] && exit 0
+if [[ -z "$ADDED" ]]; then
+  (( FOUND )) && { leak_blocked "identity"; exit 1; }
+  exit 0
+fi
 
 scan_common "$ADDED"
 

@@ -153,6 +153,26 @@ else
   log "enabled   pre-commit leak guard (core.hooksPath = .githooks)"
 fi
 
+# Commits here travel, so the identity must too. A work address in a commit header
+# is published with the repo and can only be removed by rewriting every sha after
+# it, so this repo gets GitHub's no-reply address. The global identity is left
+# alone — work repos should keep committing as you.
+echo
+echo "Commit identity:"
+if [[ -n "$(git -C "${REPO_DIR}/.." config --local --get user.email 2>/dev/null || true)" ]]; then
+  log "ok        repo-local identity already set"
+elif command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+  NOREPLY="$(gh api user --jq '"\(.id)+\(.login)@users.noreply.github.com"' 2>/dev/null || true)"
+  if [[ -n "$NOREPLY" ]]; then
+    run git -C "${REPO_DIR}/.." config user.email "$NOREPLY"
+    log "set       repo-local identity to ${NOREPLY}"
+  else
+    log "SKIPPED   repo-local identity — could not read the GitHub account"
+  fi
+else
+  log "SKIPPED   repo-local identity — gh not authenticated; set user.email by hand"
+fi
+
 echo
 if [[ -d "$BACKUP_DIR" ]]; then
   echo "Replaced files are in ${BACKUP_DIR/#$HOME/$TILDE}"

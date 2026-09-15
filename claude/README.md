@@ -162,9 +162,32 @@ drift apart:
 | Real-looking ticket id | any `[A-Z]{2,}-\d+` that isn't the `ABC-1234` placeholder |
 | Denylisted term | anything in `~/.claude/local/commit-denylist.txt` |
 | Unrecognized person | **`pre-commit` only**, in `skills/voice/refs/` — any person not on `.githooks/placeholder-roster.txt` |
+| Commit identity | the author/committer address, when it names an employer or an internal host |
 
-Every check but the last runs over both a diff and a message. The person check is path-scoped, so it
-has no meaning for a message and stays in `pre-commit`.
+Every check but the last two runs over both a diff and a message. The person check is path-scoped, so
+it has no meaning for a message and stays in `pre-commit`.
+
+### Commit identity
+
+An author address is published with the repo like everything else, but no content scan reaches it —
+it lives in the commit header, not in any file. It's also the one thing that can't be fixed
+afterwards: changing it rewrites every sha from that commit on. So it's checked **before** the diff,
+on every commit, and audited across all history.
+
+The blanket "real email address" rule is deliberately not applied here: an identity is an address by
+construction, so it would flag every commit ever made and say nothing. What's caught is an address
+carrying a **denylisted term** or an **internal hostname** — an employer's domain, a `.lan` machine
+name.
+
+`install.sh` sets a repo-local identity to GitHub's no-reply address (`<id>+<login>@users.noreply.
+github.com`), leaving your global identity alone so work repos still commit as you. That address is
+also now exempt from the email check — "noreply" sits in its domain rather than its local part, so
+the original `noreply@` exclusion never matched it.
+
+**The audit will report historical identities until they're rewritten**, and that's intended: this
+history carries two past employers' addresses and a `.lan` hostname from before the check existed.
+They're harmless while the repo is private and would be published the moment it isn't, so the audit
+says so rather than going quiet. `git filter-repo --mailmap` is the fix, if that day comes.
 
 That last check works the other way round from the rest. The voice corpus is anonymized by contract,
 so every person in it is invented; the hook therefore keeps an **allowlist** of placeholders and

@@ -55,7 +55,7 @@ scan_common() {
 
   check "Real email address" \
     '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' \
-    '@(example\.(com|org|net)|acme-org)|noreply@'
+    '@(example\.(com|org|net)|acme-org)|noreply@|@users\.noreply\.github\.com'
 
   check "Absolute home path" \
     '/(Users|home)/[A-Za-z0-9._-]+/'
@@ -69,18 +69,37 @@ scan_common() {
     '(^|[^A-Za-z0-9])ABC-[0-9]+' \
     cs
 
-  # Machine-local company terms — employer, product and service names.
-  if [[ -r "$DENYLIST" ]]; then
-    local terms term hits
-    terms="$(grep -vE '^\s*(#|$)' "$DENYLIST" | sed 's/[[:space:]]*$//' || true)"
-    if [[ -n "$terms" ]]; then
-      while IFS= read -r term; do
-        [[ -z "$term" ]] && continue
-        hits="$(printf '%s\n' "$SCAN" | grep -iF -- "$term" || true)"
-        [[ -n "$hits" ]] && report "Denylisted term: ${term}" "$hits"
-      done <<< "$terms"
-    fi
-  fi
+  check_denylist
+}
+
+# Machine-local company terms — employer, product and service names.
+check_denylist() {
+  [[ -r "$DENYLIST" ]] || return 0
+  local terms term hits
+  terms="$(grep -vE '^\s*(#|$)' "$DENYLIST" | sed 's/[[:space:]]*$//' || true)"
+  [[ -n "$terms" ]] || return 0
+  while IFS= read -r term; do
+    [[ -z "$term" ]] && continue
+    hits="$(printf '%s\n' "$SCAN" | grep -iF -- "$term" || true)"
+    [[ -n "$hits" ]] && report "Denylisted term: ${term}" "$hits"
+  done <<< "$terms"
+}
+
+# Commit author and committer identities.
+#
+# These are published with the repo and no content scan reaches them — they live in
+# commit headers, not in any file — so they need their own pass. The blanket email
+# rule is deliberately NOT applied: an identity is an address by construction, so it
+# would flag every commit ever made and mean nothing. What matters is an address that
+# carries an employer name or an internal host.
+scan_identity() {
+  SCAN="$1"
+  [[ -z "$SCAN" ]] && return 0
+
+  check "Internal hostname in a commit identity" \
+    '[A-Za-z0-9-]+\.(internal|corp|intranet|lan)\b'
+
+  check_denylist
 }
 
 leak_blocked() {

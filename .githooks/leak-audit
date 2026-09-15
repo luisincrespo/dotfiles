@@ -67,7 +67,15 @@ else
   done < <(git rev-list --all)
   scan_common "$(printf '%s' "$msgs" | normalize_ssh_remotes | apply_allowlist)"
 
-  # 2. Every blob ever committed — not just the current tree, so content that was
+  # 2. Every commit identity. These live in commit headers, so no amount of
+  #    scanning file content or messages reaches them — and they are published
+  #    with the repo like everything else.
+  phase "Commit identities — author and committer, all refs"
+  idents="$(git log --all --format='%an <%ae>%n%cn <%ce>' | sort -u | sed 's|^|identity: |')"
+  scan_identity "$(printf '%s' "$idents" | apply_allowlist)"
+  printf '  scanned %s distinct identities\n' "$(printf '%s\n' "$idents" | grep -c . || true)"
+
+  # 3. Every blob ever committed — not just the current tree, so content that was
   #    added and later removed is still caught. Deduped by object id.
   phase "File content — every blob ever committed"
   blobs=""
@@ -96,6 +104,10 @@ if (( FOUND )); then
   force-push is the only real removal, and only helps if nobody
   else has pulled. For a remote that has been public, treat the
   value as disclosed and rotate it instead.
+
+  A commit identity is the same but worse: it lives in the commit
+  header, so it cannot be edited without changing every sha after
+  it. git filter-repo --mailmap rewrites them wholesale.
   ────────────────────────────────────────────────────────────────
 
 MSG
