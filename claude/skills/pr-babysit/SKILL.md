@@ -182,6 +182,12 @@ Conflicts or a stale base must be fixed first. After resolving, skip Phases 1-2 
 - **GitLab**: `glab api "projects/<repo_id>/merge_requests/<number>/pipelines" | jq '.[0]'` → `pipeline_id`, `status`.
 - **GitHub**: `gh api "repos/<repo_id>/commits/<head_sha>/check-runs?per_page=100" --paginate` + `gh api "repos/<repo_id>/commits/<head_sha>/status"`. Synthesize `status`: any non-`completed`/pending → `running`; any `failure`/`timed_out`/`action_required` → `failed`; all success/skipped/neutral → `success`. `pipeline_id = head_sha`.
 
+> **Far fewer checks than the previous head_sha means conflicts, not broken CI.**
+> GitHub cannot build a merge ref for a conflicting PR, and `pull_request`
+> workflows run against that ref, so they never start — leaving only the
+> `push`-triggered ones. Recheck `has_conflicts` (0.5) before investigating
+> workflow config, dropped events or path filters.
+
 ### 1.1 Skip-fast
 - `pipeline_id == state.last_pipeline_id` AND `status` ∈ {success, running, pending} → skip to Phase 2.
 - `status` ∈ {running, pending} → note, skip to Phase 2.
@@ -225,10 +231,11 @@ Surfaces the specific Sonar issues (the platform check only shows pass/fail). ID
 ### 2.0 Fetch threads
 Unified per thread: `{ thread_id, resolvable, resolved, notes:[{note_id, author, body, system, url}] }`.
 - **GitLab**: `glab api "projects/<repo_id>/merge_requests/<number>/discussions?per_page=100" --paginate`.
-- **GitHub** — THREE places, ALL fetched every cycle:
+- **GitHub** — FOUR places, ALL fetched every cycle:
   1. Review threads (line-level) via GraphQL: `gh api graphql -f query='query($owner:String!,$repo:String!,$number:Int!){repository(owner:$owner,name:$repo){pullRequest(number:$number){reviewThreads(first:100){nodes{id isResolved isOutdated comments(first:50){nodes{id databaseId author{login} body url createdAt}}}}}}}' -F owner=<owner> -F repo=<repo> -F number=<number>`
   2. Issue comments (PR-level, NOT resolvable): `gh api "repos/<repo_id>/issues/<number>/comments?per_page=100" --paginate`.
   3. Reviews with body: `gh api "repos/<repo_id>/pulls/<number>/reviews?per_page=100" --paginate` (`COMMENTED` + non-empty body = pseudo-thread; APPROVED/CHANGES_REQUESTED feed the approval check in `pr-merge`).
+  4. **Check-run annotations** — these render in Files Changed as `Check warning on line N`, so they read as review comments even though no API above returns them. For each check run with `output.annotations_count > 0`: `gh api "repos/<repo_id>/check-runs/<check_run_id>/annotations"`. A **passing** check still emits them, so never gate this on `conclusion == failure`. Treat a `warning`/`failure` annotation pointing at a file in your diff as an auto-fix item (it is usually lint the formatter does not cover); `notice` level and anything outside the diff is noise.
 
 ### 2.1 Iterate threads
 Skip if `thread_id` ∈ `state.addressed_thread_ids`, OR all notes `system`, OR (`resolvable && resolved`). Take the first non-system note → `author`, `body`, `note_id`. Normalize `author_base` (GitHub: strip trailing `[bot]`).

@@ -58,6 +58,8 @@ Opens **one** MR/PR for the current branch and returns. This is the create stage
 - `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.
 - `SCREENSHOT_WIDTH_PX`: `400` (reviewer-friendly default; ~640 for full-page/wide layouts)
 - `SCREENSHOT_MARKER`: `<!-- pr:screenshots:start -->` … `<!-- pr:screenshots:end -->` (skill-owned, delimited region)
+- `REVIEW_REQUEST_CHANNEL`: unset + `review_request_channel` — the Slack channel the Step 7 draft is addressed to.
+- `REVIEW_REQUEST_HANDLE`: unset + `review_request_handle` — the group handle to @-mention there. Unset ⇒ fall back to named reviewers or a placeholder.
 
 ## Step 0: Platform + already-open guard
 
@@ -95,7 +97,7 @@ Opens **one** MR/PR for the current branch and returns. This is the create stage
   - **Drop a template section this diff can't fill** — e.g. a `## Changeset` section when the change touches no versioned package. Check the repo's own layout for which paths those are; don't assume `libs/**`. **When the repo's own instructions say to always follow the template, keep every section instead and write one line saying why it's empty** — a missing heading reads as not having followed the template, and that's what gets asked about in review. A section whose own text is conditional ("if X was created, paste it here") is satisfied by **omitting** it when X doesn't exist — don't keep the heading to write "n/a", and never fill it with a substitute because the slot is there.
   - Don't cite Figma nodes, design-source names, or sibling implementations ("mirrors X.tsx"); describe behavior so each line stands alone.
   - **Describe the change as it stands in the final diff — what it does and why — not how it got there.** Out: file-by-file maps, function lists, code-level references, "changed from X to Y" for decisions internal to *this* PR, alternatives you weighed, reasoning you worked through, and corrections to the ticket's premise. Explain a decision only when it is critical *and* a reader can't get it from the code and its comments; when the repo asks you to name a rejected alternative, that's one clause. Describing the prior behavior of already-shipped code this PR *fixes* is fine.
-  - **Reference other PRs as full URLs, never bare `#123`** (stacked base, follow-up, etc.).
+  - **Reference other PRs as full URLs, never bare `#123`** (stacked base, follow-up, etc.). For a stacked unit, fold the stack into whichever template section already carries context or the ticket reference — never a section of its own, and never above the summary: an ordered list in merge order, one line per PR as `<short title> — <full URL>`, the current one bolded and marked `**← this PR**`.
 - No template → write a short reviewer-facing description (what + why, a few lines). Same rules.
 
 ## Step 4: UI screenshots (when snapshottable UI changed)
@@ -128,7 +130,8 @@ Any capture step fails → don't block; create without screenshots and note it i
 
 Only for a **ready** PR (skip a draft/stacked unit — its review request happens when it's promoted to ready in `post-merge-cleanup`). Unless `--no-review-ping`:
 
-- Invoke `Skill(voice)` to **draft** a Slack review-request in Luis's voice, following his convention: the review-request template (global `CLAUDE.md` rule #6 — `PR to <one-line of what it does>`, a blank line, then the PR `web_url`; `MR to …` on GitLab) and the reviewer(s) to @-mention — **who to tag varies per PR, so don't default to any handle**: use whoever Luis names (an arg or in-conversation); if unknown, leave a clear `@<reviewer>` placeholder for him to fill, or ask.
+- Invoke `Skill(voice)` to **draft** a Slack review-request in Luis's voice, following his convention: the review-request template (global `CLAUDE.md` rule #6 — `PR to <one-line of what it does>`, a blank line, then the PR `web_url`; `MR to …` on GitLab), addressed to `REVIEW_REQUEST_CHANNEL` and opening with `REVIEW_REQUEST_HANDLE`. **Prefer that group handle over naming individuals** — it reaches whoever is free, which is how a claim-by-reaction channel works. With no handle configured, use whoever Luis names (an arg or in-conversation), else leave a clear `@<reviewer>` placeholder for him to fill.
+- **Announce a stack as a stack**: say so in the first line, then one line per PR in merge order giving what that PR alone handles, its full URL, and a marker on any that are draft — a reviewer has to know which to pick up first.
 - **Generate it, don't send it.** Present the draft for Luis to send himself — that's his default. Send it yourself only if he *explicitly* tells you to this run.
 - Autonomous (`deliver`) run: surface the draft alongside the open announcement (`✅ Opened <web_url> (ready). Review-request draft ready for you to send.`) and let `pr-babysit` proceed — don't wait on it.
 

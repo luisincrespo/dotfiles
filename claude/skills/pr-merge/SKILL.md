@@ -68,6 +68,7 @@ Merges one open MR/PR **only when every condition holds**, after a local verific
 
 - `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.
 - `REBASE_SYNC_REPOS`: `[]` + `rebase_sync_repos` — derive `SYNC_STRATEGY = "rebase"` if `repo_id` matches, else `"merge"` (only relevant if a conflict surfaces here).
+- `NONBLOCKING_CHECKS`: `{}` + `nonblocking_checks` — per-repo map of check names that are red for reasons unrelated to any PR (a drifted baseline suite). Entries are **glob patterns** (`*` matches any run of characters), so `import-tests*` covers a sharded matrix whose shard count changes between runs — a bare name matches only itself and will silently miss `name (3)`. Only list a check whose **own repo history** shows PRs merging while it is red; never one that actually guards this change.
 - **State file**: `~/.claude/cache/deliver/pr-<platform>-<repo-with-slashes-as-dashes>-<number>.json` (shared with `pr-babysit`; read `last_pipeline_id`).
 
 ## Phase 0: Resolve + guards
@@ -82,8 +83,8 @@ Merges one open MR/PR **only when every condition holds**, after a local verific
 1. `state == opened`.
 2. **Approved**: GitLab `glab api "projects/<repo_id>/merge_requests/<number>/approvals"` → `approved: true` and `approvals_required` met; GitHub `reviewDecision == "APPROVED"`.
 3. **All threads resolved**: GitLab every `resolvable` discussion resolved; GitHub every review thread `isResolved == true` (issue-comment pseudo-threads don't count, but each new one must be in `state.addressed_thread_ids` — `pr-babysit` records replies there).
-4. `state.last_pipeline_id` status == `success`.
-5. **Platform mergeable**: GitLab `merge_status == "can_be_merged"` AND `!has_conflicts` AND `blocking_discussions_resolved`; GitHub `mergeable == "MERGEABLE"` AND `mergeStateStatus ∈ ["CLEAN", "HAS_HOOKS"]` (NOT `BLOCKED`/`BEHIND`/`DIRTY`/`UNSTABLE`).
+4. `state.last_pipeline_id` status == `success`, counting a failing check as green only when it is in `NONBLOCKING_CHECKS` for this repo.
+5. **Platform mergeable**: GitLab `merge_status == "can_be_merged"` AND `!has_conflicts` AND `blocking_discussions_resolved`; GitHub `mergeable == "MERGEABLE"` AND `mergeStateStatus ∈ ["CLEAN", "HAS_HOOKS"]`. `UNSTABLE` passes only when every failing check is in `NONBLOCKING_CHECKS` for this repo; `BLOCKED`/`BEHIND`/`DIRTY` always fail.
 6. **Local conflict check**: `git fetch origin <target_branch>` then `git merge-tree HEAD "origin/<target_branch>"` — no markers AND exit 0 → pass; else → Phase 3 (conflict).
 7. `is_draft == false`.
 
