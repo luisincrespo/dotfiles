@@ -106,4 +106,5 @@ Route by **portability**, which decides the file:
 - Review *your* changes only; don't wander outside the diff hunting for unrelated issues (that's not the job, and it inflates scope).
 - Don't invent findings to seem thorough — a clean diff is a valid result.
 - Fix at the right layer: a real product bug the change exposes is fixed in source, not papered over in a test. For a problem *outside the task* — and the task decides that, since a refactor's whole point is changing existing code — take it only if it's a genuinely quick win; otherwise batch it rather than silently widening the diff.
+- When the change bundles fixes for several diagnosed causes, confirm each is load-bearing by removing it alone and re-testing. A cause inferred from reading code, rather than isolated by experiment, may not exist — and a fix for a non-existent cause still passes every test you write for it.
 - Never bypass a check to make it pass. Format only changed files.
