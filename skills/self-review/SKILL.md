@@ -74,7 +74,7 @@ Run these over the diff and collect findings:
 Run the independent passes in parallel where the tooling allows.
 
 ## Step 3.5 — Exercise it
-Static passes miss what only shows up at runtime. When the change is user-facing and you can launch the app, drive the actual path: `Skill(run)`, or the repo's own local-dev skill when it has one. Reuse a running environment rather than starting a second.
+Static passes miss what only shows up at runtime. When the change is user-facing and you can launch the app, drive the actual path: `Skill(run)`, or the repo's own local-dev skill when it has one. Reuse a running environment rather than starting a second. Read this repo's `local_e2e` entry in local config first — how to bring it up, how to authenticate, and the traps that have cost time before — and append a note there when a new one costs you time.
 
 Check two things, not one: **the defect is gone**, and **the neighbouring case still works** — a guard added to fix one path is the likeliest thing to have silently disabled another. Name the states you exercised in the report.
 
