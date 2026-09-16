@@ -2,8 +2,15 @@
   "name": "dotfiles",
   "version": "1.0.0",
   "description": "Personal MR/PR lifecycle, review and voice skills, shared with Claude Code",
-  "author": { "name": "Luis Crespo" },
-  "repository": "https://github.com/luisincrespo/.dotfiles",
-  "keywords": ["pr", "review", "voice", "delivery"],
+  "author": {
+    "name": "Luis Crespo"
+  },
+  "repository": "https://github.com/luisincrespo/dotfiles",
+  "keywords": [
+    "pr",
+    "review",
+    "voice",
+    "delivery"
+  ],
   "skills": "claude/skills"
 }

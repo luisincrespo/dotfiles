@@ -86,7 +86,7 @@ unless the shipped docs say so. They enumerate what carries over, and this isn't
 skills reach a cloud session:
 
 ```shell
-devin plugins install luisincrespo/.dotfiles     # git source — syncs to cloud
+devin plugins install luisincrespo/dotfiles      # git source — syncs to cloud
 devin plugins install --local .                  # this machine only, for authoring
 ```
 
@@ -151,8 +151,8 @@ What does **not** work, so nobody re-investigates:
   start — after the plugin loads, which is far too late to authenticate the fetch that
   loads it. No documented way to hand git credentials to a plugin fetch at all.
 - Installing the GitHub App on your own account, as above.
-- The repo name. `.dotfiles` clones fine over HTTPS with a token; the leading dot is not
-  the problem.
+- The repo name. It was briefly suspected, since the repo was called `.dotfiles` at the time;
+  it clones fine over HTTPS with a token either way.
 
 ### Packaging it as a zip
 
@@ -192,4 +192,4 @@ devin doctor
 Run `devin skills list` from **outside this repo**. Inside it, the skills resolve as
 project files via `./claude/skills/`, which proves nothing about the user-level wiring —
 that path exists here whether or not the flag works. From any other directory they must
-still appear, listed against `~/code/.dotfiles/claude/skills/`. That's the real check.
+still appear, listed against `~/code/dotfiles/claude/skills/`. That's the real check.

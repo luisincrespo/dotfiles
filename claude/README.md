@@ -6,8 +6,8 @@ settings, kept portable so they can be installed on any machine.
 ## Setting up a new machine
 
 ```shell
-git clone git@github.com:luisincrespo/.dotfiles.git ~/code/.dotfiles
-cd ~/code/.dotfiles
+git clone git@github.com:luisincrespo/dotfiles.git ~/code/dotfiles
+cd ~/code/dotfiles
 ./claude/install.sh
 ```
 

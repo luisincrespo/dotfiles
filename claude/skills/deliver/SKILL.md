@@ -85,7 +85,7 @@ When the resolved entry stage is past understand/plan (adoption, `--stage`, or w
 
 ## Phase B — Per-unit loop
 
-Set up **one integration worktree per task** under `<repo_root>/.claude/worktrees/<task-slug>` (rule #11) if not already working in one; create a branch per unit inside it.
+Set up **one integration worktree per task** if not already working in one; create a branch per unit inside it. Use the repo's own worktree tooling when it ships any — a skill or script that creates them, or a documented location — since it usually encodes setup steps (certs, secrets, direnv) you'd otherwise rediscover the hard way; fall back to `<repo_root>/.claude/worktrees/<task-slug>` only when there is none (rule #12). Say which you used.
 
 **Ticket → In Progress** (once): before the first unit's `B1` — or, on adoption entering past execute, right away — move the associated ticket forward per `## Ticket status sync`.
 

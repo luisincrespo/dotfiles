@@ -1,4 +1,4 @@
-# .dotfiles
+# dotfiles
 
 Personal interactive shell and AI tooling config.
 
@@ -13,7 +13,7 @@ Roughly in order — each step has something later that depends on it.
 3. **Clone this repo:**
 
    ```shell
-   git clone git@github.com:luisincrespo/.dotfiles.git ~/code/.dotfiles
+   git clone git@github.com:luisincrespo/dotfiles.git ~/code/dotfiles
    ```
 
 4. **Shell** — Homebrew, `ohmyzsh`, the plugins and their prerequisites:
@@ -27,7 +27,7 @@ Roughly in order — each step has something later that depends on it.
    git config --global pull.rebase false   # CLAUDE.md rule 10 — default to merge, not rebase
    ```
 
-6. **Claude Code** — `cd ~/code/.dotfiles && ./claude/install.sh`, then fill in the
+6. **Claude Code** — `cd ~/code/dotfiles && ./claude/install.sh`, then fill in the
    machine-local files and install plugins: [`claude/README.md`](./claude/README.md).
 7. **Forge CLIs** — `gh auth login`, plus `glab auth login` if the job uses GitLab. Both
    need a real terminal for the browser handshake.
