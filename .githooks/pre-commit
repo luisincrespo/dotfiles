@@ -18,7 +18,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 source "${REPO_ROOT}/.githooks/leak-checks.sh"
 
 ROSTER="${REPO_ROOT}/.githooks/placeholder-roster.txt"
-VOICE_REFS="claude/skills/voice/refs/"
+VOICE_REFS="skills/voice/refs/"
 FOUND=0
 
 # The hook files carry these patterns as their own source, so scanning them

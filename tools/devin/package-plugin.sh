@@ -29,7 +29,7 @@ rm -f "$OUT"
 # No -y, deliberately: zip follows AGENTS.md (a symlink to claude/CLAUDE.md) and
 # stores real content. Stored as a link it would dangle, since the zip carries no
 # claude/CLAUDE.md for it to point at.
-zip -rq "$OUT" .devin-plugin AGENTS.md claude/skills \
+zip -rq "$OUT" .devin-plugin AGENTS.md skills \
   -x '*/.DS_Store' '*/.git/*'
 
 # A bundle that unpacks wrong fails silently in the web UI, so check it here.
@@ -41,8 +41,8 @@ listing="$(unzip -l "$OUT")"
 grep -q '\.devin-plugin/plugin\.json' <<<"$listing" || fail "manifest missing"
 agents="$(unzip -p "$OUT" AGENTS.md)"
 [[ -n "$agents" ]] || fail "AGENTS.md empty — symlink stored as a link, not followed?"
-skills=$(grep -c 'claude/skills/[^/]*/SKILL\.md' <<<"$listing" || true)
-declared=$(python3 -c "import json;print(json.load(open('.devin-plugin/plugin.json'))['skills'])")
+skills=$(grep -c 'skills/[^/]*/SKILL\.md' <<<"$listing" || true)
+declared=$(python3 -c "import json;print(json.load(open('.devin-plugin/plugin.json')).get('skills','skills'))")
 [[ "$skills" -gt 0 ]] || fail "no SKILL.md files bundled"
 
 printf '\n  \033[1;32mBuilt\033[0m %s\n' "${OUT/#$HOME/~}"

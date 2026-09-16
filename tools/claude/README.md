@@ -8,7 +8,7 @@ settings, kept portable so they can be installed on any machine.
 ```shell
 git clone git@github.com:luisincrespo/dotfiles.git ~/code/dotfiles
 cd ~/code/dotfiles
-./claude/install.sh
+./tools/claude/install.sh
 ```
 
 Then restart Claude Code, and fill in the three machine-local files below — none of them is ever
@@ -37,9 +37,9 @@ Plugins aren't linked — Claude Code owns its own cache, so install those separ
 ## Install, preview, roll back
 
 ```shell
-./claude/install.sh              # link into ~/.claude
-./claude/install.sh --dry-run    # show what would change, touch nothing
-./claude/install.sh --uninstall  # drop the symlinks, restore the last backup
+./tools/claude/install.sh              # link into ~/.claude
+./tools/claude/install.sh --dry-run    # show what would change, touch nothing
+./tools/claude/install.sh --uninstall  # drop the symlinks, restore the last backup
 ```
 
 Install symlinks each skill and `CLAUDE.md` into `~/.claude`, so edits made from any machine land
@@ -72,15 +72,20 @@ warning and you copy the values by hand.
 
 ## What's here
 
+This directory is the **Claude Code adapter**. The content it installs is portable and lives at the
+repo root — `AGENTS.md` and `skills/` — in formats other agents read natively. Only the wiring is
+here.
+
 | Path | What |
 |---|---|
-| `skills/` | Nine skills — the `deliver` MR/PR lifecycle family, plus `self-review`, `understand-task`, `pr-review` and `voice` |
-| `CLAUDE.md` | Global instructions applied to every project |
+| `install.sh` | Links the root `AGENTS.md` and `skills/` into `~/.claude`; `--dry-run` and `--uninstall` supported |
 | `settings.stable.json` | Durable preferences, merged into `~/.claude/settings.json` on install (see below) |
 | `merge-settings.py` | Does that merge, key-by-key |
 | `local/config.example.json` | Schema for the machine-local skill overrides (see below) |
 | `local/commit-denylist.example.txt` | Starting point for the machine-local leak-guard denylist |
-| `install.sh` | Links it all into `~/.claude`; `--dry-run` and `--uninstall` supported |
+
+`~/.claude/CLAUDE.md` is a symlink to the repo's `AGENTS.md`: Claude Code looks for the first name,
+every other agent for the second, and there is one file behind both.
 
 ### The skills
 

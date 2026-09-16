@@ -73,6 +73,13 @@ Run these over the diff and collect findings:
 - **Accessibility (frontend only)** — launch a native `Agent` (general-purpose) to review the changed frontend files against WCAG 2.2 AA in the source. Skip when no frontend files changed. *(Deliberately plugin-free. If the user later vets a dedicated accessibility-reviewer plugin, its agent can be swapped in here — but this pipeline defaults to Anthropic-native tools + the user's own skills only.)*
 Run the independent passes in parallel where the tooling allows.
 
+## Step 3.5 — Exercise it
+Static passes miss what only shows up at runtime. When the change is user-facing and you can launch the app, drive the actual path: `Skill(run)`, or the repo's own local-dev skill when it has one. Reuse a running environment rather than starting a second.
+
+Check two things, not one: **the defect is gone**, and **the neighbouring case still works** — a guard added to fix one path is the likeliest thing to have silently disabled another. Name the states you exercised in the report.
+
+If the environment is broken for reasons unrelated to the diff, say so plainly and report what stayed unverified. Don't count "couldn't run it" as verified, and don't sink the run into fixing someone's local setup.
+
 ## Step 4 — Triage & fix (loop)
 Triage fix-now vs batch:
 - **Fix now** — clear, bounded, and you can verify the fix (obvious bugs, a missing `const`, a reuse the simplify pass surfaced, a genuine a11y defect). Apply, then re-run the relevant Step-2 check.
@@ -83,7 +90,7 @@ Triage fix-now vs batch:
 Confirm the diff honors the repo's own `CLAUDE.md` and the user's global rules + feedback memories, rather than re-deriving them. **Read the repo's `CLAUDE.md` for its conventions** — versioning/changeset rules, styling and design-system preferences, file-layout rules — instead of assuming another project's. From the user's global rules, the recurring ones are: doc comments on new/edited types, functions and their members; AAA structure in new/edited tests; strict equality (`!== undefined`, not `!= null`); no non-null assertions or `void`-operator fire-and-forget. Flag anything off as a fix-now or batch item.
 
 ## Output
-When the loop settles, report: gates status (green/what's red), what you fixed, and the batch (unresolved items for the user). If `--task-slug` was set, fold unresolved items into the task ledger's notes. This stage does **not** commit, push, or open a PR — it leaves a clean, reviewed diff for the next stage (`pr-open`).
+When the loop settles, report: gates status (green/what's red), what you ran it against (or why you couldn't), what you fixed, and the batch (unresolved items for the user). If `--task-slug` was set, fold unresolved items into the task ledger's notes. This stage does **not** commit, push, or open a PR — it leaves a clean, reviewed diff for the next stage (`pr-open`).
 
 ## Step 6 — Capture learnings (self-educate)
 After reporting, take one beat: did anything about *how this review ran* warrant a durable edit? Never invent one — "nothing to capture" is the common and correct answer, said in a line and moved past.

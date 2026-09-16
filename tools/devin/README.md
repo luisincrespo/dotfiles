@@ -1,7 +1,7 @@
 # Devin
 
 The Devin CLI can read Claude Code's config directly, so the rules and skills in
-[`claude/`](../claude/README.md) work in Devin without being copied or kept in sync.
+[`tools/claude/`](../claude/README.md) work in Devin without being copied or kept in sync.
 
 ## Setup
 
@@ -40,7 +40,7 @@ reason: it names an account.
 | `~/.claude/settings.json`, `settings.local.json` | Permissions |
 | `~/.claude/mcp_servers.json` | MCP servers |
 
-`claude/install.sh` symlinks the skills into `~/.claude/skills/`, and Devin follows those
+`tools/claude/install.sh` symlinks the skills into `~/.claude/skills/`, and Devin follows those
 links back here — so one copy of each skill serves both tools, and a skill edited from
 either lands in this repo ready to commit.
 
@@ -71,8 +71,7 @@ Two ways to actually get them there:
 - **A plugin** — a bundle of skills, rules, hooks, MCP servers and subagents installed
   from a git repo or subfolder, and the one mechanism documented to work across cloud
   sessions, the CLI and Desktop alike. Needs a `.devin-plugin/plugin.json` and the skills
-  under `skills/`; ours sit under `claude/skills/`, so this repo is close to the shape but
-  not there yet. **Closed beta** — request access from Cognition support.
+  under `skills/`, which is where ours live. **Closed beta** — request access from Cognition support.
 - **Commit them into the work repo** under `.claude/skills/`. Simple, and works today —
   but it publishes personal skills into an employer's repo, which is the thing this repo
   is arranged to avoid. Only reasonable for a skill the team should have anyway.
@@ -95,11 +94,11 @@ which is also how you know a git-sourced one does.
 
 Two details make the packaging cost almost nothing:
 
-- **`"skills": "claude/skills"`** — the manifest points at where the skills already live,
-  so nothing moved. The field takes any plugin-root-relative path.
-- **`AGENTS.md` is a symlink to `claude/CLAUDE.md`** — a plugin's always-on rule must be
-  an `AGENTS.md` at the plugin root and that path *isn't* configurable, so linking beats
-  keeping a second copy to drift. Devin follows it.
+- **`skills/` at the repo root** is the plugin default, so the manifest declares no path at all.
+  The `skills` field exists for a layout that needs one; ours doesn't.
+- **`AGENTS.md` is the rules file itself** — a plugin's always-on rule must be an `AGENTS.md`
+  at the plugin root and that path *isn't* configurable. Rather than keep a copy, the rules
+  live there and `tools/claude/install.sh` points `~/.claude/CLAUDE.md` at it.
 
 Skills arrive namespaced as `/dotfiles:<name>`.
 
@@ -190,6 +189,6 @@ devin doctor
 ```
 
 Run `devin skills list` from **outside this repo**. Inside it, the skills resolve as
-project files via `./claude/skills/`, which proves nothing about the user-level wiring —
+project files via `./skills/`, which proves nothing about the user-level wiring —
 that path exists here whether or not the flag works. From any other directory they must
-still appear, listed against `~/code/dotfiles/claude/skills/`. That's the real check.
+still appear, listed against `~/code/dotfiles/skills/`. That's the real check.

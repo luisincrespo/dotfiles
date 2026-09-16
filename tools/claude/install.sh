@@ -13,7 +13,11 @@
 
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Two roles that used to be one directory. TOOL_DIR is this adapter — the pieces
+# that only mean anything to Claude Code. REPO_ROOT holds the portable content:
+# AGENTS.md and skills/, in formats other agents read natively.
+TOOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${TOOL_DIR}/../.." && pwd)"
 CLAUDE_DIR="${HOME}/.claude"
 BACKUP_DIR="${CLAUDE_DIR}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 DRY_RUN=0
@@ -52,12 +56,12 @@ link() {
 # most recent backup back. Leaves ~/.claude/local/* alone — that is machine
 # state, not repo content.
 if (( UNINSTALL )); then
-  echo "Unlinking Claude config from ${REPO_DIR}"
+  echo "Unlinking Claude config from ${REPO_ROOT}"
   echo
   for target in "${CLAUDE_DIR}/skills/"* "${CLAUDE_DIR}/CLAUDE.md"; do
     [[ -L "$target" ]] || continue
     case "$(readlink "$target")" in
-      "${REPO_DIR}"/*) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
+      "${REPO_ROOT}"/*) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
     esac
   done
 
@@ -88,17 +92,17 @@ if (( UNINSTALL )); then
 fi
 
 (( DRY_RUN )) && echo "DRY RUN — nothing will be changed"
-echo "Linking Claude config from ${REPO_DIR}"
+echo "Linking Claude config from ${REPO_ROOT}"
 
 echo
 echo "Skills:"
-for skill in "$REPO_DIR"/skills/*/; do
+for skill in "$REPO_ROOT"/skills/*/; do
   link "${skill%/}" "${CLAUDE_DIR}/skills/$(basename "$skill")"
 done
 
 echo
 echo "Config:"
-link "${REPO_DIR}/CLAUDE.md" "${CLAUDE_DIR}/CLAUDE.md"
+link "${REPO_ROOT}/AGENTS.md" "${CLAUDE_DIR}/CLAUDE.md"
 
 # settings.json is NOT linked — Claude Code rewrites it at runtime, so the machine
 # owns the file. The repo's durable preferences are merged into it key-by-key;
@@ -115,9 +119,9 @@ fi
 if command -v python3 >/dev/null 2>&1; then
   log "merging   durable preferences into ~/.claude/settings.json"
   if (( DRY_RUN )); then
-    python3 "${REPO_DIR}/merge-settings.py" "${REPO_DIR}/settings.stable.json" "${CLAUDE_DIR}/settings.json" --dry-run
+    python3 "${TOOL_DIR}/merge-settings.py" "${TOOL_DIR}/settings.stable.json" "${CLAUDE_DIR}/settings.json" --dry-run
   else
-    python3 "${REPO_DIR}/merge-settings.py" "${REPO_DIR}/settings.stable.json" "${CLAUDE_DIR}/settings.json"
+    python3 "${TOOL_DIR}/merge-settings.py" "${TOOL_DIR}/settings.stable.json" "${CLAUDE_DIR}/settings.json"
   fi
 else
   log "SKIPPED   settings merge — python3 not found; copy settings.stable.json by hand"
@@ -126,30 +130,30 @@ fi
 echo
 echo "Machine-local overrides:"
 run mkdir -p "${CLAUDE_DIR}/local"
-run cp "${REPO_DIR}/local/config.example.json" "${CLAUDE_DIR}/local/config.example.json"
+run cp "${TOOL_DIR}/local/config.example.json" "${CLAUDE_DIR}/local/config.example.json"
 log "copied    ~/.claude/local/config.example.json"
 if [[ -e "${CLAUDE_DIR}/local/config.json" ]]; then
   log "kept      ~/.claude/local/config.json (already present, left untouched)"
 else
-  run cp "${REPO_DIR}/local/config.example.json" "${CLAUDE_DIR}/local/config.json"
+  run cp "${TOOL_DIR}/local/config.example.json" "${CLAUDE_DIR}/local/config.json"
   log "seeded    ~/.claude/local/config.json — fill in this machine's values"
 fi
 
-run cp "${REPO_DIR}/local/commit-denylist.example.txt" "${CLAUDE_DIR}/local/commit-denylist.example.txt"
+run cp "${TOOL_DIR}/local/commit-denylist.example.txt" "${CLAUDE_DIR}/local/commit-denylist.example.txt"
 log "copied    ~/.claude/local/commit-denylist.example.txt"
 if [[ -e "${CLAUDE_DIR}/local/commit-denylist.txt" ]]; then
   log "kept      ~/.claude/local/commit-denylist.txt (already present, left untouched)"
 else
-  run cp "${REPO_DIR}/local/commit-denylist.example.txt" "${CLAUDE_DIR}/local/commit-denylist.txt"
+  run cp "${TOOL_DIR}/local/commit-denylist.example.txt" "${CLAUDE_DIR}/local/commit-denylist.txt"
   log "seeded    ~/.claude/local/commit-denylist.txt — add this employer's terms"
 fi
 
 echo
 echo "Leak guard:"
-if [[ "$(git -C "${REPO_DIR}/.." config --get core.hooksPath 2>/dev/null || true)" == ".githooks" ]]; then
+if [[ "$(git -C "${REPO_ROOT}" config --get core.hooksPath 2>/dev/null || true)" == ".githooks" ]]; then
   log "ok        core.hooksPath already set to .githooks"
 else
-  run git -C "${REPO_DIR}/.." config core.hooksPath .githooks
+  run git -C "${REPO_ROOT}" config core.hooksPath .githooks
   log "enabled   pre-commit leak guard (core.hooksPath = .githooks)"
 fi
 
@@ -159,12 +163,12 @@ fi
 # alone — work repos should keep committing as you.
 echo
 echo "Commit identity:"
-if [[ -n "$(git -C "${REPO_DIR}/.." config --local --get user.email 2>/dev/null || true)" ]]; then
+if [[ -n "$(git -C "${REPO_ROOT}" config --local --get user.email 2>/dev/null || true)" ]]; then
   log "ok        repo-local identity already set"
 elif command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
   NOREPLY="$(gh api user --jq '"\(.id)+\(.login)@users.noreply.github.com"' 2>/dev/null || true)"
   if [[ -n "$NOREPLY" ]]; then
-    run git -C "${REPO_DIR}/.." config user.email "$NOREPLY"
+    run git -C "${REPO_ROOT}" config user.email "$NOREPLY"
     log "set       repo-local identity to ${NOREPLY}"
   else
     log "SKIPPED   repo-local identity — could not read the GitHub account"
