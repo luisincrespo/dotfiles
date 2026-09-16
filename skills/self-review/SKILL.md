@@ -62,7 +62,7 @@ Run the repo-appropriate checks scoped to the change (don't reformat the world):
 - **Read the repo first** — its `CLAUDE.md`/docs name the real lint, build, test and typecheck commands, and the package manager that runs them. Never assume a build system or a package manager.
 - **A single command that bundles several gates is the whole gate.** When the repo says its one command already covers lint, types and formatting, run that and do **not** re-run the parts after it. A repo stating "type checking is included, don't run `tsc`/`check-types` separately" means it: the second pass costs minutes and can disagree with the bundled one.
 - **Only when the repo names nothing**, fall back by ecosystem. nx monorepos: `npx nx affected --target=eslint:lint|build|test --base=<base> --head=HEAD` (fall back to `lint` if `eslint:lint` isn't the target). Typecheck via **IDE diagnostics first** (`mcp__ide__getDiagnostics`), falling back to scoped `npx tsc --noEmit`.
-- **Repo addenda:** run any `verification_addenda` from `~/.claude/local/config.json` whose `when_paths_under` prefix matches a changed path — e.g. a nested app that owns a separate pipeline.
+- **Repo addenda:** run any `verification_addenda` from `~/.agents/local/config.json` whose `when_paths_under` prefix matches a changed path — e.g. a nested app that owns a separate pipeline.
 Fix failures at the source (preferred) or test. Run the formatter over **only the changed files** (`npx prettier --write <files>`, `ruff format`, `gofmt -w`, `cargo fmt --`, whatever the repo uses), never a format-everything target — it reformats unrelated code and buries the real diff.
 
 ## Step 3 — Compose the review passes
@@ -101,7 +101,7 @@ What actually recurs here:
 - **A pass that produced noise** instead of findings, or one that keeps earning its place.
 
 Route by **portability**, which decides the file:
-- **Repo- or employer-specific mechanics** (the actual command, a nested pipeline, a host) → `verification_addenda` or another key in `~/.claude/local/config.json`. This skill travels between jobs; a build command naming a private package doesn't belong in it.
+- **Repo- or employer-specific mechanics** (the actual command, a nested pipeline, a host) → `verification_addenda` or another key in `~/.agents/local/config.json`. This skill travels between jobs; a build command naming a private package doesn't belong in it.
 - **A lesson that would hold at any job** → the relevant section of this skill.
 - **A durable one-off fact** → a memory, not a rule.
 

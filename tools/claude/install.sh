@@ -4,7 +4,7 @@
 #
 # Symlinks so edits made on any machine land in the repo and can be committed.
 # Anything real that would be replaced is moved into a timestamped backup first.
-# Machine-specific values are NOT linked: they live in ~/.claude/local/config.json,
+# Machine-specific values are NOT linked: they live in ~/.agents/local/config.json,
 # which this script only ever seeds, never overwrites.
 #
 # Usage:
@@ -19,6 +19,10 @@ set -euo pipefail
 TOOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${TOOL_DIR}/../.." && pwd)"
 CLAUDE_DIR="${HOME}/.claude"
+# Machine-local skill config. Vendor-neutral on purpose: the values are portable
+# (protected branches, verification commands), the skills reading them are portable,
+# and only this installer happens to sit in the Claude adapter.
+LOCAL_DIR="${HOME}/.agents/local"
 BACKUP_DIR="${CLAUDE_DIR}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 DRY_RUN=0
 UNINSTALL=0
@@ -53,7 +57,7 @@ link() {
 }
 
 # Remove any symlink under ~/.claude that points into this repo, then put the
-# most recent backup back. Leaves ~/.claude/local/* alone — that is machine
+# most recent backup back. Leaves ~/.agents/local/* alone — that is machine
 # state, not repo content.
 if (( UNINSTALL )); then
   echo "Unlinking Claude config from ${REPO_ROOT}"
@@ -129,23 +133,23 @@ fi
 
 echo
 echo "Machine-local overrides:"
-run mkdir -p "${CLAUDE_DIR}/local"
-run cp "${TOOL_DIR}/local/config.example.json" "${CLAUDE_DIR}/local/config.example.json"
-log "copied    ~/.claude/local/config.example.json"
-if [[ -e "${CLAUDE_DIR}/local/config.json" ]]; then
-  log "kept      ~/.claude/local/config.json (already present, left untouched)"
+run mkdir -p "${LOCAL_DIR}"
+run cp "${REPO_ROOT}/local/config.example.json" "${LOCAL_DIR}/config.example.json"
+log "copied    ~/.agents/local/config.example.json"
+if [[ -e "${LOCAL_DIR}/config.json" ]]; then
+  log "kept      ~/.agents/local/config.json (already present, left untouched)"
 else
-  run cp "${TOOL_DIR}/local/config.example.json" "${CLAUDE_DIR}/local/config.json"
-  log "seeded    ~/.claude/local/config.json — fill in this machine's values"
+  run cp "${REPO_ROOT}/local/config.example.json" "${LOCAL_DIR}/config.json"
+  log "seeded    ~/.agents/local/config.json — fill in this machine's values"
 fi
 
-run cp "${TOOL_DIR}/local/commit-denylist.example.txt" "${CLAUDE_DIR}/local/commit-denylist.example.txt"
-log "copied    ~/.claude/local/commit-denylist.example.txt"
-if [[ -e "${CLAUDE_DIR}/local/commit-denylist.txt" ]]; then
-  log "kept      ~/.claude/local/commit-denylist.txt (already present, left untouched)"
+run cp "${REPO_ROOT}/local/commit-denylist.example.txt" "${LOCAL_DIR}/commit-denylist.example.txt"
+log "copied    ~/.agents/local/commit-denylist.example.txt"
+if [[ -e "${LOCAL_DIR}/commit-denylist.txt" ]]; then
+  log "kept      ~/.agents/local/commit-denylist.txt (already present, left untouched)"
 else
-  run cp "${TOOL_DIR}/local/commit-denylist.example.txt" "${CLAUDE_DIR}/local/commit-denylist.txt"
-  log "seeded    ~/.claude/local/commit-denylist.txt — add this employer's terms"
+  run cp "${REPO_ROOT}/local/commit-denylist.example.txt" "${LOCAL_DIR}/commit-denylist.txt"
+  log "seeded    ~/.agents/local/commit-denylist.txt — add this employer's terms"
 fi
 
 echo

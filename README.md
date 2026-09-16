@@ -84,7 +84,7 @@ instructions [here](./tools/devin/README.md).
 
 Commits are checked by two hooks in `.githooks/` — `pre-commit` over the lines a commit adds,
 `commit-msg` over its message — which block credentials, real email addresses, internal hostnames,
-ticket ids and any employer-specific term listed in `~/.claude/local/commit-denylist.txt`. That
+ticket ids and any employer-specific term listed in `~/.agents/local/commit-denylist.txt`. That
 denylist stays outside the repo, since one naming your employer would be the leak it prevents.
 Enabled by `./tools/claude/install.sh`, or manually with:
 

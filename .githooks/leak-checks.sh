@@ -11,7 +11,7 @@
 # Callers: set FOUND=0, call `scan_common "<text>"`, then on FOUND call
 # `leak_blocked "<noun>"` and exit 1.
 
-DENYLIST="${HOME}/.claude/local/commit-denylist.txt"
+DENYLIST="${HOME}/.agents/local/commit-denylist.txt"
 
 report() {
   local label="$1" hits="$2"
@@ -114,7 +114,7 @@ leak_blocked() {
       git commit --no-verify
 
   Company-specific terms are read from:
-      ~/.claude/local/commit-denylist.txt
+      ~/.agents/local/commit-denylist.txt
   ────────────────────────────────────────────────────────────────
 
 MSG

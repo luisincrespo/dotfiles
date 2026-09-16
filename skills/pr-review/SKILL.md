@@ -33,8 +33,8 @@ the next review goes better.
 
 ## Config
 
-> **Local overrides.** If `~/.claude/local/config.json` exists, its keys override the defaults
-> below (schema: `~/.claude/local/config.example.json`). `config.json` is machine-local and never committed.
+> **Local overrides.** If `~/.agents/local/config.json` exists, its keys override the defaults
+> below (schema: `~/.agents/local/config.example.json`). `config.json` is machine-local and never committed.
 
 - `<repo>`: resolve in this order, first hit wins — **most specific beats most general**:
   1. An owner/repo named in the invocation: a pasted PR URL (`github.com/<owner>/<repo>/pull/<N>`)

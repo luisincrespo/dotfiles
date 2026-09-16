@@ -7,7 +7,7 @@
 # applies to a diff: reading staged lines, and the voice-corpus person check,
 # which is scoped to specific paths and so has no meaning for a message.
 #
-# Company names live in ~/.claude/local/commit-denylist.txt, NOT in this repo — a
+# Company names live in ~/.agents/local/commit-denylist.txt, NOT in this repo — a
 # denylist naming an employer would itself be the leak it's meant to prevent.
 #
 # Override a false positive with:  git commit --no-verify

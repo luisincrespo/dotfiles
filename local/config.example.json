@@ -1,5 +1,5 @@
 {
-  "//": "Machine-local overrides for the deliver/pr-* skill family. Copy to ~/.claude/local/config.json and fill in. Never commit the filled-in copy: it names private repos, hosts and bot accounts.",
+  "//": "Machine-local overrides for the deliver/pr-* skill family. Copy to ~/.agents/local/config.json and fill in. Never commit the filled-in copy: it names private repos, hosts and bot accounts.",
 
   "//protected_branches_extra": "Branch patterns that are ALSO protected, on top of the built-in main, master and stage-*. Entries are glob patterns: a bare name matches exactly, * matches any run of characters, so \"rc-*\" covers every dated release candidate. Used by deliver, pr-open, pr-babysit, pr-merge.",
   "protected_branches_extra": [],

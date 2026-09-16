@@ -89,8 +89,8 @@ Polls an open MR/PR and drives it toward merge. This is the babysit stage of the
 
 ## Config
 
-> **Local overrides.** Values below are portable defaults. If `~/.claude/local/config.json` exists,
-> its keys override or extend them (schema: `~/.claude/local/config.example.json`); any key absent
+> **Local overrides.** Values below are portable defaults. If `~/.agents/local/config.json` exists,
+> its keys override or extend them (schema: `~/.agents/local/config.example.json`); any key absent
 > there keeps the default. `config.json` is machine-local and never committed.
 
 - `AI_REVIEWER_USERNAMES_GITLAB`: `[]` + `ai_reviewer_usernames_gitlab` (empty ⇒ every comment batches as human)
@@ -289,7 +289,7 @@ Once the PR hands off or you stop polling, ask whether anything about how this r
 
 What recurs at this stage: a CI failure class that was safely auto-fixable — or looked it and wasn't; a bot whose comments are noise (→ `bot_noise_body_markers_extra`) or a reviewer worth auto-addressing (→ `ai_reviewer_usernames_*`); a sync or conflict pattern that keeps recurring.
 
-Route it: repo- or employer-specific facts → `~/.claude/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
 
 ## Hard constraints
 

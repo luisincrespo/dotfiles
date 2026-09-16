@@ -74,7 +74,7 @@ Once the brief is handed back, ask whether anything about how this ran warrants 
 
 What recurs at this stage: where the real requirement actually lived (the ticket, a thread, or a person); a question that should have been asked before the code was written rather than after; where a repo keeps the patterns worth reusing.
 
-Route it: repo- or employer-specific facts → `~/.claude/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
 
 ## Hard constraints
 - Read-only. No edits, no commits, no tickets **filed or transitioned**, no plan authored — those are later stages. (Recording the ticket's ref + current status in the ledger is fine; moving its status is `deliver`/`post-merge-cleanup`'s job.)

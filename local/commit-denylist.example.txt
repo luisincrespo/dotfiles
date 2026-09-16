@@ -1,6 +1,6 @@
 # Terms the dotfiles leak-guard hooks must never let into a commit.
 #
-# Copy to ~/.claude/local/commit-denylist.txt and fill in. Keep it OUT of the repo:
+# Copy to ~/.agents/local/commit-denylist.txt and fill in. Keep it OUT of the repo:
 # a denylist naming your employer would itself be the leak it prevents.
 #
 # One term per line, case-insensitive, matched as a fixed substring. # = comment.

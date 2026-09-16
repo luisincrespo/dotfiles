@@ -61,8 +61,8 @@ Do everything from the **main worktree root**, never from inside the worktree be
 
 ## Config
 
-> **Local overrides.** Values below are portable defaults. If `~/.claude/local/config.json` exists,
-> its keys override or extend them (schema: `~/.claude/local/config.example.json`); any key absent
+> **Local overrides.** Values below are portable defaults. If `~/.agents/local/config.json` exists,
+> its keys override or extend them (schema: `~/.agents/local/config.example.json`); any key absent
 > there keeps the default. `config.json` is machine-local and never committed.
 
 - **PR state file**: `~/.claude/cache/deliver/pr-<platform>-<repo-with-slashes-as-dashes>-<number>.json`
@@ -143,7 +143,7 @@ Once cleanup finishes, ask whether anything about how this ran warrants a durabl
 
 What recurs at this stage: a stacked-dependent step that needed doing by hand; a tracker state that wouldn't map to an intent; a follow-up that should have been raised earlier, or shouldn't have been raised at all.
 
-Route it: repo- or employer-specific facts → `~/.claude/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
 
 ## Hard constraints
 

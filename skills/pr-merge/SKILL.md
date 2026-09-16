@@ -62,8 +62,8 @@ Merges one open MR/PR **only when every condition holds**, after a local verific
 
 ## Config
 
-> **Local overrides.** Values below are portable defaults. If `~/.claude/local/config.json` exists,
-> its keys override or extend them (schema: `~/.claude/local/config.example.json`); any key absent
+> **Local overrides.** Values below are portable defaults. If `~/.agents/local/config.json` exists,
+> its keys override or extend them (schema: `~/.agents/local/config.example.json`); any key absent
 > there keeps the default. `config.json` is machine-local and never committed.
 
 - `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.
@@ -149,7 +149,7 @@ Once the merge lands or returns not-ready, ask whether anything about how this r
 
 What recurs at this stage: a merge condition the platform reports differently than expected; a strategy the repo enforces; a semantic conflict the local pre-merge check caught — or missed, which is the one actually worth encoding.
 
-Route it: repo- or employer-specific facts → `~/.claude/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
 
 ## Hard constraints
 

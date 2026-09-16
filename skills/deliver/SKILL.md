@@ -32,8 +32,8 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 
 ## Config
 
-> **Local overrides.** Values below are portable defaults. If `~/.claude/local/config.json` exists,
-> its keys override or extend them (schema: `~/.claude/local/config.example.json`); any key absent
+> **Local overrides.** Values below are portable defaults. If `~/.agents/local/config.json` exists,
+> its keys override or extend them (schema: `~/.agents/local/config.example.json`); any key absent
 > there keeps the default. `config.json` is machine-local and never committed.
 
 - `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.

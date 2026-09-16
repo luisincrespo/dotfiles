@@ -27,7 +27,7 @@ The rest of that file is machine state the CLI writes itself — `devin.org_id`,
 between accounts; it identifies the org you authenticated against.
 [`config.example.json`](./config.example.json) has the shape.
 
-The real file lives outside this repo, like `~/.claude/local/` does, and for the same
+The real file lives outside this repo, like `~/.agents/local/` does, and for the same
 reason: it names an account.
 
 ## What carries across

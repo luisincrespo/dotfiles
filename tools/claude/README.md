@@ -17,8 +17,8 @@ committed:
 | File | What goes in it |
 |---|---|
 | `~/.claude/settings.json` | Model choice — the durable preferences are merged in by `install.sh`, the rest is yours |
-| `~/.claude/local/config.json` | This machine's repo id, SonarQube host, protected branches, reviewer bots — see [Machine-local overrides](#machine-local-overrides) |
-| `~/.claude/local/commit-denylist.txt` | Employer, product and service names the [leak guard](#leak-guard) must keep out of commits |
+| `~/.agents/local/config.json` | This machine's repo id, SonarQube host, protected branches, reviewer bots — see [Machine-local overrides](#machine-local-overrides) |
+| `~/.agents/local/commit-denylist.txt` | Employer, product and service names the [leak guard](#leak-guard) must keep out of commits |
 
 The skills work unconfigured, so filling these in can wait until you know the new setup: SonarQube
 is skipped, no extra branches are protected, and `pr-review` derives the repo from `git remote`.
@@ -102,7 +102,7 @@ every other agent for the second, and there is one file behind both.
 | `voice` | Drafts outward-facing writing (Slack, PR comments, descriptions) in your voice |
 
 **Every one of them self-educates.** Each ends by asking whether the run warranted a durable edit,
-and routes what it finds by portability — repo- or employer-specific facts to `~/.claude/local/`, a
+and routes what it finds by portability — repo- or employer-specific facts to `~/.agents/local/`, a
 lesson that holds anywhere into the skill, a one-off into a memory. Nothing is written without
 showing the exact edit first. Run under `deliver`, a skill hands its lesson up rather than editing,
 so `deliver`'s end-of-run reflection routes it once instead of two skills recording it twice.
@@ -117,10 +117,10 @@ See [`devin/README.md`](../devin/README.md).
 ## Machine-local overrides
 
 The skills in this repo are generic. Anything that names a private repo, host, bot account or
-build pipeline lives in `~/.claude/local/config.json`, which is **outside this repo and never
+build pipeline lives in `~/.agents/local/config.json`, which is **outside this repo and never
 committed**. Skills read it at run time; every key is optional and falls back to a portable default.
 
-`install.sh` copies the schema to `~/.claude/local/config.example.json` and seeds `config.json`
+`install.sh` copies the schema to `~/.agents/local/config.example.json` and seeds `config.json`
 from it on first run only — an existing one is never overwritten.
 
 | Key | Effect when set |
@@ -165,7 +165,7 @@ drift apart:
 | Absolute home path | `/Users/<name>/…`, `/home/<name>/…` |
 | Internal hostname | `*.internal`/`*.corp`/`*.lan`, and `sonarqube.`/`gitlab.`/`jira.`/`jenkins.`… on a real domain |
 | Real-looking ticket id | any `[A-Z]{2,}-\d+` that isn't the `ABC-1234` placeholder |
-| Denylisted term | anything in `~/.claude/local/commit-denylist.txt` |
+| Denylisted term | anything in `~/.agents/local/commit-denylist.txt` |
 | Unrecognized person | **`pre-commit` only**, in `skills/voice/refs/` — any person not on `.githooks/placeholder-roster.txt` |
 | Commit identity | the author/committer address, when it names an employer or an internal host |
 
@@ -202,7 +202,7 @@ it, which a denylist can't do. Coined a new placeholder? Add it to the roster. T
 committed, since fake names are safe to share and it should work on a fresh machine with no setup.
 
 The denylist is where employer, product and service names go. It's **machine-local on purpose** — a
-denylist naming your employer would itself be the leak it prevents, so it lives in `~/.claude/local/`,
+denylist naming your employer would itself be the leak it prevents, so it lives in `~/.agents/local/`,
 outside this repo, and `.gitignore` blocks the in-repo path as a backstop. List what was named
 in-house rather than what was bought: a codename nobody coins by accident is worth catching, while a
 third-party product anyone might write about buys false positives instead. Previous employers belong

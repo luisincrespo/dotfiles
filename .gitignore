@@ -1,10 +1,10 @@
-# Machine-local Claude overrides. Both filled-in copies belong in ~/.claude/local/
+# Machine-local skill overrides. Both filled-in copies belong in ~/.agents/local/
 # and must never be committed — the repo ships only the .example templates beside
 # them. Ignored here as a backstop: neither file is written to this path in normal
 # use, so an appearance means something went wrong, and the denylist in particular
 # would be the leak it exists to prevent.
-claude/local/config.json
-claude/local/commit-denylist.txt
+local/config.json
+local/commit-denylist.txt
 
 # Built plugin bundles. Reproducible from the tree by devin/package-plugin.sh,
 # so there is nothing to gain from committing one.
