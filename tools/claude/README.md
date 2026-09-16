@@ -116,6 +116,7 @@ every other agent for the second, and there is one file behind both.
 | `post-merge-cleanup` | Advances stacked dependents, deletes branch/worktree, closes the ticket |
 | `pr-review` | Reviews someone else's PR, inline, in your voice, never posting without approval |
 | `voice` | Drafts outward-facing writing (Slack, PR comments, descriptions) in your voice |
+| `maintain-dotfiles` | Lands changes to this repo pair — judges public vs private, groups by concern, commits, pushes, resyncs |
 
 **Every one of them self-educates.** Each ends by asking whether the run warranted a durable edit,
 and routes what it finds by portability — repo- or employer-specific facts to `~/.agents/local/`, a
