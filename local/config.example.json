@@ -22,6 +22,26 @@
   "//bot_noise_body_markers_extra": "Extra HTML-comment markers that identify a bot comment as noise, added to the built-in list.",
   "bot_noise_body_markers_extra": [],
 
+  "//staging_verification": "Per-repo, keyed by 'github/<owner>/<repo>'. Enables deliver's B5 staging-verification phase for repos that gate deploys on manual testing. Omit a repo and the phase never runs for it. needs_testing_label: the PR label that marks a change as needing post-deploy testing. staging_url: the deployed environment to drive. deploy_state_cmd: a command that reports whether a given sha has landed on each surface. notes: free-text traps worth remembering, appended as they cost time.",
+  "staging_verification": {
+    "github/acme-org/example-repo": {
+      "needs_testing_label": "needs-testing",
+      "staging_url": "https://staging.example.com",
+      "deploy_state_cmd": "<command taking a sha, reporting deployed/not per surface>",
+      "notes": []
+    }
+  },
+
+  "//local_e2e": "Per-repo, keyed the same way. Read by self-review Step 3.5 before driving the app locally. start: how to bring the stack up. app_url: where it lands. login: how to authenticate a test user. notes: traps that have cost time before — append rather than rediscover.",
+  "local_e2e": {
+    "github/acme-org/example-repo": {
+      "start": "<command that brings the local stack up>",
+      "app_url": "http://localhost:3000",
+      "login": "<how to authenticate locally>",
+      "notes": []
+    }
+  },
+
   "//verification_addenda": "Extra verification commands for repos whose nested apps own a separate pipeline. Run by self-review and pr-merge when a changed path starts with when_paths_under.",
   "verification_addenda": [
     {

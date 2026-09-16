@@ -25,7 +25,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 
 - `<task-ref>`: a ticket id/URL, a Slack link, or free-text describing the task. Default: the task stated in the conversation.
 - `--resume`: continue an existing task from its ledger instead of starting fresh.
-- `--stage <understand|plan|execute|verify|open|babysit>` (alias `--from`): force the entry stage for a task with no ledger — e.g. `--stage babysit` on a branch whose PR is already open. Overrides A0's auto-detection.
+- `--stage <understand|plan|execute|verify|open|babysit|verify-staging>` (alias `--from`): force the entry stage for a task with no ledger — e.g. `--stage babysit` on a branch whose PR is already open. Overrides A0's auto-detection.
 - `--interval <time>`: passed through to `pr-babysit`'s loop.
 - `--no-ticket-sync`: don't touch the associated tracker ticket's status (see `## Ticket status sync`). Default: sync when a ticket + a connected tracker exist.
 - `--no-review-ping`: passed through to `pr-open` — skip drafting the review-request ping.
@@ -42,7 +42,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
   {"task_ref":null,"requirements":null,"acceptance":null,"plan_summary":null,"phase":"understand",
    "deferred_items":[],
    "ticket_sync":{"enabled":false,"in_progress":false,"in_review":false,"done":false},
-   "units":[{"id":1,"title":null,"branch":null,"base":null,"kind":"independent","depends_on":null,"pr_number":null,"status":"pending"}]}
+   "units":[{"id":1,"title":null,"branch":null,"base":null,"kind":"independent","depends_on":null,"pr_number":null,"status":"pending","needs_staging_verification":false,"staging_verified":null}]}
   ```
   `task_slug` = the ticket id if there is one (lowercased, e.g. `abc-1234`), else a short kebab slug of the task. `task_ref` holds `{tracker, id, url, current_status}` when the task has an associated ticket, else `null`.
 - `TICKET_SYNC`: **on by default** when `task_ref` has a ticket AND its tracker connector (the Atlassian / Linear MCP) is available this session; `--no-ticket-sync` forces it off. Governs the `## Ticket status sync` transitions.
@@ -55,7 +55,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 
 1. **Resume** — `--resume`, or a ledger already exists for this task → load it and jump to the first unfinished phase/unit. Done.
 2. **No ledger** — resolve the **entry stage** from the strongest signal available (in precedence), then seed a ledger from current reality so the rest of the spine runs unchanged:
-   - **Explicit** — `--stage <understand|plan|execute|verify|open|babysit>` (alias `--from`) always wins.
+   - **Explicit** — `--stage <understand|plan|execute|verify|open|babysit|verify-staging>` (alias `--from`) always wins.
    - **Session context** — if *this* conversation already establishes the task and how far it's gotten (we scoped it, agreed a plan, implemented/committed it, or opened a PR earlier this session), use that: set the task identity + entry stage and seed `requirements`/`plan_summary`/`deferred_items` from what was already done, so you don't re-run `understand-task`/plan on work you just did. It also disambiguates *which* task the current branch belongs to. (Caveat: a long or summarized session can be stale — treat session context as authoritative for *intent* but verify *artifacts* against the probe below.)
    - **Git/PR probe** — the objective ground truth: the sole signal on a cold start (no relevant session context), and the artifact cross-check otherwise. Probe platform + git state (`git remote get-url origin`, `git branch --show-current`, the default branch, and `gh pr list --head <branch>` / `glab mr list --source-branch <branch>`):
 
@@ -114,6 +114,17 @@ For each unit:
 - Invoke `Skill(pr-babysit)` with the unit's PR ref, `--task-slug <slug>` (and `--interval` if set). It loops on CI/comments/keep-current and, when merge-ready, chains `Skill(pr-merge)` → `Skill(post-merge-cleanup)`.
 - `post-merge-cleanup` marks the unit `merged`, advances any stacked dependents, and — on the **last** unit — proposes the task's `deferred_items` as follow-ups (approval-gated).
 - Advance to the next unit until all are `merged`.
+
+### B5. Verify on staging (deploy-gated, resumable)
+A unit whose PR carried the repo's needs-testing label isn't finished at merge: someone has to exercise it on the deployed environment, usually a day later and in another session. `post-merge-cleanup` sets `needs_staging_verification` on the unit; this step clears it. Config comes from the repo's `staging_verification` entry in local config.
+
+- **Entered later, not inline**: `deliver --stage verify-staging`, or when the user says a deploy is ready to test. Pick up every unit with `needs_staging_verification: true` and `staging_verified: null`.
+- **Confirm the unit is actually deployed first.** Merged is not deployed, and a stack merges one unit at a time, so testing a unit still sitting on a branch produces findings that describe nothing. Run the repo's `deploy_state_cmd` against the unit's merge sha, read each surface separately rather than a composite verdict, and skip any unit that hasn't landed yet, saying so.
+- **Take the steps from the unit's own PR description**, not from memory and not from a sibling unit's plan. That Test Plan section is the authored, reviewer-facing one, and it's what the label refers to.
+- **Drive the deployed environment** (`staging_url`) the way `self-review` Step 3.5 drives local: real clicks, and both the cancel and the confirm path of anything destructive.
+- **Attribute failures before reporting them.** Check whether the same failure reproduces without the unit's change; a bug that pre-dates it is not a regression, and calling it one costs a deploy. Say which of the two you established.
+- **Record the outcome** in `staging_verified` as `{at, sha, result}`. On a fail, report and stop: the fix is a new unit, not an edit to a merged one.
+- **On a pass, clear the testing flag in both places it lives.** Until you do, the PR still advertises itself as untested and the deploy stays gated. Remove the `needs_testing_label` from the PR (`gh pr edit <n> --remove-label <label>`), **and** uncheck the `- [x] **NEEDS_TESTING**` box in its description — that box is what added the label at merge, so leaving it checked contradicts the label you just removed. Check each one separately: they drift, and finding one already cleared tells you nothing about the other. Then post a one-line note saying what was verified and against which sha. All three are outward-facing, so confirm before the first.
 
 ## Gates (the only reasons to stop)
 

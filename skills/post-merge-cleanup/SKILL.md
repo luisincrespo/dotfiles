@@ -134,7 +134,8 @@ This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when
 ## Step 7: Announce + housekeeping
 - `🧹 Deleted branch <source_branch> and worktree <wt_path>.` (omit the worktree clause if there wasn't one).
 - **Heads-up if the session ran inside the removed worktree**: that dir no longer exists, so tell the user to `/loop stop` and `cd <main_root>`.
-- Once every unit's PR is merged and cleaned, mark the task ledger done (or delete it if no un-filed follow-ups remain).
+- **If the merged PR carried the repo's needs-testing label** (`staging_verification.needs_testing_label` in local config), set `needs_staging_verification: true` on its unit. The deploy gets tested later, in another session, so this step only records it — `deliver` B5 is what acts on it.
+- Once every unit's PR is merged and cleaned, mark the task ledger done. **Keep the ledger** while any unit still has `needs_staging_verification: true` and `staging_verified: null` — deleting it there would strand the pending verification; delete only when no un-filed follow-ups and no pending verification remain.
 
 **Session / integration worktree.** The same recipe (Steps 3–4) applies to the worktree this session runs in once all its PRs are merged/closed — remove it decisively even though it's the current cwd; that's normal end-of-session cleanup. Hard prerequisite: no *unpushed, unmerged* work — verify `git -C <wt> status --porcelain` is empty and its HEAD is merged or still on a remote branch (`git -C <wt> for-each-ref --format='%(upstream:short)' refs/heads/<branch>`) before removing.
 
