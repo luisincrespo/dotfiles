@@ -70,6 +70,11 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   the work you just did.
 - **Don't assert specifics you haven't verified.** Naming a concrete thing (a vendor, a URL, a
   system) reads as knowledge of their setup. Either verify it first or describe the shape generically.
+- **Don't overstate certainty — argue the cost, not the absolute.** "Impossible", "can't", "never"
+  invite a counterexample, and one usually exists: a constant someone can raise, a flag, a server
+  change. Say what it would actually take ("the server caps `first` at 50, so a full-window refetch
+  needs a server change and a ~500 KB response") and let the cost carry the argument. It persuades
+  better and it survives the reviewer who knows the exception.
 - **Don't put feelings or commitments in his mouth.** Warmth invented on his behalf is still
   invention. If he hasn't said he feels a thing, or that he'll do a thing, don't write it for him —
   he cuts it, and it reads as someone else's voice when he doesn't.
