@@ -155,9 +155,19 @@ What does **not** work, so nobody re-investigates:
 
 ### Packaging it as a zip
 
-`./devin/package-plugin.sh` builds the bundle into `dist/` — the manifest, `AGENTS.md`
-with its symlink resolved to real content, and the nine skills — then verifies it, because
-a bundle that unpacks wrong fails silently in the web UI.
+`./tools/devin/package-plugin.sh` builds the bundle into `dist/` — the manifest, `AGENTS.md` and
+the nine skills — then verifies it, because a bundle that unpacks wrong fails silently in the web
+UI.
+
+```shell
+./tools/devin/package-plugin.sh                 # public content only
+./tools/devin/package-plugin.sh --with-private  # + the private overlay
+```
+
+The upload is a **personal-scope** plugin, visible only to you, so the private overlay can safely
+ride along — and `voice` is much better with its corpus than without. It's opt-in rather than
+default because an **org-scoped** upload would hand that corpus to everyone in the org, and a flag
+you had to type is a decision; a default is an accident waiting to happen.
 
 **Uploading can't be automated.** The CLI installs only from a repo, a git URL or a local
 path, and the v3 API has 151 endpoints and not one for plugins or uploads. So the last step
