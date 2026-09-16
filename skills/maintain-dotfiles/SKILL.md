@@ -30,6 +30,7 @@ allowed-tools:
   - Bash(./tools/devin/sync-plugin.sh:*)
   - Bash(./tools/claude/install.sh:*)
   - Bash(devin plugins:*)
+  - Skill(loop)
 ---
 
 # maintain-dotfiles
@@ -50,6 +51,28 @@ Concepts live in the READMEs, not here: [`README.md`](../../README.md) for the l
 forced vs chosen, [`tools/claude/README.md`](../../tools/claude/README.md) for the overlay and
 leak guard, [`tools/devin/README.md`](../../tools/devin/README.md) for the plugin and the
 freshness rules. Read the relevant one rather than re-deriving it.
+
+## Args
+
+- `--watch`: keep checking on an interval instead of running once. Invoke `Skill(loop)` with
+  `/maintain-dotfiles --_looped`, then continue below; the loop re-enters this skill each round.
+- `--_looped`: internal — set by the wrap above so a looped round doesn't wrap again.
+
+**Single-pass by default**, unlike `pr-babysit`, which auto-wraps. Babysitting is inherently a
+wait: a PR is in flight and something else has to happen. Maintaining is usually a one-shot —
+land what's pending — and starting a background watch every time someone wants a commit would
+be wrong. Watching is the exception, so it's opt-in.
+
+### Pacing, when watching
+
+Don't arm a Monitor on the repo. A file watcher fires on every save, and the condition here is
+the opposite: Step 2 wants the tree to have been **quiet** for ten minutes. Time is the signal.
+
+Start around 30 minutes and stretch when rounds come back clean — 50, then an hour. What this
+catches is a skill amending itself after a task elsewhere, which happens on the scale of hours,
+and an uncommitted change sitting a little longer costs nothing. Polling an idle tree costs
+more than it saves. Say so and stop if the user is plainly done for the day: the skill works
+the same run on demand.
 
 ## Step 1 — Survey
 
