@@ -55,6 +55,10 @@ scan_common "$ADDED"
 # invented. Anything person-shaped that is not on the roster is therefore a real
 # name that slipped in — caught the first time, without predicting it.
 VERBS='asked|approved|flagged|replied|said|wanted|proposed|corrected|noticed|pointed|cut|trimmed|rewrote|edited'
+# Capitalized words that open a sentence and are not people. Without these, "Also cut
+# the preamble" reads as a person named Also. A real name will never be on this list,
+# so it narrows nothing that matters — extend it as new ones turn up.
+NOT_NAMES='Also|And|But|For|Not|Now|Here|There|Then|This|That|These|Those|They|Their|We|You|She|Both|Each|Every|Everyone|Someone|Nobody|One|First|Second|Later|Again|Still|Even|Only|Just|What|When|Where|Which|Who|Why|How|Most|Some|Any|All|Before|After|Once|Instead|Rather|Better|Worse|Same|Note|Keep|Drop|Same'
 if [[ -r "$ROSTER" ]]; then
   KNOWN="$(grep -vE '^[[:space:]]*(#|$)' "$ROSTER" | sed 's/[[:space:]]*$//' | tr 'A-Z' 'a-z')"
   known() { printf '%s\n' "$KNOWN" | grep -qxF "$(printf '%s' "$1" | tr 'A-Z' 'a-z')"; }
@@ -72,6 +76,7 @@ if [[ -r "$ROSTER" ]]; then
       | grep -oE "@[A-Za-z][A-Za-z0-9._-]*( [A-Z][a-z]+)?|[A-Z][a-z]{2,}( [A-Z][a-z]+)? ($VERBS)" \
       | sed -E "s/^@//; s/ ($VERBS)\$//" \
       | grep -ivE '^example\.(com|org|net)$' \
+      | grep -vE "^(${NOT_NAMES})( |$)" \
       | sort -u || true)"
     while IFS= read -r c; do
       [[ -z "$c" ]] && continue

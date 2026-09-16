@@ -38,6 +38,11 @@ Read these first:
 **The examples are the ground truth.** When the abstract rules and a real example disagree, imitate
 the closest example.
 
+The `examples-*.md` files live in a **private companion repo** and are overlaid at install time, so
+they can simply be absent — a public-only or cloud install has `principles.md` and nothing else.
+Work from the principles when that happens, and say once that you're drafting without the corpus so
+the weaker draft isn't a surprise. Never invent an example to fill the gap.
+
 ## Step 2 — Draft in his voice
 
 Write the message following the principles and the closest example(s). Match his tone, length, and

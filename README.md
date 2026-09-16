@@ -10,11 +10,14 @@ Roughly in order — each step has something later that depends on it.
    Homebrew won't install without them.
 2. **SSH key** — `ssh-keygen -t ed25519`, add the public half to GitHub, confirm with
    `ssh -T git@github.com`.
-3. **Clone this repo:**
+3. **Clone this repo**, and the private companion beside it if you have access:
 
    ```shell
    git clone git@github.com:luisincrespo/dotfiles.git ~/code/dotfiles
+   git clone git@github.com:luisincrespo/dotfiles-private.git ~/code/dotfiles-private
    ```
+
+   The second is optional — it's found as a sibling, or wherever `DOTFILES_PRIVATE` points.
 
 4. **Shell** — Homebrew, `ohmyzsh`, the plugins and their prerequisites:
    [`zsh/README.md`](./zsh/README.md). Do this before the Claude install, which needs
@@ -51,6 +54,12 @@ adapters under `tools/` are the only vendor-specific parts.
 | `.devin-plugin/` | adapter | plugin manifest — must sit at the repo root, not under `tools/` |
 | `.githooks/` | repo hygiene | leak guard; vendor-neutral |
 | `zsh/` | shell | nothing to do with agents |
+
+Anything that can't be published lives in a private companion repo,
+[`dotfiles-private`](https://github.com/luisincrespo/dotfiles-private), which mirrors this layout.
+`install.sh` overlays the two into `~/.claude` at install time — a skill in both trees is assembled
+file-by-file. Neither checkout ever holds the other's files, so publishing this repo can't leak the
+private half by accident. Without it, everything still installs; only `voice` runs thinner.
 
 Adding a tool means adding one directory under `tools/` that points it at `AGENTS.md` and
 `skills/`. Nothing in either needs to change, and nothing about them is Claude-specific despite

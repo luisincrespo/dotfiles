@@ -47,6 +47,22 @@ back in this repo ready to commit. Anything real it would replace is moved to
 `~/.claude/.dotfiles-backup/<timestamp>/` first, and `--uninstall` puts it back. Restart Claude Code
 after any of these to pick up the change.
 
+### The private overlay
+
+A companion repo mirroring this one's layout supplies content that can't be published — today, the
+`voice` example corpus. It's found as a sibling of this checkout, or at `DOTFILES_PRIVATE`.
+
+A skill present in **both** trees is assembled in `~/.claude/skills/<name>/` as a real directory of
+symlinks, one per file, drawn from each. A skill in this repo alone stays a single directory
+symlink, as before. Editing through `~/.claude` still writes back to whichever repo owns the file.
+
+The merge happens at install time and **never in a checkout**. Symlinking private files into this
+tree and relying on `.gitignore` would be simpler and wrong: one missed entry publishes them, and
+no leak check would catch it, because that content is anonymized by design and passes every rule.
+
+`install.sh` also copies `.githooks/` into the private repo and sets its `core.hooksPath`. This
+repo's hooks stay authoritative, so the two can't drift — don't edit the copy.
+
 ### What is linked, what is merged, what is yours
 
 | Mode | Files | Why |

@@ -23,6 +23,10 @@ CLAUDE_DIR="${HOME}/.claude"
 # (protected branches, verification commands), the skills reading them are portable,
 # and only this installer happens to sit in the Claude adapter.
 LOCAL_DIR="${HOME}/.agents/local"
+# A companion repo mirroring this one's layout, holding content that must not be
+# published. Sibling by convention; override with DOTFILES_PRIVATE. Absent is fine —
+# everything still installs, just without the private half.
+PRIVATE_ROOT="${DOTFILES_PRIVATE:-$(cd "${REPO_ROOT}/.." && pwd)/dotfiles-private}"
 BACKUP_DIR="${CLAUDE_DIR}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 DRY_RUN=0
 UNINSTALL=0
@@ -63,10 +67,14 @@ if (( UNINSTALL )); then
   echo "Unlinking Claude config from ${REPO_ROOT}"
   echo
   for target in "${CLAUDE_DIR}/skills/"* "${CLAUDE_DIR}/CLAUDE.md"; do
-    [[ -L "$target" ]] || continue
-    case "$(readlink "$target")" in
-      "${REPO_ROOT}"/*) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
-    esac
+    if [[ -L "$target" ]]; then
+      case "$(readlink "$target")" in
+        "${REPO_ROOT}"/*) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
+      esac
+    elif [[ -d "$target" && -z "$(find "$target" -type f -not -type l -print -quit 2>/dev/null)" ]]; then
+      # An overlaid skill: a real directory holding nothing but symlinks.
+      rm -rf "$target"; log "unlinked  ${target/#$HOME/$TILDE} (overlay)"
+    fi
   done
 
   LATEST="$(ls -1d "${CLAUDE_DIR}/.dotfiles-backup/"*/ 2>/dev/null | sort | tail -1 || true)"
@@ -100,8 +108,46 @@ echo "Linking Claude config from ${REPO_ROOT}"
 
 echo
 echo "Skills:"
+# A skill the private repo also carries is assembled file-by-file, so the private
+# half never has to sit inside the public checkout — where one missed .gitignore
+# entry would publish it, and no leak check would catch it, the corpus being
+# anonymized by design. A public-only skill stays a single directory symlink.
+overlay() {
+  local name="$1" dest="${CLAUDE_DIR}/skills/$1" src rel
+  if [[ -L "$dest" ]]; then
+    run rm "$dest"
+  elif [[ -d "$dest" ]]; then
+    if [[ -n "$(find "$dest" -type f -not -type l -print -quit 2>/dev/null)" ]]; then
+      run mkdir -p "$BACKUP_DIR/$(dirname "${dest#"$CLAUDE_DIR"/}")"
+      run mv "$dest" "$BACKUP_DIR/${dest#"$CLAUDE_DIR"/}"
+      log "backed up ${dest/#$HOME/$TILDE} (held real files)"
+    else
+      run rm -rf "$dest"
+    fi
+  fi
+  for src in "${REPO_ROOT}/skills/$name" "${PRIVATE_ROOT}/skills/$name"; do
+    [[ -d "$src" ]] || continue
+    while IFS= read -r rel; do
+      run mkdir -p "$dest/$(dirname "$rel")"
+      run ln -sfn "$src/$rel" "$dest/$rel"
+    done < <(cd "$src" && find . -type f | sed 's|^\./||')
+  done
+  log "overlaid  ${dest/#$HOME/$TILDE}"
+}
+
+if [[ -d "$PRIVATE_ROOT" ]]; then
+  log "private   ${PRIVATE_ROOT/#$HOME/$TILDE}"
+else
+  log "private   none found — public content only"
+fi
+
 for skill in "$REPO_ROOT"/skills/*/; do
-  link "${skill%/}" "${CLAUDE_DIR}/skills/$(basename "$skill")"
+  name="$(basename "$skill")"
+  if [[ -d "${PRIVATE_ROOT}/skills/${name}" ]]; then
+    overlay "$name"
+  else
+    link "${skill%/}" "${CLAUDE_DIR}/skills/${name}"
+  fi
 done
 
 echo
@@ -179,6 +225,27 @@ elif command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
   fi
 else
   log "SKIPPED   repo-local identity — gh not authenticated; set user.email by hand"
+fi
+
+# The private repo holds the voice corpus — precisely what the person check exists
+# for — so it needs the same guard. Rather than maintain two copies, the public
+# repo's hooks are authoritative and copied in on every install, so they can't drift.
+if [[ -d "${PRIVATE_ROOT}/.git" ]]; then
+  echo
+  echo "Private repo:"
+  run mkdir -p "${PRIVATE_ROOT}/.githooks"
+  run cp "${REPO_ROOT}/.githooks/"* "${PRIVATE_ROOT}/.githooks/"
+  run git -C "$PRIVATE_ROOT" config core.hooksPath .githooks
+  log "synced    hooks from this repo (authoritative copy)"
+  if [[ -z "$(git -C "$PRIVATE_ROOT" config --local --get user.email 2>/dev/null || true)" ]]; then
+    EMAIL="$(git -C "$REPO_ROOT" config --local --get user.email 2>/dev/null || true)"
+    if [[ -n "$EMAIL" ]]; then
+      run git -C "$PRIVATE_ROOT" config user.email "$EMAIL"
+      log "set       repo-local identity to match this repo"
+    fi
+  else
+    log "ok        repo-local identity already set"
+  fi
 fi
 
 echo
