@@ -102,101 +102,103 @@ Two details make the packaging cost almost nothing:
 
 Skills arrive namespaced as `/dotfiles:<name>`.
 
-### If you ever do install it: turn the Claude import off
+### Installing it
 
-With both active, everything doubles — `/deliver` from the import and `/dotfiles:deliver`
-from the plugin, and `CLAUDE.md` loaded as a rule twice over. Same files either way, so
-nothing breaks, but the list is ambiguous and the rule burns context twice. Once the
-plugin is the source of truth, set:
-
-```json
-{ "read_config_from": { "claude": false } }
+```shell
+devin plugins install luisincrespo/dotfiles
 ```
 
-That is the one edit to this file that actually changes behaviour.
+That's it. The source is public, so Devin Cloud clones it directly — no admin grant, no
+upload, no bundle. It installs at **personal** scope, so it reaches your cloud sessions and
+your other machines, and nobody else's. **Merging to `master` is the release.**
 
-### Cloud needs the repo public, or an admin
+### Three surfaces, three freshness rules
 
-The manifest works — all nine skills and the rule load, and a git-sourced install is
-explicitly "added to your personal plugins, applying to your cloud sessions and other
-devices". **But a private repo can't be cloned by Devin Cloud here**, and the way out
-isn't in your hands.
+They do not stay current the same way, and the difference bites once skills start amending
+themselves:
 
-The GitHub integration has two layers that are easy to conflate:
-
-| Layer | Grants | |
+| Surface | Source | Current when |
 |---|---|---|
-| Account link | Devin acts under **your identity** — authored PRs, review comments | attribution |
-| GitHub App installation | **Read access** to selected repositories | access |
+| Claude Code | `~/.claude` symlinks into the repo | **immediately** — before you even commit |
+| Devin, cloud | fetched per session from the git source | **next session** — nothing to do |
+| Devin, local | a cached **copy** under `~/.local/share/devin/cli/plugins/cache/` | **only after `devin plugins update`** |
 
-Linking your account is not access. Cloud clones through the **organization's** integration,
-so the org must hold read permission on the repo — and installing the app on your *personal*
-GitHub account doesn't help, because the org's integration never consults that installation.
-Granting it is admin-only: "ask an admin to grant the affected organization access… from
-Settings → Repositories". The repo showing up in a list means nothing; the docs call this
-out directly — confirm permission "even if it already appears in the repository list".
+So on this machine `/deliver` (the Claude import, live) and `/dotfiles:deliver` (the plugin,
+a snapshot) can be different versions of the same skill, and nothing warns you. Whichever
+the model reaches for is what runs.
 
-What does work, all verified:
+```shell
+./tools/devin/sync-plugin.sh             # push, then refresh the cache
+./tools/devin/sync-plugin.sh --no-push   # refresh only
+```
 
-- **A public source repo.** No grant, no integration, no admin — a public plugin installs
-  to personal scope and reaches cloud.
-- **A zip uploaded at personal scope.** Bypasses git entirely — see below. This is the
-  route in use here, since the repo is staying private.
-- **An admin grant**, if asking is reasonable where you work.
+### Why the Claude import stays on
 
-What does **not** work, so nobody re-investigates:
+Both sources are active locally, so each of your skills is listed twice and `AGENTS.md`
+loads as a rule twice. Turning the import off with `{"read_config_from": {"claude": false}}`
+would fix that — and it's one boolean governing every Claude import, so it would also stop
+Devin reading a **work repo's** own `.claude/` directory. On the monorepo here that's 48
+skills, 6 commands and 5 rules the team maintains.
 
-- Plugin environment variables and Devin Secrets. They configure command hooks at session
-  start — after the plugin loads, which is far too late to authenticate the fetch that
-  loads it. No documented way to hand git credentials to a plugin fetch at all.
-- Installing the GitHub App on your own account, as above.
-- The repo name. It was briefly suspected, since the repo was called `.dotfiles` at the time;
-  it clones fine over HTTPS with a token either way.
+De-duplicating nine entries isn't worth losing forty-eight. Leave it on.
 
-### Packaging it as a zip
+Cloud is unaffected either way: a cloud VM has no `~/.claude` to import from, so it sees the
+nine from the plugin and nothing doubled. That was the whole reason the import couldn't reach
+cloud in the first place.
 
-`./tools/devin/package-plugin.sh` builds the bundle into `dist/` — the manifest, `AGENTS.md` and
-the nine skills — then verifies it, because a bundle that unpacks wrong fails silently in the web
-UI.
+### What does not work, so nobody re-investigates
+
+- **Plugin environment variables and Devin Secrets** for a private fetch. They configure
+  command hooks at session start — after the plugin loads, far too late to authenticate the
+  fetch that loads it. No documented way to hand git credentials to a plugin fetch at all.
+- **Installing the GitHub App on your personal account.** Cloud clones through the
+  *organization's* integration, which never consults a personal installation. The two layers
+  are easy to conflate: linking your account grants **identity** (authored PRs, review
+  comments); only an App installation grants **read access**. Granting it for a repo is
+  admin-only, and a repo appearing in the list is not permission — the docs say to confirm it
+  "even if it already appears in the repository list".
+- **A force-push, to remove something from a published history.** GitHub retains the previous
+  tip, and the whole pre-rewrite history stays fetchable by that sha. Deleting and recreating
+  the repo is what actually removes it.
+- **The repo name.** Briefly suspected when this was called `.dotfiles`; it clones fine over
+  HTTPS with a token either way.
+
+### Packaging it as a zip — the private-source fallback
+
+Not needed while the source is public. It's the way in if the repo ever goes private again,
+since a zip bypasses git entirely and needs no admin.
+
+`./tools/devin/package-plugin.sh` builds the bundle into `dist/` — the manifest, `AGENTS.md`
+and the nine skills — then verifies it, because a bundle that unpacks wrong fails silently in
+the web UI.
 
 ```shell
 ./tools/devin/package-plugin.sh                 # public content only
 ./tools/devin/package-plugin.sh --with-private  # + the private overlay
 ```
 
-The upload is a **personal-scope** plugin, visible only to you, so the private overlay can safely
-ride along — and `voice` is much better with its corpus than without. It's opt-in rather than
-default because an **org-scoped** upload would hand that corpus to everyone in the org, and a flag
-you had to type is a decision; a default is an accident waiting to happen.
+The upload is personal-scope and visible only to you, so the private overlay can ride along —
+and `voice` is much better with its corpus than without. Opt-in rather than default because an
+**org-scoped** upload would hand that corpus to everyone in the org; a flag you have to type is
+a decision, a default is an accident waiting to happen.
 
-**Uploading can't be automated.** The CLI installs only from a repo, a git URL or a local
-path, and the v3 API has 151 endpoints and not one for plugins or uploads. So the last step
-is by hand: Devin → Customize → Add plugin → upload, scope **Personal** (an org-scoped
-upload would install it for everyone in the org).
+**Uploading can't be automated.** The CLI installs only from a repo, a git URL or a local path,
+and the v3 API has 151 endpoints and not one for plugins or uploads. The last step is by hand:
+Devin → Customize → Add plugin → upload, scope **Personal**.
 
-Two consequences of a zip being a snapshot rather than a link:
-
-- **Re-run and re-upload after changing a skill.** Nothing propagates on its own.
-- **Don't edit the plugin in Devin's web editor.** It's allowed, and it silently forks the
-  copy there away from what's committed here. This repo stays the source of truth.
-
-### So: don't install this plugin locally
-
-It would add nothing. The Claude import above already serves all nine skills to the CLI
-and Desktop, and a local install merely duplicates them as `/dotfiles:*` and loads
-`CLAUDE.md` as a rule twice. The plugin's only value is cloud, which is blocked. That also
-makes `read_config_from.claude` moot — leave it alone.
-
-The manifest stays in the repo, working and ready, for whenever the source is public or an
-account can grant access.
+And a zip is a snapshot: re-run and re-upload after changing a skill, and don't edit the plugin
+in Devin's web editor — it's allowed, and it silently forks that copy from this repo.
 
 ## Verify
 
 ```shell
-devin rules list     # expect: CLAUDE [Claude] always-on
-devin skills list    # expect: the nine skills
-devin doctor
+devin rules list      # expect: CLAUDE [Claude] and AGENTS [Standard], both always-on
+devin skills list     # expect: nine bare names, plus nine as /dotfiles:*
+devin plugins list    # expect: dotfiles, installed at Personal scope
 ```
+
+Two rules and doubled skills is the **correct** result here, not a fault — see *Why the
+Claude import stays on*. A cloud session shows nine and one, since it has no `~/.claude`.
 
 Run `devin skills list` from **outside this repo**. Inside it, the skills resolve as
 project files via `./skills/`, which proves nothing about the user-level wiring —
