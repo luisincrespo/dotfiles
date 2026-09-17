@@ -13,7 +13,7 @@ description: >-
 
 A conductor for the whole task lifecycle. It owns only the **spine** — phase sequencing, the gates between phases, a per-task **ledger**, and handoff — and delegates the actual work to focused sub-skills. It carries no conventions of its own: at every step it follows the repo `CLAUDE.md`, the nearest module `CLAUDE.md`/`AGENTS.md`, and the user's feedback memories.
 
-**Mostly autonomous.** Flow straight through the phases; stop only for a genuine **ambiguity** or **risk** gate (below). Don't manufacture check-ins.
+**Mostly autonomous, past one unconditional stop.** The **plan checkpoint** always runs (A2). Beyond it, flow straight through the phases and stop only for a genuine **ambiguity** or **risk** gate (below). Don't manufacture check-ins other than those.
 
 **Terminology.** Write **"PR"** on GitHub and **"MR"** on GitLab in everything you say to the user.
 
@@ -81,7 +81,8 @@ When the resolved entry stage is past understand/plan (adoption, `--stage`, or w
   - One cohesive, reviewable change → **one unit** (`kind:"independent"`).
   - Genuinely separable or too large for one review → **multiple units**. Mark them `stacked` when a later unit builds on an earlier unit's not-yet-merged code (base = the previous unit's branch); `independent` when they can each target the default branch on their own.
 - Write `plan_summary` and the ordered `units[]` (with `title`, `base`, `kind`, `depends_on`) into the ledger.
-- **Plan checkpoint (gate):** for a straightforward single-unit change, proceed. For a **multi-unit / stacked breakdown, a non-trivial change, or anything touching a risk-gate area**, present the plan + breakdown for approval via `EnterPlanMode` → `ExitPlanMode` before building. (A stack is a real decision — get a nod on it.)
+- **Plan checkpoint (gate) — always, no exceptions.** Present the plan + breakdown for approval via `EnterPlanMode` → `ExitPlanMode` before building, however small the change looks. "Straightforward" is your own estimate of work you have not done yet, and the runs where that estimate is wrong are precisely the ones worth catching while the cost is a sentence rather than a diff. Approving a one-line plan takes seconds; finding out the approach was wrong once a PR is open costs the review.
+- **Size the plan to the change.** A single-unit fix deserves a line or two — what you'll change, and why it's the smallest thing that satisfies the acceptance criteria. Don't pad it to justify the gate: a long plan for a small change is harder to check than a short one, which defeats the point of asking. A multi-unit or stacked breakdown is where detail belongs, because the stack is itself the decision.
 
 ## Phase B — Per-unit loop
 
@@ -129,7 +130,7 @@ A unit whose PR carried the repo's needs-testing label isn't finished at merge: 
 ## Gates (the only reasons to stop)
 
 - **Ambiguity** — requirements/acceptance genuinely unclear, or a material choice between different solutions that changes scope. Surfaced by `understand-task`; relay and wait.
-- **Plan checkpoint** — approve non-trivial / multi-unit / stacked breakdowns (plan mode). Straightforward single-unit work proceeds.
+- **Plan checkpoint** — **always**, before building anything (plan mode). Sized to the change, never skipped for being small.
 - **Risk** — before public-API/auth/security/PII/destructive/protected-branch/cross-team actions (B1), before a merge (owned by `pr-merge`'s conditions), and before filing any follow-up ticket (owned by `post-merge-cleanup`).
 
 Everything else runs autonomously — including auto-fixing CI, addressing clear AI-reviewer comments, and merging with confidence once every condition holds.
