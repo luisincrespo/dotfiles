@@ -119,6 +119,12 @@ state unprompted, and a draft is permanently `BLOCKED`), so each flip burns a wa
 when any API call in the loop fails, **skip the cycle** rather than substituting a placeholder like
 `?` — a placeholder changes the signature and fires twice, once out and once back.
 
+**Re-arm on every turn, not just loop turns.** An interactive exchange replaces the turn that would
+have called `ScheduleWakeup`, so a conversation silently ends the watch — and the longer the
+conversation, the likelier it is off. While a babysit is active, end *any* turn that touched this
+PR by re-arming, and say when the next check is. If you cannot tell whether a wakeup is pending,
+re-arm: a duplicate is replaced, a missing one is not noticed until the user asks.
+
 ## Phase 0: Detect platform, resolve MR/PR, load state
 
 ### 0.0 Platform
@@ -246,7 +252,7 @@ Then: `author_base` ∈ `AI_REVIEWER_USERNAMES` → 2a; else → 2b.
 
 ### 2a. AI-reviewer comment
 Classify `body`: **auto-fix** (clear, bounded, scoped to diff lines, no opinion); **ask-user** (ambiguous/opinion/cross-cutting/unverifiable); **ignore-as-noise** (trivially wrong / already done / misread — verify by reading the file first).
-Reply/resolve: GitLab reply `glab api --method POST ".../discussions/<thread_id>/notes" -f body="<text>"`, resolve `glab api --method PUT ".../discussions/<thread_id>?resolved=true"`; GitHub review-thread reply `gh api graphql -f query='mutation($t:ID!,$b:String!){addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$t,body:$b}){comment{id}}}' -F t=<thread_id> -F b="<text>"`, resolve `gh api graphql -f query='mutation($t:ID!){resolveReviewThread(input:{threadId:$t}){thread{id isResolved}}}' -F t=<thread_id>`; GitHub issue-comment pseudo-thread reply `gh pr comment <number> --body "<text> (Re: <url>)"` (mark addressed in state; UI keeps showing it open).
+Reply/resolve: GitLab reply `glab api --method POST ".../discussions/<thread_id>/notes" -f body="<text>"`, resolve `glab api --method PUT ".../discussions/<thread_id>?resolved=true"`; GitHub review-thread reply `gh api graphql -f query='mutation($t:ID!,$b:String!){addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$t,body:$b}){comment{id}}}' -F t=<thread_id> -F b="<text>"`, resolve `gh api graphql -f query='mutation($t:ID!){resolveReviewThread(input:{threadId:$t}){thread{id isResolved}}}' -F t=<thread_id>`; GitHub issue-comment pseudo-thread reply `gh pr comment <number> --body "<text>"` where `<text>` **opens with a blockquote of the finding** — one or two trimmed lines plus a link to it — because a PR-level comment lands with no visual tie to what it answers (mark addressed in state; UI keeps showing it open).
 - **auto-fix**: edit → verify (IDE diagnostics / scoped `npx tsc --noEmit`) → commit `Address review: <summary>` (ticket-prefixed) → push → reply `Addressed in <sha>.` → resolve → append to `addressed_thread_ids`.
 - **ask-user**: skip if in `shown_but_unaddressed_thread_ids`. Else batch `AI reviewer (unclear): <url> — <summary> — why unsure: <reason>`, append to `shown_but_unaddressed_thread_ids`.
 - **ignore-as-noise**: reply (one polite sentence) → resolve → append to `addressed_thread_ids`.
@@ -283,8 +289,8 @@ Runs every cycle. Read `refs/storybook-screenshots.md` (Step 7) for the sizing a
 
 `pr-merge` owns the full merge gate (approval, threads resolved, CI green, mergeable, pre-merge local verification) and the merge itself. So this stage only decides whether it's worth *asking*:
 
-- Skip (keep looping) if any of: `is_draft == true`, `state != opened`, batch non-empty this cycle (Phase 3 already gated), or `state.last_pipeline_id` status is not `success`.
-- Otherwise invoke `Skill(pr-merge)` with `<mr-ref>` (this MR/PR) and `--task-slug <slug>` if set. `pr-merge` re-verifies every condition and either merges (→ `post-merge-cleanup`) or returns "not ready — keep watching." Either way this cycle ends; `/loop` re-checks next cycle (a successful merge is caught by Phase 0.3's terminal check and stops the loop).
+- Skip (keep looping) if any of: `is_draft == true`, `state != opened`, batch non-empty this cycle (Phase 3 already gated), `state.last_pipeline_id` status is not `success`, or **no approval has landed yet** — GitHub `reviewDecision` ∈ {`REVIEW_REQUIRED`, `CHANGES_REQUESTED`} (already in the 0.1 payload, so this costs nothing), GitLab an empty `approved_by`. Approval is `pr-merge`'s first gate, so without one the handoff can only load the skill, re-run local pre-merge verification and come back "not ready" — every cycle, for as long as the review sits unclaimed. **Fail open**: no cheap approval signal ⇒ hand off anyway.
+- Otherwise invoke `Skill(pr-merge)` with `<mr-ref>` (this MR/PR) and `--task-slug <slug>` if set. It re-verifies every condition and either merges (→ `post-merge-cleanup`) or returns "not ready — keep watching." Either way this cycle ends; `/loop` re-checks next cycle (a successful merge is caught by Phase 0.3's terminal check and stops the loop).
 
 ## Phase 5: Capture learnings (self-educate)
 Once the PR hands off or you stop polling, ask whether anything about how this ran warrants a durable edit. Never invent one — "nothing to capture" is the usual answer and deserves a line, not a paragraph.
