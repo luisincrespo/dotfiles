@@ -88,7 +88,11 @@ the next review goes better.
 - If the PR is part of a stack, read every PR in it before claiming something is absent or won't
   exist — grep all branches, not just this one. Read the existing review threads first
   (`gh api repos/…/pulls/<N>/comments`): dedupe against them, and note which findings other
-  reviewers already own.
+  reviewers already own. Before replying that one of those findings is wrong, check *when* it was
+  made against when the code it describes appeared (`git log -S`, or the per-commit diff). A finding
+  that reads as mistaken against the current file is usually one the author already fixed — a commit
+  named for review updates is the tell — and telling a reviewer they misread costs the review its
+  credibility.
 
 ### 2. Decide the focus
 Ask the user what to focus on if they didn't say. Common lenses for this repo (frontend/React):
@@ -122,7 +126,9 @@ For equivalence, check side-effect ordering separately from rendered output. For
 whether the thing is load-bearing for a documented invariant: a `[]` dep array plus an
 `eslint-disable` is usually protecting a "runs exactly once" contract. For implementability, follow
 the value to whoever consumes it — threading a field through a command whose only handler ignores it
-relocates the problem instead of fixing it.
+relocates the problem instead of fixing it. For a type change, enumerate producers **including
+tests**: loosely typed spec helpers (`Array<{ field: string }>`) are what a production-only sweep
+misses, so "free to tighten" becomes a red build.
 
 ### 4. Review with the user, in rounds
 Present each round's draft comments with `file:line` + exact text. Let the user cut, reword,
