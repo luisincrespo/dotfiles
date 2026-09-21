@@ -85,6 +85,11 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   you're right. State your part, ask your question, let them own theirs. If the gap you spotted
   matters, it surfaces on their side or comes up when they ask.
 - **When two things relate, say precisely how.** "overlap but aren't the same" beats "you get both".
+- **When the author has answered and the outcome is settled, reply with the acknowledgement only.**
+  No clarifying what your original comment meant, no restating the mechanism already sitting in the
+  thread, no explaining their own code back to them. Their answer plus a plain "yeah, agreed" is the
+  whole reply; anything past that is re-reviewing a thread that's done. A one-line answer from them
+  earns a one-line reply from you.
 - **Keep housekeeping out of a reply about a finding.** A review thread answers the thing that
   thread raised. Work done in the same sitting (a rebase, a lockfile regen, an unrelated CI failure
   clearing) is not part of the answer and belongs in a direct report instead.
