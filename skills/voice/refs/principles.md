@@ -54,8 +54,6 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   "quick question" — if you're asking someone to decide something, say that.
 - **Don't rank your own findings.** Skip "the big one", "the critical thing",
   "most importantly". State each finding plainly and let the reader weigh it.
-  Dramatizing a routine one spends credibility you'll want for the ones that
-  actually matter.
 - **Concrete over abstract.** When explaining how something works, name the actual things (the agents,
   the tiers, the features) instead of describing them in the abstract — specifics give the reader
   clarity. "a Student gets Summarizer, Humanizer, AI Detector" beats "a set that varies by persona".
@@ -72,6 +70,11 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   the work you just did.
 - **Don't assert specifics you haven't verified.** Naming a concrete thing (a vendor, a URL, a
   system) reads as knowledge of their setup. Either verify it first or describe the shape generically.
+- **When you decline on cost, put the position first and the concession last.** A closing "if it
+  needed real work I'd agree" names the condition under which the reviewer would be right, which is
+  worth saying; an opening concession only cushions. Open by showing you weighed the alternatives
+  when the decline turns on *judgment* instead, where the reviewer needs to see they were considered
+  at all.
 - **Don't overstate certainty — argue the cost, not the absolute.** "Impossible", "can't", "never"
   invite a counterexample, and one usually exists: a constant someone can raise, a flag, a server
   change. Say what it would actually take ("the server caps `first` at 50, so a full-window refetch
@@ -92,7 +95,7 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   earns a one-line reply from you.
 - **Keep housekeeping out of a reply about a finding.** A review thread answers the thing that
   thread raised. Work done in the same sitting (a rebase, a lockfile regen, an unrelated CI failure
-  clearing) is not part of the answer and belongs in a direct report instead.
+  clearing, your own local test results) is not part of the answer and belongs in a direct report instead.
 - **Keep process state out of a PR/MR description.** Where a change sits in *your* workflow (waiting
   on someone, why it's a draft, what you'll do if the answer is no) is conversation, not description.
   The description says what the change is and why; the humans handle the rest in Slack.
