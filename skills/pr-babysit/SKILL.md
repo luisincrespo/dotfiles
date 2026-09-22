@@ -113,11 +113,15 @@ If args contain `--_looped` or `--once` → skip to Phase 0. Otherwise invoke `S
 
 **Monitor signature — poll the signal, not the churn.** When `loop` arms a Monitor for the MR/PR,
 build its change signature from: `state`, `is_draft`, `reviewDecision`, `head_sha`, the **names** of
-failing checks, a binary `running`/`all-done` for CI, and the three comment/review counts. Leave out
-`mergeStateStatus` and any per-check running *count* — both flap on their own (GitHub recomputes merge
-state unprompted, and a draft is permanently `BLOCKED`), so each flip burns a wakeup on nothing. And
-when any API call in the loop fails, **skip the cycle** rather than substituting a placeholder like
-`?` — a placeholder changes the signature and fires twice, once out and once back.
+failing checks, a binary `running`/`all-done` for CI, and the three comment/review counts **taken
+excluding the account this session posts as**: a reply you post lands under that account (on GitHub a
+thread reply registers as an empty-bodied review), so raw totals wake the loop on its own previous
+cycle. Leave out `mergeStateStatus` and any per-check running *count* — both flap on their own (GitHub
+recomputes merge state unprompted, and a draft is permanently `BLOCKED`), so each flip burns a wakeup
+on nothing. Resist widening any of these "so nothing is missed": every false wake this produces is
+churn you caused or churn nobody caused, and the skipped/neutral check states are the usual way in.
+And when any API call in the loop fails, **skip the cycle** rather than substituting a placeholder
+like `?` — a placeholder changes the signature and fires twice, once out and once back.
 
 **Re-arm on every turn, not just loop turns.** An interactive exchange replaces the turn that would
 have called `ScheduleWakeup`, so a conversation silently ends the watch — and the longer the
