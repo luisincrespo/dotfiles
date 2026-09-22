@@ -53,7 +53,7 @@ The **verify** stage: put your own diff through the same scrutiny a reviewer wou
 - `--task-slug <slug>`: when invoked by `deliver`, so batched findings can be noted against the task.
 
 ## Step 1 — Scope the diff
-- Compute the changeset: `git diff --name-only <base>...HEAD` plus any uncommitted changes (`git status --porcelain`). List the affected packages.
+- Compute the changeset: `git diff --name-only <base>...HEAD` plus any uncommitted changes (`git status --porcelain`). List the affected packages. **Resolve `<base>` to its remote-tracking ref (`origin/<base>`) when one exists** — in a worktree the local branch ref is frozen at creation time, so a bare name can be far behind and silently widen the diff to include other people's commits.
 - Flag whether **frontend** files changed (`*.tsx`/`*.jsx`/`*.vue`/`*.svelte`/`*.css`/`*.scss`/`*.html`, or the repo's equivalent templates) — gates the accessibility pass.
 - Note new components: a new `*.tsx` component in a package that has Storybook (`.storybook/` or existing `*.stories.*`) **must** have a story when the repo's `CLAUDE.md` requires one — flag if missing.
 
@@ -88,7 +88,7 @@ Triage fix-now vs batch:
 - After applying fixes, **re-review the changed areas** — don't stop at one pass; a fix can introduce a new issue. Loop Steps 2–4 until the automated gates are green and no clear findings remain.
 
 ## Step 5 — Convention sweep (reference, don't restate)
-Confirm the diff honors the repo's own `CLAUDE.md` and the user's global rules + feedback memories, rather than re-deriving them. **Read the repo's `CLAUDE.md` for its conventions** — versioning/changeset rules, styling and design-system preferences, file-layout rules — instead of assuming another project's. From the user's global rules, the recurring ones are: doc comments on new/edited types, functions and their members; AAA structure in new/edited tests; strict equality (`!== undefined`, not `!= null`); no non-null assertions or `void`-operator fire-and-forget. Flag anything off as a fix-now or batch item.
+Confirm the diff honors the repo's own `CLAUDE.md` and the user's global rules + feedback memories, rather than re-deriving them. **Read the repo's `CLAUDE.md` for its conventions** — versioning/changeset rules, styling and design-system preferences, file-layout rules — instead of assuming another project's. From the user's global rules, the recurring ones are: doc comments on new/edited types, functions and their members, each **shorter than the thing it documents** (coverage is the rule, length is the failure mode — keep only what a reader can't recover from the code, such as cross-file coupling, a platform quirk, or a caveat about what the function does not check, and cut prose that restates the signature); AAA structure in new/edited tests; strict equality (`!== undefined`, not `!= null`); no non-null assertions or `void`-operator fire-and-forget. Flag anything off as a fix-now or batch item.
 
 ## Output
 When the loop settles, report: gates status (green/what's red), what you ran it against (or why you couldn't), what you fixed, and the batch (unresolved items for the user). If `--task-slug` was set, fold unresolved items into the task ledger's notes. This stage does **not** commit, push, or open a PR — it leaves a clean, reviewed diff for the next stage (`pr-open`).
