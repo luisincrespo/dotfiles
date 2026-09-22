@@ -68,6 +68,13 @@ be wrong. Watching is the exception, so it's opt-in.
 Don't arm a Monitor on the repo. A file watcher fires on every save, and the condition here is
 the opposite: Step 2 wants the tree to have been **quiet** for ten minutes. Time is the signal.
 
+**Re-arm on every turn, not just loop turns.** The wakeup is scheduled by the turn that ends a
+round, and an interactive exchange replaces that turn — so a conversation silently ends the
+watch, and the longer the conversation the likelier it is already off. While watching, end *any*
+turn that touched these repos by re-arming, and say when the next check is. If you cannot tell
+whether a wakeup is pending, re-arm: a duplicate replaces the old one, a missing one goes
+unnoticed until someone asks why nothing has been committed for four days.
+
 Start around 30 minutes and stretch when rounds come back clean — 50, then an hour. What this
 catches is a skill amending itself after a task elsewhere, which happens on the scale of hours,
 and an uncommitted change sitting a little longer costs nothing. Polling an idle tree costs
@@ -83,9 +90,22 @@ Clean and in sync → say so in one line and stop. That is the common outcome.
 
 ## Step 2 — Is anything still being written?
 
-**Other sessions edit these files while working.** Check the mtime of everything modified; if
-any is younger than ~10 minutes, hold this round and say so. Committing half a skill is worse
-than committing nothing, and these files change under you — that is normal here, not a fault.
+**Other sessions edit these files while working.** Check the mtime of everything modified.
+Committing half a skill is worse than committing nothing, and these files change under you —
+that is normal here, not a fault.
+
+**Hold per file, not per round.** A file touched in the last ~10 minutes waits; the rest
+proceed. Backlogs here run to nine files spanning seven hours, and parking the settled ones
+behind one active edit means they sit until the editing stops — which may be days.
+
+Two things the clock alone won't tell you, so check both before acting on the settled ones:
+
+- **Is the fresh file part of the same change?** A multi-file edit in progress can leave one
+  file stale and another current. If the settled files only make sense alongside the fresh one,
+  hold them together.
+- **Right at the boundary, read the diff instead.** The mtime is a proxy for "is it finished";
+  the content is the evidence. A complete, self-contained edit at exactly ten minutes is safe,
+  and a truncated one at thirty is not.
 
 ## Step 3 — Judge where each change belongs
 
