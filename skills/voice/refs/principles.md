@@ -126,5 +126,12 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   link**, which may or may not cc someone. For a **multi-PR stack**, open with "Here's a PR stack for
   <what>", one line per PR as `<purpose> — <link>` (mark draft/stacked inline), and a sentence or two
   of context is fine here (unlike the single-PR form). **No JIRA ticket** in team Slack. **Broadcasting to a broad channel** — nobody addressed — takes a greeting and a sized ask instead of the `@handle` form: "Hey, team! Here's a small PR to <what it does>." Whoever picks it up is volunteering, so saying how big it is does the work the handle would have.
+- **The `@handle PR to …` shape is for a COLD ask.** When you're following up with someone you were
+  just talking to, or who just reviewed something adjacent, write it as conversation instead: open
+  with where this sits relative to what they already know ("Here's one last PR related to <the work
+  they know>"), put the link inline, say what you hit in your own words ("Ran into an edge case
+  where…"), and close with "Mind taking a look?". Cut the comparison to the previous PR, the reason
+  a bot could not approve it, and any second thing it also fixes. All true, none of it load-bearing
+  for a yes.
 - **In a dedicated review channel, drop the explicit "please review" ask** — the channel's purpose
   makes it implicit. (This is the one place the usual "end with a single ask" doesn't apply.)
