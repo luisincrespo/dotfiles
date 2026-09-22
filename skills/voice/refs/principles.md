@@ -93,6 +93,12 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   thread, no explaining their own code back to them. Their answer plus a plain "yeah, agreed" is the
   whole reply; anything past that is re-reviewing a thread that's done. A one-line answer from them
   earns a one-line reply from you.
+- **When you're recording an outcome that was already settled in person, give the cause and stop.**
+  The reader was in the conversation, so anything propping the cause up is noise: corroborating
+  evidence (why the same thing worked in the other view, why a refresh fixes it) argues a point
+  nobody is disputing, and reassurance about the real environments (why it can't happen in staging
+  or prod) answers a worry they never raised about machinery they already know. What does still
+  belong is anything that changed in the code since they looked, because they have to re-read it.
 - **Keep housekeeping out of a reply about a finding.** A review thread answers the thing that
   thread raised. Work done in the same sitting (a rebase, a lockfile regen, an unrelated CI failure
   clearing, your own local test results) is not part of the answer and belongs in a direct report instead.
