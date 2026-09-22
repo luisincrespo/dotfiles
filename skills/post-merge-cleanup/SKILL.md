@@ -124,15 +124,19 @@ Run only when `--task-slug` is set, this was the **last** unit (all `units[]` in
 This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when `--task-slug` is set AND this was the **last** unit of the task (all `units[]` in the ledger are `status:"merged"`). If earlier units remain open, skip for now — the last unit's cleanup will do it.
 
 1. Read `deferred_items` from the task ledger. Empty → announce `No deferred follow-ups for this task.` and skip.
-2. For each item, draft a concise follow-up (title + one-line why + risk + suggested owner + **a proposed priority**). **Propose the full list to the user and ask which to file** — filing tickets/issues is outward-facing and often cross-team, so it always needs explicit approval (never auto-file; ties to the user's "scope: low-lift only, document the rest" and "no outward action without approval" habits).
+2. **Before drafting, search the tracker for an existing ticket covering the item; if one exists, report it instead of proposing a new one.** Then, for each item that survives, draft a concise follow-up (title + one-line why + risk + suggested owner + **a proposed priority**). **Propose the full list to the user and ask which to file** — filing tickets/issues is outward-facing and often cross-team, so it always needs explicit approval (never auto-file; ties to the user's "scope: low-lift only, document the rest" and "no outward action without approval" habits).
    **Every ticket you file gets a priority** — leaving it unset pushes triage onto whoever finds
    it later. Propose one per ticket alongside the filing decision and get it signed off with the
    rest; never pick a priority unilaterally. A proposal-shaped ticket takes the lowest rung, since
    anything higher implies the idea is already agreed.
 3. On approval, file the approved ones and skip the rest:
    - GitHub issue: `gh issue create --title "<title>" --body "<body>"`.
-   - Jira/Linear, or a repo that ships its own ticket skill: delegate to that skill / MCP rather than guessing field values (the harness will surface any needed tool). Do NOT invent tracker field values.
-   - If the user prefers no ticket: leave a written hand-off note (a short markdown block they can paste), don't file.
+   - Jira/Linear, or a repo that ships its own ticket skill: delegate to that skill / MCP rather than guessing field values. Do NOT invent tracker field values.
+   - **No ticket warranted** (too small, or the user says so): write it to the configured
+     personal backlog (local config `personal_backlog`) as one self-contained, pickup-ready
+     page — that destination is the source of truth, so don't also leave a local copy to
+     drift. With none configured, or its connector unavailable this session, fall back to a
+     local markdown note and say which you used.
 4. Announce what was filed with links; leave the un-filed items in the note. Then clear the filed items from the ledger (keep the un-filed ones for later).
 
 ## Step 7: Announce + housekeeping
