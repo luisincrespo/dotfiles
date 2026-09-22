@@ -44,6 +44,15 @@
     }
   },
 
+  "//second_opinion_review": "Per-repo, keyed by 'github/<owner>/<repo>'. Turns on self-review Step 3.6, a second correctness pass by a different model. Omit a repo and the step never runs there — it is opt-in per repo because the reviewer is handed your diff, and where that goes is a per-codebase decision. command: a non-interactive CLI taking instructions as an argument and reading content on stdin. It is run from a scratch directory, not the repo, so include whatever flag that CLI needs to accept a non-repo working directory (codex needs --skip-git-repo-check). max_rounds: how many times the convergence loop may re-run it after fixes (2 is usually enough; the cap exists because a second model will always find something on a large diff). notes: traps worth remembering.",
+  "second_opinion_review": {
+    "github/acme-org/example-repo": {
+      "command": "codex exec --skip-git-repo-check",
+      "max_rounds": 2,
+      "notes": []
+    }
+  },
+
   "//staging_verification": "Per-repo, keyed by 'github/<owner>/<repo>'. Enables deliver's B5 staging-verification phase for repos that gate deploys on manual testing. Omit a repo and the phase never runs for it. needs_testing_label: the PR label that marks a change as needing post-deploy testing. staging_url: the deployed environment to drive. deploy_state_cmd: a command that reports whether a given sha has landed on each surface. notes: free-text traps worth remembering, appended as they cost time.",
   "staging_verification": {
     "github/acme-org/example-repo": {

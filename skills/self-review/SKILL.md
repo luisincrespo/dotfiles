@@ -16,6 +16,7 @@ allowed-tools:
   - Edit
   - Bash(git status:*)
   - Bash(git diff:*)
+  - Bash(git show:*)
   - Bash(git diff --name-only:*)
   - Bash(git log:*)
   - Bash(git rev-parse:*)
@@ -41,6 +42,9 @@ allowed-tools:
   - Bash(bun run:*)
   - Bash(bun test:*)
   - mcp__ide__getDiagnostics
+  # Step 3.6's second opinion. Narrow to the non-interactive review verb: this hands over your
+  # diff, so the grant should not also cover an interactive session or a subcommand that writes.
+  - Bash(codex exec:*)
 ---
 
 # self-review
@@ -81,11 +85,64 @@ Check two things, not one: **the defect is gone**, and **the neighbouring case s
 
 If the environment is broken for reasons unrelated to the diff, say so plainly and report what stayed unverified. Don't count "couldn't run it" as verified, and don't sink the run into fixing someone's local setup.
 
+## Step 3.6 — Second opinion, different model
+
+Only when this repo has a `second_opinion_review` entry in local config. No entry → skip and say
+so in one line; this is opt-in per repo, not per machine.
+
+A second model is worth running because the failure modes that survive Step 3 are the ones a
+reviewer shares with the author — the same blind spot that wrote the bug reads past it. A
+different model has different blind spots. That is the whole value, so **don't prompt it toward
+your own conclusions**: give it the change and ask what's wrong with it.
+
+**Hand it the content, and run it from outside the checkout.** Assemble the diff plus the full
+text of the changed files and pipe that to the configured `command` on stdin, instructions as the
+argument, with the working directory set to a scratch dir rather than the repo. For a **deleted**
+file the text is not in the tree — read it from `git show <base>:<path>`.
+
+> Why bother: a review CLI pointed at a working tree reads whatever it finds interesting. Asked to
+> review a one-line change in this repo, one read twenty-eight Claude Code session transcripts
+> belonging to an unrelated project.
+
+**This is mitigation, not isolation, and the difference matters.** A payload removes the *need* to
+explore and takes the repo out of arm's reach; it does not remove the *ability*. The process still
+has your filesystem and, in the case tested here, read access everywhere with no deny rules. Assume
+anything it decides to open can go to its vendor.
+
+That is precisely why this is **opt-in per repo**. Enable it where a reviewer reading beyond the
+payload would be acceptable anyway; leave it off where it would not. Don't reason from "we handed it
+only the diff" — that was the first claim this step made, and the first second-opinion run
+falsified it.
+
+Ask for correctness defects, and for an explicit verdict line when it finds none, so "clean" is
+distinguishable from "crashed" or "ran out of turns" — the same rule as Step 2's filter check.
+
+**It reviews; it does not write.** You apply every fix. A reviewer that edits is a second author,
+and then nobody reviewed the result.
+
 ## Step 4 — Triage & fix (loop)
 Triage fix-now vs batch:
 - **Fix now** — clear, bounded, and you can verify the fix (obvious bugs, a missing `const`, a reuse the simplify pass surfaced, a genuine a11y defect). Apply, then re-run the relevant Step-2 check.
 - **Batch** — anything ambiguous, opinion-driven, cross-cutting, or where the "fix" needs a judgment call (including a Sonar/linter rule that fights another). Present these to the user with `file:line` + why-unsure; don't guess.
 - After applying fixes, **re-review the changed areas** — don't stop at one pass; a fix can introduce a new issue. Loop Steps 2–4 until the automated gates are green and no clear findings remain.
+
+**Converging with the second opinion.** Its findings are not privileged: triage them exactly like
+your own, fix-now or batch. Then re-run Step 3.6 on the amended diff, up to `max_rounds`.
+
+Three things end the loop, and one of them must:
+
+- **Both clean.** Done.
+- **The cap.** A second model will always find *something* on a large diff, so rounds are capped
+  rather than run to silence. **The cap stops re-running the second opinion, not fixing.** A clear,
+  bounded defect found on the final round is still fixed and still verified by your own Step 2
+  gates — Step 4's ordinary rule — and the report says it landed after the last second-opinion
+  round, so nobody reads it as having been double-checked.
+- **A finding you think is wrong.** Do not edit code to make a reviewer stop saying it — that is
+  how a correct implementation gets bent toward a misreading. State both positions with
+  `file:line`, batch it, and let the user settle it.
+
+A finding already batched does not restart the loop; re-raising it is the same finding, not a new
+round.
 
 ## Step 5 — Convention sweep (reference, don't restate)
 Confirm the diff honors the repo's own `CLAUDE.md` and the user's global rules + feedback memories, rather than re-deriving them. **Read the repo's `CLAUDE.md` for its conventions** — versioning/changeset rules, styling and design-system preferences, file-layout rules — instead of assuming another project's. From the user's global rules, the recurring ones are: doc comments on new/edited types, functions and their members, each **shorter than the thing it documents** (coverage is the rule, length is the failure mode — keep only what a reader can't recover from the code, such as cross-file coupling, a platform quirk, or a caveat about what the function does not check, and cut prose that restates the signature); AAA structure in new/edited tests; strict equality (`!== undefined`, not `!= null`); no non-null assertions or `void`-operator fire-and-forget. Flag anything off as a fix-now or batch item.
