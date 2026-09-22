@@ -22,6 +22,28 @@
   "//bot_noise_body_markers_extra": "Extra HTML-comment markers that identify a bot comment as noise, added to the built-in list.",
   "bot_noise_body_markers_extra": [],
 
+  "//personal_backlog": "Where post-merge-cleanup writes a deferred item that doesn't warrant a tracker ticket. Not per-repo — it's your backlog, wherever you keep it. Configure the app/destination its connector needs; that destination is then the source of truth, so nothing is also written locally to drift from it. Unset, or its connector missing this session, falls back to a local markdown note.",
+  "personal_backlog": {
+    "app": "<connector or app name>",
+    "page_url": "<url of the page to append to>",
+    "page_id": "<its id, if the connector needs one>",
+    "shape": "<how one entry should be structured>",
+    "page_sections": [],
+    "fallback": "<what to do when the connector is unavailable>",
+    "notes": []
+  },
+
+  "//auto_approval": "Per-repo, keyed by 'github/<owner>/<repo>'. A repo where applying a label requests an automated review. pr-open adds it after opening when the diff meets opt_in_criterion. label: the label to add. mechanism: how it is triggered, for the report. opt_in / opt_in_criterion: when it applies and the test a diff must meet. notes: traps worth remembering. Applying it only requests a review — the bot triages risk itself and declines what it does not like — so it needs no approval gate. Omit a repo and pr-open never labels it.",
+  "auto_approval": {
+    "github/acme-org/example-repo": {
+      "label": "<label that requests the review>",
+      "mechanism": "<what the label triggers>",
+      "opt_in": "<when this applies>",
+      "opt_in_criterion": "<the test a diff must meet>",
+      "notes": []
+    }
+  },
+
   "//staging_verification": "Per-repo, keyed by 'github/<owner>/<repo>'. Enables deliver's B5 staging-verification phase for repos that gate deploys on manual testing. Omit a repo and the phase never runs for it. needs_testing_label: the PR label that marks a change as needing post-deploy testing. staging_url: the deployed environment to drive. deploy_state_cmd: a command that reports whether a given sha has landed on each surface. notes: free-text traps worth remembering, appended as they cost time.",
   "staging_verification": {
     "github/acme-org/example-repo": {
