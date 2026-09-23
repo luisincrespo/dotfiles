@@ -11,7 +11,7 @@ description: >-
 
 # deliver
 
-A conductor for the whole task lifecycle. It owns only the **spine** — phase sequencing, the gates between phases, a per-task **ledger**, and handoff — and delegates the actual work to focused sub-skills. It carries no conventions of its own: at every step it follows the repo `CLAUDE.md`, the nearest module `CLAUDE.md`/`AGENTS.md`, and the user's feedback memories.
+A conductor for the whole task lifecycle. It owns only the **spine** — phase sequencing, the gates between phases, a per-task **ledger**, and handoff — and delegates the actual work to focused sub-skills.
 
 **Mostly autonomous, past one unconditional stop.** The **plan checkpoint** always runs (A2). Beyond it, flow straight through the phases and stop only for a genuine **ambiguity** or **risk** gate (below). Don't manufacture check-ins other than those.
 
@@ -55,7 +55,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 
 1. **Resume** — `--resume`, or a ledger already exists for this task → load it and jump to the first unfinished phase/unit. Done.
 2. **No ledger** — resolve the **entry stage** from the strongest signal available (in precedence), then seed a ledger from current reality so the rest of the spine runs unchanged:
-   - **Explicit** — `--stage <understand|plan|execute|verify|open|babysit|verify-staging>` (alias `--from`) always wins.
+   - **Explicit** — `--stage` always wins.
    - **Session context** — if *this* conversation already establishes the task and how far it's gotten (we scoped it, agreed a plan, implemented/committed it, or opened a PR earlier this session), use that: set the task identity + entry stage and seed `requirements`/`plan_summary`/`deferred_items` from what was already done, so you don't re-run `understand-task`/plan on work you just did. It also disambiguates *which* task the current branch belongs to. (Caveat: a long or summarized session can be stale — treat session context as authoritative for *intent* but verify *artifacts* against the probe below.)
    - **Git/PR probe** — the objective ground truth: the sole signal on a cold start (no relevant session context), and the artifact cross-check otherwise. Probe platform + git state (`git remote get-url origin`, `git branch --show-current`, the default branch, and `gh pr list --head <branch>` / `glab mr list --source-branch <branch>`):
 
@@ -104,7 +104,7 @@ For each unit:
 
 ### B1. Execute
 - **Risk gate** before starting: stop and check with the user before public-API changes, auth/security-sensitive or PII paths, destructive/irreversible actions, anything on a protected branch, or clearly cross-team/higher-risk work (the user's habit: do the low-lift part now, hand off the rest → log the hand-off to `deferred_items`). **A change that grants its own author access or privileges always stops here**, even when the user asked for it and it looks routine — confirm the access is actually needed before opening, not after.
-- Create the unit's branch off its `base` in the task worktree. Implement the smallest change that satisfies this unit, following the repo's own `CLAUDE.md` (its versioning, styling and file-layout conventions) plus the user's global rules and memories (doc comments, strict equality, no non-null assertions, AAA tests, …). Anything you consciously punt → append to `deferred_items`. Commit (ticket-prefixed if the task has an id). Update the unit `status:"executing"`.
+- Create the unit's branch off its `base` in the task worktree. Implement the smallest change that satisfies this unit, following the repo's own `CLAUDE.md` plus the user's global rules and memories (doc comments, strict equality, no non-null assertions, AAA tests, …). Anything you consciously punt → append to `deferred_items`. Commit (ticket-prefixed if the task has an id). Update the unit `status:"executing"`.
 
 ### B2. Verify
 - Invoke `Skill(self-review)` with `--base <unit base>` and `--task-slug <slug>`. Address its fix-now items; relay its batch. **Loop B1↔B2** until the gates are green and no clear findings remain.
@@ -140,7 +140,7 @@ Everything else runs autonomously — including auto-fixing CI, addressing clear
 
 ## Handoff / resume
 
-The ledger is the single source of truth. On any pause (a gate, `/loop` between babysit cycles, end of session), it already holds `phase`, per-unit `status`, `deferred_items`, and PR numbers — so a later `deliver --resume` (or a fresh session) picks up exactly where this left off. A task started **outside** `deliver` (no ledger — PRs opened by hand or via `pr-open`) is picked up the same way: A0 adopts it from git/PR state (or `--stage`) into a fresh ledger, then resume behaves identically. Keep a one-line status when you pause: `deliver: task <slug> — unit <i>/<N> in <phase>; <what's next>.`
+The ledger is the single source of truth. On any pause (a gate, `/loop` between babysit cycles, end of session), it already holds `phase`, per-unit `status`, `deferred_items`, and PR numbers — so a later `deliver --resume` (or a fresh session) picks up exactly where this left off. Keep a one-line status when you pause: `deliver: task <slug> — unit <i>/<N> in <phase>; <what's next>.`
 
 ## Ticket status sync
 
@@ -151,7 +151,7 @@ Three milestones:
 - **→ In Review** — the first time the task has an open PR (after the first `pr-open`, or on adoption when A0 finds one). Fires once.
 - **→ Done** — owned by `post-merge-cleanup`, **not here**: `pr-babysit` self-wraps in `/loop`, so the merge happens detached from this conductor across later turns. `post-merge-cleanup` runs *at* merge completion, on the **last** unit, and does the Done transition there (gated on the same `ticket_sync.enabled`).
 
-Guards (all in the ref): skip silently if no ticket / the tracker MCP is absent this session / `--no-ticket-sync`; never move a ticket backward or fight a manual move (forward-only via a status-rank table); record each transition in `ticket_sync` so it's idempotent across `/loop` cycles and resumes. Set `TICKET_DONE_CONFIRM` to confirm before Done.
+Guards (all in the ref): skip silently if no ticket / the tracker MCP is absent this session / `--no-ticket-sync`; never move a ticket backward or fight a manual move (forward-only via a status-rank table); record each transition in `ticket_sync` so it's idempotent across `/loop` cycles and resumes.
 
 ## Learn from every iteration
 
@@ -159,12 +159,11 @@ Two triggers keep the pipeline sharpening:
 - **When the user corrects how you ran the cycle** — a phase they wanted skipped or added, a gate that should/shouldn't have stopped, a wrong-sized breakdown, a convention missed — treat it as a durable lesson, not a one-off.
 - **End-of-run reflection (proactive — do this, don't wait to be told).** When a run finishes — the task's last unit merges, or you pause/stop mid-way — take one beat and ask: *did anything about how this ran warrant a skill or memory edit?* (a gate that mis-fired, a phase you improvised, a breakdown that was the wrong size, a repeated manual step worth encoding, a convention you had to be reminded of). If yes, act on it now (routing + show-first below). If nothing surfaced, say so in one line and move on — never invent a lesson to seem diligent.
 
-Fold each real lesson into the **right** place: spine/gate/breakdown lessons here in `deliver`; stage-specific lessons into `understand-task` / `self-review` / the `pr-*` skills; durable facts into a memory. **A skill edit changes every future run, so show the exact edit first — which skill + section + the new/changed wording — and apply it only once the user confirms** (prefer refining or replacing an existing line over adding one). A one-off fact is a memory, not a skill rule — write those directly and mention them. Keep each skill lean — if an edit grows a section, cut a sentence elsewhere. This is how the pipeline gets sharper with use.
+Fold each real lesson into the **right** place: spine/gate/breakdown lessons here in `deliver`; stage-specific lessons into `understand-task` / `self-review` / the `pr-*` skills; durable facts into a memory. **A skill edit changes every future run, so show the exact edit first — which skill + section + the new/changed wording — and apply it only once the user confirms** (prefer refining or replacing an existing line over adding one). A one-off fact is a memory, not a skill rule — write those directly and mention them. If an edit grows a section, cut a sentence elsewhere.
 
 ## Hard constraints
 
-- Carry no conventions of your own — defer to repo `CLAUDE.md`, module `AGENTS.md`, and the user's memories at every step. Don't duplicate them here.
+- Carry no conventions of your own — defer to repo `CLAUDE.md`, the nearest module `CLAUDE.md`/`AGENTS.md`, and the user's memories at every step. Don't duplicate them here.
 - Never start execution on a `PROTECTED_BRANCHES` branch. Never merge outside `pr-merge`; never delete a branch/worktree outside `post-merge-cleanup`.
 - Respect every sub-skill's own hard constraints (rebase/force-push rules, `--no-verify` limits, never touching human threads, no Slack without approval, no follow-up filed without approval).
 - Outward-facing written content — PR titles/descriptions (`pr-open`) and review-thread replies (`pr-babysit`) — is written in Luis's voice via the `voice` skill (see their **Voice** notes); a reply to a human still needs his approval.
-- Stop at the gates; otherwise keep the task moving to done.
