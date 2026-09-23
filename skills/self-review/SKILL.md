@@ -17,7 +17,6 @@ allowed-tools:
   - Bash(git status:*)
   - Bash(git diff:*)
   - Bash(git show:*)
-  - Bash(git diff --name-only:*)
   - Bash(git log:*)
   - Bash(git rev-parse:*)
   - Bash(git merge-base:*)
@@ -49,7 +48,7 @@ allowed-tools:
 
 # self-review
 
-The **verify** stage: put your own diff through the same scrutiny a reviewer would, *before* asking anyone else to look. Distinct from `pr-review` (which reviews other people's PRs) — this is your work, and the point is to catch problems while they're cheap to fix. `/code-review` is one input this composes, not the whole thing.
+The **verify** stage: put your own diff through the same scrutiny a reviewer would, *before* asking anyone else to look. Distinct from `pr-review` (which reviews other people's PRs) — this is your work, and the point is to catch problems while they're cheap to fix.
 
 ## Args (all optional)
 
@@ -72,13 +71,13 @@ Fix failures at the source (preferred) or test. Run the formatter over **only th
 
 ## Step 3 — Compose the review passes
 
-**Hand every pass the diff's location explicitly, and make it prove it found one.** A review command or agent resolves its target from the shell's working directory, which under `deliver` is the main checkout, not the task worktree — so it reviews a clean tree and wanders into unrelated history without saying so. Put the worktree path in the prompt and require the reviewer to confirm a non-empty diff touching the expected paths *before* reviewing. (Step 3.6's second opinion is the exception: it gets the diff itself, never a path to the checkout, for the reasons given there.) A pass that can't state what it looked at has not run, whatever it reports. This is Step 2's "a filter over a failed command's output is not evidence" in another shape: an empty diff and a clean diff produce the same verdict.
+**Hand every pass the diff's location explicitly, and make it prove it found one.** A review command or agent resolves its target from the shell's working directory, which under `deliver` is the main checkout, not the task worktree — so it reviews a clean tree and wanders into unrelated history without saying so. Put the worktree path in the prompt and require the reviewer to confirm a non-empty diff touching the expected paths *before* reviewing. (Step 3.6's second opinion is the exception: it gets the diff itself, never a path to the checkout, for the reasons given there.) A pass that can't state what it looked at has not run, whatever it reports — an empty diff and a clean diff produce the same verdict.
 
 Run these over the diff and collect findings:
 - **Correctness / bugs** (the primary hunt) — `/code-review` is a native built-in *command*, not a Skill-tool skill, so it can't be called via `Skill()`. Default (autonomous): launch a native review-focused `Agent` over the diff. Alternative: the user runs `/code-review` themselves and feeds findings back.
 - **Reuse / simplification** — `Skill(simplify)` (native built-in; quality only, applies its own fixes).
 - **Security** — `Skill(security-review)` (native built-in) over the pending changes.
-- **Accessibility (frontend only)** — launch a native `Agent` (general-purpose) to review the changed frontend files against WCAG 2.2 AA in the source. Skip when no frontend files changed. *(Deliberately plugin-free. If the user later vets a dedicated accessibility-reviewer plugin, its agent can be swapped in here — but this pipeline defaults to Anthropic-native tools + the user's own skills only.)*
+- **Accessibility (frontend only)** — launch a native `Agent` (general-purpose) to review the changed frontend files against WCAG 2.2 AA in the source. Skip when no frontend files changed. *(Deliberately plugin-free: native tools and the user's own skills, until the user vets a dedicated accessibility-reviewer plugin to swap in.)*
 Run the independent passes in parallel where the tooling allows.
 
 ## Step 3.5 — Exercise it
@@ -91,7 +90,7 @@ If the environment is broken for reasons unrelated to the diff, say so plainly a
 ## Step 3.6 — Second opinion, different model
 
 Only when this repo has a `second_opinion_review` entry in local config. No entry → skip and say
-so in one line; this is opt-in per repo, not per machine.
+so in one line.
 
 A second model is worth running because the failure modes that survive Step 3 are the ones a
 reviewer shares with the author — the same blind spot that wrote the bug reads past it. A
@@ -118,7 +117,7 @@ only the diff" — that was the first claim this step made, and the first second
 falsified it.
 
 Ask for correctness defects, and for an explicit verdict line when it finds none, so "clean" is
-distinguishable from "crashed" or "ran out of turns" — the same rule as Step 2's filter check.
+distinguishable from "crashed" or "ran out of turns".
 
 **It reviews; it does not write.** You apply every fix. A reviewer that edits is a second author,
 and then nobody reviewed the result.
@@ -148,7 +147,7 @@ A finding already batched does not restart the loop; re-raising it is the same f
 round.
 
 ## Step 5 — Convention sweep (reference, don't restate)
-Confirm the diff honors the repo's own `CLAUDE.md` and the user's global rules + feedback memories, rather than re-deriving them. **Read the repo's `CLAUDE.md` for its conventions** — versioning/changeset rules, styling and design-system preferences, file-layout rules — instead of assuming another project's. From the user's global rules, the recurring ones are: doc comments on new/edited types, functions and their members, each **shorter than the thing it documents** (coverage is the rule, length is the failure mode — keep only what a reader can't recover from the code, such as cross-file coupling, a platform quirk, or a caveat about what the function does not check, and cut prose that restates the signature); AAA structure in new/edited tests; strict equality (`!== undefined`, not `!= null`); no non-null assertions or `void`-operator fire-and-forget. Flag anything off as a fix-now or batch item.
+Confirm the diff honors the repo's own `CLAUDE.md` and the user's global rules + feedback memories, rather than re-deriving them. **Read the repo's `CLAUDE.md` for its conventions** — versioning/changeset rules, styling and design-system preferences, file-layout rules — instead of assuming another project's. The global rules are already loaded; the recurring ones written nowhere else: doc comments each **shorter than the thing they document** (coverage is the rule, length is the failure mode — keep only what a reader can't recover from the code, such as cross-file coupling, a platform quirk, or a caveat about what the function does not check); strict equality (`!== undefined`, not `!= null`); no non-null assertions or `void`-operator fire-and-forget. Flag anything off as a fix-now or batch item.
 
 ## Output
 When the loop settles, report: gates status (green/what's red), what you ran it against (or why you couldn't), what you fixed, and the batch (unresolved items for the user). If `--task-slug` was set, fold unresolved items into the task ledger's notes. This stage does **not** commit, push, or open a PR — it leaves a clean, reviewed diff for the next stage (`pr-open`).
@@ -175,4 +174,4 @@ Route by **portability**, which decides the file:
 - Don't invent findings to seem thorough — a clean diff is a valid result.
 - Fix at the right layer: a real product bug the change exposes is fixed in source, not papered over in a test. For a problem *outside the task* — and the task decides that, since a refactor's whole point is changing existing code — take it only if it's a genuinely quick win; otherwise batch it rather than silently widening the diff.
 - When the change bundles fixes for several diagnosed causes, confirm each is load-bearing by removing it alone and re-testing. A cause inferred from reading code, rather than isolated by experiment, may not exist — and a fix for a non-existent cause still passes every test you write for it. The same applies to a causal story you inherited: before repeating a brief's or ticket's account of what went wrong in a commit message or PR description, check it against the code, and trace the whole path rather than stopping at the one suspect it names. Ruling that suspect out is not the same as finding the cause, and a misattributed cause ships as documentation and invalidates the reviewer test plan built on it.
-- Never bypass a check to make it pass. Format only changed files.
+- Never bypass a check to make it pass.
