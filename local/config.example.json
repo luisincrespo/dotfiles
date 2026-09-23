@@ -44,6 +44,15 @@
     }
   },
 
+  "//review_request_mechanism": "How pr-open Step 7 asks for review. 'github-reviewers' proposes reviewers on the PR itself and skips Slack, since pinging as well splits the thread. Unset means a Slack draft via voice.",
+  "review_request_mechanism": "",
+
+  "//review_request_channel": "Slack channel the Step 7 draft is addressed to, when Slack is the mechanism.",
+  "review_request_channel": "",
+
+  "//review_request_handle": "Group handle to open that draft with. Preferred over naming individuals — it reaches whoever is free, which is how a claim-by-reaction channel works. Unset falls back to whoever Luis names, else an @<reviewer> placeholder.",
+  "review_request_handle": "",
+
   "//second_opinion_review": "Per-repo, keyed by 'github/<owner>/<repo>'. Turns on self-review Step 3.6, a second correctness pass by a different model. Omit a repo and the step never runs there — it is opt-in per repo because the reviewer is handed your diff, and where that goes is a per-codebase decision. command: a non-interactive CLI taking instructions as an argument and reading content on stdin. It is run from a scratch directory, not the repo, so include whatever flag that CLI needs to accept a non-repo working directory (codex needs --skip-git-repo-check). max_rounds: how many times the convergence loop may re-run it after fixes (2 is usually enough; the cap exists because a second model will always find something on a large diff). notes: traps worth remembering.",
   "second_opinion_review": {
     "github/acme-org/example-repo": {
