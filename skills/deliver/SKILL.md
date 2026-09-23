@@ -115,6 +115,7 @@ For each unit:
 
 ### B4. Babysit → merge → cleanup
 - Invoke `Skill(pr-babysit)` with the unit's PR ref, `--task-slug <slug>` (and `--interval` if set). It loops on CI/comments/keep-current and, when merge-ready, chains `Skill(pr-merge)` → `Skill(post-merge-cleanup)`.
+- **`pr-merge` does not confirm before merging.** If the user adds a merge precondition the platform can't see (an RC cut, a freeze) and then steps away, stop the loop rather than let the condition lift unattended; resume with `--resume`.
 - `post-merge-cleanup` marks the unit `merged`, advances any stacked dependents, and — on the **last** unit — proposes the task's `deferred_items` as follow-ups (approval-gated).
 - Advance to the next unit until all are `merged`.
 
