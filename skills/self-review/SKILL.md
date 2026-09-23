@@ -71,6 +71,9 @@ Run the repo-appropriate checks scoped to the change (don't reformat the world):
 Fix failures at the source (preferred) or test. Run the formatter over **only the changed files** (`npx prettier --write <files>`, `ruff format`, `gofmt -w`, `cargo fmt --`, whatever the repo uses), never a format-everything target — it reformats unrelated code and buries the real diff.
 
 ## Step 3 — Compose the review passes
+
+**Hand every pass the diff's location explicitly, and make it prove it found one.** A review command or agent resolves its target from the shell's working directory, which under `deliver` is the main checkout, not the task worktree — so it reviews a clean tree and wanders into unrelated history without saying so. Put the worktree path in the prompt and require the reviewer to confirm a non-empty diff touching the expected paths *before* reviewing. (Step 3.6's second opinion is the exception: it gets the diff itself, never a path to the checkout, for the reasons given there.) A pass that can't state what it looked at has not run, whatever it reports. This is Step 2's "a filter over a failed command's output is not evidence" in another shape: an empty diff and a clean diff produce the same verdict.
+
 Run these over the diff and collect findings:
 - **Correctness / bugs** (the primary hunt) — `/code-review` is a native built-in *command*, not a Skill-tool skill, so it can't be called via `Skill()`. Default (autonomous): launch a native review-focused `Agent` over the diff. Alternative: the user runs `/code-review` themselves and feeds findings back.
 - **Reuse / simplification** — `Skill(simplify)` (native built-in; quality only, applies its own fixes).
