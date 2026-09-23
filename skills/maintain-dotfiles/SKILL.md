@@ -5,8 +5,8 @@ description: >-
   the public repo or the private one, group it by concern, commit, push, and resync the tools
   that consume it. Use when changes are sitting uncommitted in ~/code/dotfiles, when a skill
   has just amended itself, or on a recurring watch. Knows the public/private split, the leak
-  guard's three entry points, and which surfaces go stale. Only for this repo pair; for any
-  other repo use deliver.
+  guard's three entry points, and which surfaces go stale. On idle rounds, trims whichever skill
+  has grown most. Only for this repo pair; for any other repo use deliver.
 allowed-tools:
   - Read
   - Grep
@@ -86,7 +86,7 @@ the same run on demand.
 `git status --porcelain` in both repos, and `git fetch` to see if either is behind. Behind →
 `git pull` (merge, never rebase — global rule 10) before anything else.
 
-Clean and in sync → say so in one line and stop. That is the common outcome.
+Clean and in sync → skip to Step 8. That is the common outcome, and it's the one time there's room to trim.
 
 ## Step 2 — Is anything still being written?
 
@@ -175,6 +175,38 @@ Ask once whether the round warranted a durable edit. "Nothing to capture" is the
 Route by portability: repo- or employer-specific facts → `~/.agents/local/`; a lesson that
 holds anywhere → the relevant skill; a durable one-off → a memory. Show the exact edit and
 apply it only once the user confirms.
+
+## Step 8 — Trim (the counterweight to Step 7)
+
+Every skill ends by capturing learnings, which adds rules; nothing removed them. In one week the
+skills grew 16% — `self-review` 67% — and `deliver` loads seven of them per run. Growth is the
+default, so trimming has to be a step, not a hope.
+
+**When.** On an idle round — the tree is clean, so there's nothing else to do — pick the one skill
+that has grown most since its last `Trim` commit, if that's over ~15%. One skill per round, so a
+trim never arrives as a wall of diffs.
+
+**Cut what doesn't change behaviour:** a rule stated twice, in one skill or restated from
+`AGENTS.md` or a sibling; a rule a later one supersedes; a second or third illustration of one
+point; hedging and throat-clearing.
+
+**Keep the reasons, even though they're the longest part.** The *why* is what lets a rule reach the
+cases it didn't name, and an incident anchor ("it read twenty-eight transcripts") is what stops the
+next editor deleting a rule as paranoia. Cut those and the imperative survives with less effect —
+which is changing impact, not trimming.
+
+**Cutting a step from the pipeline needs evidence, not a hunch.** A step earns removal when it
+reliably produces nothing — `self-review` Step 6 already records passes that come back empty — or
+when it re-does what an earlier stage already established. "This seems slow" is not enough; a step
+that catches one bad merge in twenty is worth its time on the other nineteen.
+
+**Check nothing was lost.** Where the repo has a `second_opinion_review` entry, hand it the old and
+new text and ask for any instruction the old version gives that the new one doesn't. That's a
+precise question, and a second model is better at it than the author of the cut.
+
+Then it's a skill edit like any other: show the exact diff and apply only on confirmation. One skill
+per commit, subject starting `Trim`, with the before and after word counts in the body — so the
+next round can find the last trim and measure growth since.
 
 ## Hard constraints
 
