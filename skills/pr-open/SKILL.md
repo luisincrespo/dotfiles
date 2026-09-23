@@ -35,6 +35,14 @@ allowed-tools:
   - mcp__playwright__browser_take_screenshot
   - mcp__playwright__browser_resize
   - mcp__playwright__browser_close
+  - mcp__claude-in-chrome__tabs_context_mcp
+  - mcp__claude-in-chrome__tabs_create_mcp
+  - mcp__claude-in-chrome__navigate
+  - mcp__claude-in-chrome__find
+  - mcp__claude-in-chrome__read_page
+  - mcp__claude-in-chrome__computer
+  - mcp__claude-in-chrome__file_upload
+  - mcp__claude-in-chrome__tabs_close_mcp
 ---
 
 # pr-open
