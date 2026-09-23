@@ -115,7 +115,9 @@ CI passed on the source alone; a semantic conflict with the current target can s
    - `git merge-base --is-ancestor origin/<target_branch> HEAD` exit 0 → up-to-date, skip to checks. Else `git merge --no-ff --no-commit origin/<target_branch>` (`merged_locally = true`); unexpected conflict → `git merge --abort`, go to Phase 3.
    - **Always abort the probe merge before returning, on every path.** An interrupted run otherwise
      leaves the worktree mid-merge with hundreds of staged files; the next session must
-     `git merge --abort` before anything else. Check `MERGE_HEAD` when resuming.
+     `git merge --abort` before anything else. Check `MERGE_HEAD` when resuming. If you ran a generator
+     or formatter against the probe, `git checkout -- <its outputs>` first; `merge --abort` refuses
+     on a file that differs from the index.
    - **Re-run the intersection immediately before merging, not once at the start.** On a busy repo
      the target can move materially between verification and merge — one branch went from +73 to
      +165 commits, and its overlap from 2 files to 14, in a single overnight gap.
