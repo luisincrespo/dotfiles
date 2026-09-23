@@ -68,7 +68,7 @@ repo's hooks stay authoritative, so the two can't drift — don't edit the copy.
 | Mode | Files | Why |
 |---|---|---|
 | **Linked** | `skills/`, `CLAUDE.md` | Edited deliberately; writing back to the repo is the point |
-| **Merged on install** | the five keys in `settings.stable.json` | Preferences that should hold on every machine |
+| **Merged on install** | the six keys in `settings.stable.json` | Preferences that should hold on every machine |
 | **Yours alone** | everything else in `settings.json`; `local/config.json`; `local/commit-denylist.txt` | Rewritten by the tool, or machine-specific by nature |
 
 `settings.json` can't be linked: Claude Code rewrites it at runtime, and a `/model` switch strips the

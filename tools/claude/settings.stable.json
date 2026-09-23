@@ -19,7 +19,9 @@
     "  tui                      'fullscreen' takes over the terminal instead of scrolling inline.",
     "  skipAutoPermissionPrompt Suppresses the automatic permission prompt on startup.",
     "  enabledPlugins           Plugins to turn on. Only public-marketplace ones belong here;",
-    "                           install them first (see README), an unknown one is a no-op."
+    "                           install them first (see README), an unknown one is a no-op.",
+    "  preferredNotifChannel    How Claude signals it needs you. 'terminal_bell' rings the",
+    "                           terminal's bell, which works in any terminal."
   ],
 
   "permissions": {
@@ -28,6 +30,7 @@
   "effortLevel": "xhigh",
   "tui": "fullscreen",
   "skipAutoPermissionPrompt": true,
+  "preferredNotifChannel": "terminal_bell",
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true
   }
