@@ -28,7 +28,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 - `--stage <understand|plan|execute|verify|open|babysit|verify-staging>` (alias `--from`): force the entry stage for a task with no ledger — e.g. `--stage babysit` on a branch whose PR is already open. Overrides A0's auto-detection.
 - `--interval <time>`: passed through to `pr-babysit`'s loop.
 - `--no-ticket-sync`: don't touch the associated tracker ticket's status (see `## Ticket status sync`). Default: sync when a ticket + a connected tracker exist.
-- `--no-review-ping`: passed through to `pr-open` — skip drafting the review-request ping.
+- `--no-review-ping`: passed through to `pr-open` — skip the review request (the reviewer proposal, or the Slack draft where that's the mechanism).
 
 ## Config
 
@@ -110,7 +110,7 @@ For each unit:
 - Invoke `Skill(self-review)` with `--base <unit base>` and `--task-slug <slug>`. Address its fix-now items; relay its batch. **Loop B1↔B2** until the gates are green and no clear findings remain.
 
 ### B3. Open
-- Invoke `Skill(pr-open)` with `--target <unit base>` and `--task-slug <slug>`. It creates the PR (draft-if-stacked) and records `pr_number` / `status:"open"` in the unit. For a **ready** PR it also drafts (doesn't send) a review-request Slack ping via `voice` (Step 7) — pass `--no-review-ping` through.
+- Invoke `Skill(pr-open)` with `--target <unit base>` and `--task-slug <slug>`. It creates the PR (draft-if-stacked) and records `pr_number` / `status:"open"` in the unit. For a **ready** PR it also asks for review (Step 7): reviewers proposed for the PR itself where the repo works that way, else a Slack ping drafted via `voice`. Neither blocks — the PR is already open, so carry straight on to B4 and add reviewers when he answers. Pass `--no-review-ping` through.
 - **Ticket → In Review** (once per task): the first time the task has an open PR — right after this `pr-open` returns for the first unit, or on adoption when A0 found an open PR — move the ticket forward per `## Ticket status sync`.
 
 ### B4. Babysit → merge → cleanup
