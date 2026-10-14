@@ -103,7 +103,7 @@ Then, driven by the breakdown:
 For each unit:
 
 ### B1. Execute
-- **Risk gate** before starting: stop and check with the user before public-API changes, auth/security-sensitive or PII paths, destructive/irreversible actions, anything on a protected branch, or clearly cross-team/higher-risk work (the user's habit: do the low-lift part now, hand off the rest → log the hand-off to `deferred_items`). **A change that grants its own author access or privileges always stops here**, even when the user asked for it and it looks routine — confirm the access is actually needed before opening, not after.
+- **Risk gate** before starting: stop and check with the user before public-API changes, auth/security-sensitive or PII paths, destructive/irreversible actions, anything on a protected branch, or clearly cross-team/higher-risk work (the user's habit: do the low-lift part now, hand off the rest → log the hand-off to `deferred_items`). **A change that grants its own author access or privileges always stops here**, even when the user asked for it and it looks routine — confirm the access is actually needed before opening, not after. **Removing or weakening a test is a coverage decision, never a silent fallback** — even when an approved plan listed it as one: stop and confirm it with evidence nothing is lost before opening.
 - Create the unit's branch off its `base` in the task worktree. Implement the smallest change that satisfies this unit, following the repo's own `CLAUDE.md` plus the user's global rules and memories (doc comments, strict equality, no non-null assertions, AAA tests, …). Anything you consciously punt → append to `deferred_items`. Commit (ticket-prefixed if the task has an id). Update the unit `status:"executing"`.
 
 ### B2. Verify
