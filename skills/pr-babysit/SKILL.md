@@ -192,6 +192,14 @@ Conflicts or a stale base must be fixed first. After resolving, skip Phases 1-2 
 - **GitLab**: `glab api "projects/<repo_id>/merge_requests/<number>/pipelines" | jq '.[0]'` → `pipeline_id`, `status`.
 - **GitHub**: `gh api "repos/<repo_id>/commits/<head_sha>/check-runs?per_page=100" --paginate` + `gh api "repos/<repo_id>/commits/<head_sha>/status"`. Synthesize `status`: any non-`completed`/pending → `running`; any `failure`/`timed_out`/`action_required` → `failed`; all success/skipped/neutral → `success`. `pipeline_id = head_sha`.
 
+> **A `statusCheckRollup` entry without a `status` is not a pending check.**
+> The rollup mixes `CheckRun` nodes with legacy `StatusContext` ones (Vercel
+> deploys, external reviewers), and a StatusContext carries `state`, never
+> `status` — so a bare `status != "COMPLETED"` test reads every one of them as
+> forever-running and CI never looks finished. Filter on
+> `__typename == "CheckRun"` before testing `status`, in the rollup read and in
+> the Monitor signature alike.
+
 > **Far fewer checks than the previous head_sha means conflicts, not broken CI.**
 > GitHub cannot build a merge ref for a conflicting PR, and `pull_request`
 > workflows run against that ref, so they never start — leaving only the
