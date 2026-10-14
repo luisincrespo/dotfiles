@@ -130,6 +130,34 @@ relocates the problem instead of fixing it. For a type change, enumerate produce
 tests**: loosely typed spec helpers (`Array<{ field: string }>`) are what a production-only sweep
 misses, so "free to tighten" becomes a red build.
 
+### 3.5 Run it end to end, when it's worth it
+Reading the diff tells you what the code says; running it tells you what it does. Most PRs don't
+need it: when the change is logic its unit tests already pin down, CI running them is the
+verification. Run it only when **both** hold:
+
+- **It's worth it** — a substantial UI change, or a behavior change built on an involved
+  interaction: multi-step flows, state carried across screens, drag and drop, focus and keyboard
+  handling, anything whose correctness lives in how the pieces combine rather than in one function
+  a test can call.
+- **It can run locally** — the repo has a dev setup you can bring up (`Skill(run)`, the repo's own
+  local-dev skill, its `local_e2e` entry in local config) without infra you lack.
+
+Either fails → skip it, and mention that in one line only if the user might expect a run.
+
+When you do run it:
+- **Check it out in its own worktree**, never by switching the user's checkout — they may have
+  work in flight there. Commit and push nothing to the author's branch.
+- **Drive the actual path as `self-review` Step 3.5 does** — same rules for shared environments,
+  same two checks: the change works as intended, and the neighbouring case still does. A finding
+  you reproduced is one the author can't wave off; a suspicion that doesn't reproduce gets cut
+  before it costs the review credibility.
+- **A fork, or an author outside the org → ask before running anything.** Running the branch
+  executes their code on this machine, install scripts included.
+- With the round's drafts, tell the user which states you exercised and what stayed unverified.
+  That's for the user, not a comment — "I ran it and it works" isn't review feedback.
+- Environment broken for reasons unrelated to the PR → say so and review statically; don't sink
+  the review into fixing someone's local setup.
+
 ### 4. Review with the user, in rounds
 Present each round's draft comments with `file:line` + exact text. Let the user cut, reword,
 re-home points between rounds, and request code examples. Lock wording before moving on.
