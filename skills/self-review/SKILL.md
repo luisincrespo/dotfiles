@@ -103,8 +103,11 @@ your own conclusions**: give it the change and ask what's wrong with it.
 
 **Hand it the content, and run it from outside the checkout.** Assemble the diff plus the full
 text of the changed files and pipe that to the configured `command` on stdin, instructions as the
-argument, with the working directory set to a scratch dir rather than the repo. For a **deleted**
-file the text is not in the tree — read it from `git show <base>:<path>`.
+argument, with the working directory set to a scratch dir rather than the repo. Take the diff from
+the merge-base, `git diff $(git merge-base origin/<base> HEAD)`: a two-dot `git diff origin/<base>`
+also carries every commit the base gained since you branched, and the reviewer then reports on
+other people's code (a 417 KB payload and four bogus findings, once). For a **deleted** file the
+text is not in the tree — read it from `git show <base>:<path>`.
 
 > Why bother: a review CLI pointed at a working tree reads whatever it finds interesting. Asked to
 > review a one-line change in this repo, one read twenty-eight Claude Code session transcripts
