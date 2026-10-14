@@ -85,6 +85,10 @@ Static passes miss what only shows up at runtime. When the change is user-facing
 
 Check two things, not one: **the defect is gone**, and **the neighbouring case still works** — a guard added to fix one path is the likeliest thing to have silently disabled another. Name the states you exercised in the report.
 
+**Exercise with data you change in the session, not only what's already there.** A feature that reads a derived store (a search index, a cache) can look right on records some other path already brought up to date and still miss everything your change creates. Archived-template search passed on a template archived long ago and returned nothing for one archived minutes earlier, because archiving never reindexes.
+
+**When the change is gated on a data migration, exercise both sides of it.** Migrating the environment to make the new path reachable destroys the state the change actually ships into, and that pre-migration state is what every user sees on day one. Backfilling a column locally so the new branch had something to read left the un-backfilled path — the whole production estate until someone runs the script — verified by nothing.
+
 If the environment is broken for reasons unrelated to the diff, say so plainly and report what stayed unverified. Don't count "couldn't run it" as verified, and don't sink the run into fixing someone's local setup.
 
 ## Step 3.6 — Second opinion, different model
