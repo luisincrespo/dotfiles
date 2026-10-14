@@ -30,6 +30,7 @@
     "shape": "<how one entry should be structured>",
     "page_sections": [],
     "fallback": "<what to do when the connector is unavailable>",
+    "layout": "<where a new entry goes, and how a finished one is marked done>",
     "notes": []
   },
 

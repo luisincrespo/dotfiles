@@ -63,7 +63,7 @@ Produce a crisp, scannable brief:
 
 ## Step 4 — Seed the ledger
 - **Deferred items:** anything clearly out of scope but worth doing later → `deferred_items` (`{summary, why_deferred, risk, suggested_owner}`).
-- **Ticket:** if Step 1 resolved an associated ticket, record `task_ref = {tracker, id, url, current_status}` (capture the current workflow status so the caller knows the starting point). If a ticket + a connected tracker MCP both exist, set `ticket_sync.enabled = true` so `deliver` advances the ticket (In Progress → In Review → Done) as the task moves; the caller's `--no-ticket-sync` overrides. No ticket, or no tracker connector → leave `task_ref: null` / `ticket_sync.enabled: false`.
+- **Ticket:** if Step 1 resolved an associated ticket, record `task_ref = {tracker, id, url, current_status}` (capture the current workflow status so the caller knows the starting point). If a ticket + a connected tracker MCP both exist, set `ticket_sync.enabled = true` so `deliver` advances the ticket (In Progress → In Review → Done) as the task moves; the caller's `--no-ticket-sync` overrides. No ticket, or no tracker connector → leave `task_ref: null` / `ticket_sync.enabled: false`. A task that came from the personal backlog (local config `personal_backlog`) records `task_ref = {tracker: "personal_backlog", url}` instead, so finishing the task marks that entry done.
 - If `--task-slug` was passed, write `requirements`, `acceptance`, `deferred_items`, and `task_ref`/`ticket_sync` into the task ledger; else include them in the reported brief so the caller can carry them.
 
 ## Step 5 — Ambiguity gate

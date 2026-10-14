@@ -118,7 +118,7 @@ If it still exists (`git -C <main_root> show-ref --verify --quiet refs/heads/<so
 `rm -f ~/.claude/cache/deliver/pr-<platform>-<repo-dashes>-<number>.json`.
 
 ## Step 5.5: Ticket → Done (last unit)
-Run only when `--task-slug` is set, this was the **last** unit (all `units[]` in the ledger `status:"merged"`), and `ticket_sync.enabled == true` with a `task_ref` ticket. The task is now fully merged → move its ticket to Done: Read `refs/ticket-status.md` and follow it with target intent **`done`** (forward-only — skips silently if already Done, or if the tracker MCP is absent this session). Autonomous by default; if the ledger's `ticket_sync` carries a done-confirm flag, propose the transition and wait for approval instead. This is the definitive completion moment — `deliver` can't do it (the merge happened detached inside `pr-babysit`'s `/loop`), so it lives here.
+Run only when `--task-slug` is set, this was the **last** unit (all `units[]` in the ledger `status:"merged"`), and `ticket_sync.enabled == true` with a `task_ref` ticket. The task is now fully merged → move its ticket to Done: Read `refs/ticket-status.md` and follow it with target intent **`done`** (forward-only — skips silently if already Done, or if the tracker MCP is absent this session). Autonomous by default; if the ledger's `ticket_sync` carries a done-confirm flag, propose the transition and wait for approval instead. This is the definitive completion moment — `deliver` can't do it (the merge happened detached inside `pr-babysit`'s `/loop`), so it lives here. When `task_ref.tracker == "personal_backlog"`, mark that page done per `personal_backlog.layout` instead — same `--task-slug` and last-unit gates, but **not** the `ticket_sync.enabled` one, which `understand-task` never sets for a backlog page — a finished item left looking open gets picked up twice.
 
 ## Step 6: Raise deferred follow-ups (NEW — approval-gated)
 This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when `--task-slug` is set AND this was the **last** unit of the task (all `units[]` in the ledger are `status:"merged"`). If earlier units remain open, skip for now — the last unit's cleanup will do it.
@@ -134,7 +134,7 @@ This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when
    - Jira/Linear, or a repo that ships its own ticket skill: delegate to that skill / MCP rather than guessing field values. Do NOT invent tracker field values.
    - **No ticket warranted** (too small, or the user says so): write it to the configured
      personal backlog (local config `personal_backlog`) as one self-contained, pickup-ready
-     page — that destination is the source of truth, so don't also leave a local copy to
+     page, placed where its `layout` says new entries go — that destination is the source of truth, so don't also leave a local copy to
      drift. With none configured, or its connector unavailable this session, fall back to a
      local markdown note and say which you used.
 4. Announce what was filed with links; leave the un-filed items in the note. Then clear the filed items from the ledger (keep the un-filed ones for later).
@@ -159,5 +159,5 @@ Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a 
 - Branch/worktree deletion happens ONLY here, only after a confirmed merge, only for the merged `<source_branch>`, always from `<main_root>`. Never delete an unmerged branch. Retarget stacked dependents (Step 1) **before** deleting the base.
 - Never `--force` a push. `--no-verify` only for the sanctioned Step-1 forward-merge case. Leave `rm -rf` out of any broad allowlist — `worktree remove --force` covers the normal case; the `rm -rf` fallback stays prompt-gated.
 - **Never file a follow-up ticket/issue without explicit user approval** (Step 6). Never send Slack messages.
-- The **Done** ticket transition (Step 5.5) is forward-only and gated on `ticket_sync.enabled` — never move a ticket backward or fight a manual status; skip silently if the tracker MCP is absent.
+- The **Done** ticket transition (Step 5.5) is forward-only and gated on `ticket_sync.enabled` (a personal-backlog page is exempt) — never move a ticket backward or fight a manual status; skip silently if the tracker MCP is absent.
 - **Permissions note.** `git push origin --delete`, `git worktree unlock`, `git worktree prune`, and `gh issue create` may prompt the first time — expected; an agent can't self-grant them. Add Bash rules yourself for zero-prompt cleanup if desired; keep `rm -rf` out.
