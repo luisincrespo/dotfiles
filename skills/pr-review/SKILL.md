@@ -209,10 +209,17 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
   don't withhold a real one to avoid another round either. If it's worth describing to the user in
   detail, it's worth either raising or explicitly deciding to accept.
 - **Default to monitoring until every comment is fully addressed, then approve** — don't stop at
-  one re-review. When the user has handed off ("monitor this", "approve once addressed"), poll
-  the PR (self-pace via `/loop` / scheduled wake-ups; cadence in hours, not minutes — human
-  feedback is slow) and re-run this step on each new push or reply until all comments are
-  resolved, then do Step 7. Surface anything that needs the user (a reply asking a question, a
+  one re-review. When the user has handed off ("monitor this", "approve once addressed"), wrap in
+  `Skill(loop)` and let it arm a **Monitor** on the PR, as `pr-babysit` does, rather than waking on
+  a timer. A shell loop polls `gh` every couple of minutes and wakes you only when the signature
+  changes, so a push or reply lands within minutes instead of up to an hour later, and quiet
+  stretches cost nothing. Build the signature from `state`, `head_sha`, and the review,
+  review-comment and issue-comment counts **taken excluding the account this session posts as**,
+  since your own replies would otherwise wake you on your own previous cycle. Leave CI out (see
+  below). When an API call fails, skip that poll instead of emitting a placeholder, which would
+  fire twice. A Monitor expires after 30 minutes at most, so re-arm it on each expiry, and end any
+  interactive turn about this PR by re-arming too: a conversation replaces the turn that would
+  have done it. On each wake, re-run this step until all comments are resolved, then do Step 7. Surface anything that needs the user (a reply asking a question, a
   pushback you don't buy, CI gone red) instead of forcing resolution. Stop polling only when
   approved or the user calls it off. Watch commits and comments, not CI state — a red check on an
   unchanged SHA is noise — and verify any alarm your own tooling raises against the PR before
