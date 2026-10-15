@@ -278,13 +278,16 @@ Then:
 
 ## Voice (write comments like this)
 
-- Lead with the ask, keep it short. Plain words. After drafting, do a trim pass — cut hedges,
-  qualifiers, and idiom doing rhetorical rather than factual work ("that lands", "fair enough",
+- Lead with the ask, then the problem as someone using it would see it; keep the mechanism (which
+  component or query causes it) to a clause, or the comment reads as being about whatever you
+  named first. Stick to problem and fix against the current code, and leave out the PR's own
+  history ("the first commit did X"). Keep it short. Plain words. After drafting, do a trim pass —
+  cut hedges, qualifiers, and idiom doing rhetorical rather than factual work ("that lands", "fair enough",
   "something smaller underneath", "reads as incidental"). Open an acknowledgement with the
   plainest words available ("Got it, makes sense.") and go straight to the point.
 - No shorthands or jargon. Write the word out ("Is this intended?", not "Q:"), and name the actual
-  file or element instead of an acronym or a vague pointer: "the arg in `schema.graphql`", not
-  "the SDL arg"; a permalink to the code you mean, not "like the table does".
+  file or element instead of an acronym or a vague pointer: a permalink to the code you mean, not
+  "like the table does".
 - For a JSDoc/doc suggestion, give the reason as helping devs understand what the code does —
   not "to match the convention".
 - Suggestion/question framing: "Could we pull this into a hook…", "Small thing: make this
