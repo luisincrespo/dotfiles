@@ -29,9 +29,10 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 
 ## Shape
 - **Prose, not structure.** No markdown headers, bullet lists, or numbered question lists inside the
-  message itself. Short paragraphs. The exception is a set of **options or alternatives** laid out for
-  the reader to compare: one bullet each with a bolded lead-in beats a paragraph they have to parse
-  serially to find the one they care about.
+  message itself. Short paragraphs. The exception is a set of **options, alternatives, or distinct
+  changes** the reader has to compare or act on, introduced by a short framing sentence: one bullet
+  each with a bolded lead-in, written as full conversational sentences, beats a paragraph they have
+  to parse serially to find the one they care about.
 - **Inline code for identifiers.** Backtick function/var/file/flag names: `createItemInstance`,
   `next()`, `pnpm-lock.yaml`.
 - **Technical context woven in, not exhaustive.** Enough to understand the problem or the answer —
