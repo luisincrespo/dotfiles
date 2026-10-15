@@ -282,7 +282,9 @@ Then:
   qualifiers, and idiom doing rhetorical rather than factual work ("that lands", "fair enough",
   "something smaller underneath", "reads as incidental"). Open an acknowledgement with the
   plainest words available ("Got it, makes sense.") and go straight to the point.
-- No shorthands. Write the word out — "Is this intended?", not "Q:"/"q:". The user never uses these.
+- No shorthands or jargon. Write the word out ("Is this intended?", not "Q:"), and name the actual
+  file or element instead of an acronym or a vague pointer: "the arg in `schema.graphql`", not
+  "the SDL arg"; a permalink to the code you mean, not "like the table does".
 - For a JSDoc/doc suggestion, give the reason as helping devs understand what the code does —
   not "to match the convention".
 - Suggestion/question framing: "Could we pull this into a hook…", "Small thing: make this
@@ -300,7 +302,8 @@ Then:
 - It's fine to ask a genuine question ("If there's always one per message, can you note that in
   the JSDoc?") rather than assert a change. When a finding rests on an assumption about intent
   or coupling you haven't confirmed, default to a question, not an assertion ("Is this meant
-  to…? If so…").
+  to…? If so…"). That includes removing something that looks unused: ask "Do we need X?"
+  before "Could we drop X?".
 
 ## Examples of the target style
 
