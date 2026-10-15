@@ -244,6 +244,10 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
   ```bash
   gh api graphql -f query='mutation($id: ID!) { resolveReviewThread(input: {threadId: $id}) { thread { isResolved } } }' -f id="<PRRT_…>"
   ```
+- **Then clean up**, here or whenever the user calls the review off: stop any Monitor or pending
+  wakeup, delete the Step 1 ref (`git update-ref -d refs/pr-review/<N>`) and the comment body
+  files, and remove anything else the review created locally. Only delete what this review
+  made; check before removing anything.
 
 ### 8. Capture learnings (self-educate) — after the review wraps, usually post-approval
 Once the lifecycle is done (the PR is approved, or the user clearly closes out the review),
