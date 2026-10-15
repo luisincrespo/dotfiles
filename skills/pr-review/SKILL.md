@@ -57,9 +57,11 @@ the next review goes better.
 3. **Concise, human voice.** Short words, no AI-thoroughness, no "why this approach vs that"
    essays. Phrase as suggestions/questions ("Could we…", "Small thing:", "Worth picking one…").
    It should sound like the user typed it. See the Voice section.
-4. **Approve only when the user asks.** Approval is an outward-facing action. But "monitor
-   this / take care of it / approve once addressed" is a standing ask: it authorizes the full
-   monitor-until-addressed-then-approve loop (Step 6) without a fresh prompt each round.
+4. **Watch after posting, and approve at the end of the watch.** Approval is an outward-facing
+   action, but posting a round is the go-ahead for the Step 6 loop: watch the PR, iterate as
+   replies and pushes land, and approve once every comment on the PR is addressed, other
+   reviewers' included, without asking first or each round. Outside that loop, approve only when
+   the user asks.
 
 ## Workflow
 
@@ -214,8 +216,8 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
 - Report what's done and what (if anything) was missed. Don't invent issues to seem thorough — but
   don't withhold a real one to avoid another round either. If it's worth describing to the user in
   detail, it's worth either raising or explicitly deciding to accept.
-- **Default to monitoring until every comment is fully addressed, then approve** — don't stop at
-  one re-review. When the user has handed off ("monitor this", "approve once addressed"), wrap in
+- **Monitor until every comment is fully addressed, then approve** — don't stop at one re-review,
+  and don't ask whether to start: right after Step 5's last post, wrap in
   `Skill(loop)` and let it arm a **Monitor** on the PR, as `pr-babysit` does, rather than waking on
   a timer. A shell loop polls `gh` every couple of minutes and wakes you only when the signature
   changes, so a push or reply lands within minutes instead of up to an hour later, and quiet
@@ -235,6 +237,12 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
 
 ### 7. Approve (when asked, or once Step 6's loop clears every comment)
 `gh pr review <N> --repo <repo> --approve --body "<short note>"`
+- **Every comment on the PR counts, not just yours.** Before approving, hold other reviewers'
+  open threads, review summaries and PR comments, bots included, to the bar Step 6 sets for yours:
+  fixed in the code, or answered with a reasoned reply. One still open → keep watching instead of
+  approving, and tell the user whose and what. An approval reads as "ready to merge", and one that
+  lands over another reviewer's open suggestion lets it merge unaddressed. A comment you think is
+  wrong or stale isn't yours to wave through: raise it with the user rather than approve past it.
 - **Don't gate approval on CI being green.** Once every comment is addressed, approve — CI/checks
   are the author's to land. Only surface (don't block silently) if CI has gone *red*.
 - Then resolve your own threads whose findings are addressed — **in the same step, not later**.
