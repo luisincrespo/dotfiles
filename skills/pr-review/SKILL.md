@@ -197,7 +197,10 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
   (`gh api repos/.../pulls/<N>/comments`) — a reasoned "won't do" reply
   counts as addressed; a question back to you is yours to relay, not to silently resolve. Judge an
   ack against the head, not its tense, and give a silent comment one cycle before calling it punted
-  — partial pushes often land ahead of the replies on the rest.
+  — partial pushes often land ahead of the replies on the rest. A reply that cites a commit SHA
+  gets checked against the remote too: an agent's push can be rejected after a concurrent merge,
+  leaving its replies ahead of the code. Before telling the author, confirm it through the remote
+  (`git ls-remote`, the PR's commit list), and word it as a push that may not have landed.
 - `git grep` for stale references after renames (the only legit leftover is a domain *type* that
   legitimately keeps the old name).
 - **After a force-push, read the base change too.** A rebase can land upstream work in the very
