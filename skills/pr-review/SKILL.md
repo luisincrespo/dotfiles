@@ -79,8 +79,10 @@ the next review goes better.
   a labeled design pass) still gets inline comments in the Voice below, unless no line fits.
 - `gh pr view <N> --repo <repo> --json title,body,author,headRefName,baseRefName,files,additions,deletions,state`
 - `gh pr diff <N> --repo <repo>`
-- Fetch the branch and read the **full files**, not just the diff — context outside the diff
-  matters: `git fetch origin <headRefName>:<headRefName> --force` then `git show <branch>:<path>`.
+- Fetch the PR and read the **full files**, not just the diff — context outside the diff
+  matters: `git fetch origin pull/<N>/head:refs/pr-review/<N> --force`, then
+  `git show refs/pr-review/<N>:<path>`. A ref outside `refs/heads` never creates or overwrites a
+  local branch, and `pull/<N>/head` also works for PRs from forks.
 - Read what the PR **depends on and mirrors**: the types it consumes (e.g. UI-kit prop
   types), and any "analogous"/"mirrors X" code it references. Comparing against the existing
   pattern is often where the best comments come from.
