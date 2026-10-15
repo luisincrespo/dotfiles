@@ -301,7 +301,6 @@ Then:
   means no vocabulary you coined while working the problem out: name the real symbols ("the
   `OpenCoordinatorAgent` and `MessageAgent` commands"), not a shorthand the author has never
   seen ("the two halves of the compound").
-- Don't over-explain trade-offs the reader can see. State it plainly and move on.
 - It's fine to ask a genuine question ("If there's always one per message, can you note that in
   the JSDoc?") rather than assert a change. When a finding rests on an assumption about intent
   or coupling you haven't confirmed, default to a question, not an assertion ("Is this meant
