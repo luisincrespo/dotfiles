@@ -135,7 +135,31 @@ relocates the problem instead of fixing it. For a type change, enumerate produce
 tests**: loosely typed spec helpers (`Array<{ field: string }>`) are what a production-only sweep
 misses, so "free to tighten" becomes a red build.
 
-### 3.5 Run it end to end, when it's worth it
+### 3.5 Second opinion, different model
+Only when the repo has a `second_opinion_review` entry in local config — the same per-repo opt-in
+`self-review` Step 3.6 uses, for the same reason: whatever the reviewer is handed can reach its
+vendor, and that's a per-codebase decision. Read that step's rationale before the first run; this
+one differs only where the code is someone else's. No entry → skip and say so in one line.
+
+Run it after your own pass and before drafting, and **don't show it your findings**: a second
+model earns its place by not sharing your blind spots, and leading it toward yours throws that
+away. Pipe the configured `command`, from a scratch directory rather than the checkout:
+- `gh pr diff <N>`, which is already relative to the merge-base, so it carries only this PR;
+- the full text of each changed file from `refs/pr-review/<N>`;
+- the PR's title and description, so it can judge the change against what it claims to do.
+
+Ask for correctness defects, with an explicit verdict line when it finds none.
+
+What comes back are candidates, not comments. Verify each the way Step 3 verifies your own (the
+absence, equivalence, redundancy and implementability checks catch a second model as often as the
+first), dedupe against your findings and the existing threads, and drop what doesn't hold up. In
+the Step 4 rounds, mark the findings only the second model raised so the user can weigh them; the
+posted comment never says so. It reviews; it never posts or replies.
+
+On a re-review (Step 6), re-run it only for a push that substantially changes the code, up to the
+entry's `max_rounds`. A one-line fix for one of your comments doesn't need a second pair of eyes.
+
+### 3.6 Run it end to end, when it's worth it
 Reading the diff tells you what the code says; running it tells you what it does. Most PRs don't
 need it: when the change is logic its unit tests already pin down, CI running them is the
 verification. Run it only when **both** hold:
