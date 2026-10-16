@@ -266,6 +266,9 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
 
 ### 7. Approve (when asked, or once Step 6's loop clears every comment)
 `gh pr review <N> --repo <repo> --approve --body "<short note>"`
+
+A permission check can refuse an approval that rests on a conditional go-ahead. Don't work around
+it: ask the user for a direct instruction, or give them the command to run.
 - **Every comment on the PR counts, not just yours.** Before approving, hold other reviewers'
   open threads, review summaries and PR comments, bots included, to the bar Step 6 sets for yours:
   fixed in the code, or answered with a reasoned reply. One still open → keep watching instead of
