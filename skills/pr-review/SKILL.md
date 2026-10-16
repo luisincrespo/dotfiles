@@ -155,8 +155,8 @@ Ask for correctness defects, with an explicit verdict line when it finds none.
 What comes back are candidates, not comments. Verify each the way Step 3 verifies your own (the
 absence, equivalence, redundancy and implementability checks catch a second model as often as the
 first), dedupe against your findings and the existing threads, and drop what doesn't hold up. In
-the Step 4 rounds, mark the findings only the second model raised so the user can weigh them; the
-posted comment never says so. It reviews; it never posts or replies.
+the Step 4 rounds, name the model that ran, and mark the findings only it raised so the user can
+weigh them; the posted comment never says so. It reviews; it never posts or replies.
 
 On a re-review (Step 6), re-run it only for a push that substantially changes the code, up to the
 entry's `max_rounds`. A one-line fix for one of your comments doesn't need a second pair of eyes.
