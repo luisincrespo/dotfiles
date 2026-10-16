@@ -241,7 +241,9 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
   module has several agent patches, recommend reading the whole delta as one change.
 - Report what's done and what (if anything) was missed. Don't invent issues to seem thorough — but
   don't withhold a real one to avoid another round either. If it's worth describing to the user in
-  detail, it's worth either raising or explicitly deciding to accept.
+  detail, it's worth either raising or explicitly deciding to accept. A detail that could mislead a
+  later reader, such as a doc comment left detached from its symbol, counts as real: raise it as
+  non-blocking rather than accepting it silently.
 - **Monitor until every comment is fully addressed, then approve** — don't stop at one re-review,
   and don't ask whether to start: right after Step 5's last post, wrap in
   `Skill(loop)` and let it arm a **Monitor** on the PR, as `pr-babysit` does, rather than waking on
