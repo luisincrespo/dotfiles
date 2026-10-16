@@ -64,7 +64,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   an outward ask — a policy you're trying not to touch, a change you're keeping small, a deadline
   you're working to, a ticket that reached you with no description or repro. Give only the context
   the reader needs to answer; the rationale, the urgency, and the state the work arrived in are
-  yours, not theirs.
+  yours, not theirs. That includes evidence for the question: on someone's own doc or design, don't
+  walk them through their own content to justify asking. Name the gap in one clause, then ask.
 - **When your digging says the premise is wrong, say so and name the disposition.** State the finding
   and what you'll do ("so unless X, I'll mark this one done"), and let the correction come back.
   Handing the reader a menu of possible causes ("was it A, B, or something else?") makes them redo
