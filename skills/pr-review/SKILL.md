@@ -272,7 +272,8 @@ it: ask the user for a direct instruction, or give them the command to run.
 - **Every comment on the PR counts, not just yours.** Before approving, hold other reviewers'
   open threads, review summaries and PR comments, bots included, to the bar Step 6 sets for yours:
   fixed in the code, or answered with a reasoned reply. One still open → keep watching instead of
-  approving, and tell the user whose and what. An approval reads as "ready to merge", and one that
+  approving, and tell the user whose and what, with your read of each one's impact: they can choose
+  to approve over the low-impact ones. An approval reads as "ready to merge", and one that
   lands over another reviewer's open suggestion lets it merge unaddressed. A comment you think is
   wrong or stale isn't yours to wave through: raise it with the user rather than approve past it.
 - **Don't gate approval on CI being green.** Once every comment is addressed, approve — CI/checks
