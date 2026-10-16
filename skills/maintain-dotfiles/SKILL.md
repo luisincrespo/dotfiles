@@ -4,7 +4,8 @@ description: >-
   Land changes to the dotfiles repo pair — review what's pending, judge whether it belongs in
   the public repo or the private one, group it by concern, commit, push, and resync the tools
   that consume it. Use when changes are sitting uncommitted in ~/code/dotfiles, when a skill
-  has just amended itself, or on a recurring watch. Knows the public/private split, the leak
+  has just amended itself, or to keep both repos current: it watches by default, re-checking on
+  an interval (`--once` for a single pass). Knows the public/private split, the leak
   guard's three entry points, and which surfaces go stale. On idle rounds, trims whichever skill
   has grown most. Only for this repo pair; for any other repo use deliver.
 allowed-tools:
@@ -54,14 +55,16 @@ freshness rules. Read the relevant one rather than re-deriving it.
 
 ## Args
 
-- `--watch`: keep checking on an interval instead of running once. Invoke `Skill(loop)` with
-  `/maintain-dotfiles --_looped`, then continue below; the loop re-enters this skill each round.
-- `--_looped`: internal — set by the wrap above so a looped round doesn't wrap again.
+- `--once`: a single pass — land what's pending and stop, no watch.
+- `--_looped`: internal — set by the wrap below so a looped round doesn't wrap again.
+- `--watch`: accepted and ignored; watching is already the default.
 
-**Single-pass by default**, unlike `pr-babysit`, which auto-wraps. Babysitting is inherently a
-wait: a PR is in flight and something else has to happen. Maintaining is usually a one-shot —
-land what's pending — and starting a background watch every time someone wants a commit would
-be wrong. Watching is the exception, so it's opt-in.
+**Watches by default, like `pr-babysit`.** Unless args contain `--once` or `--_looped`, invoke
+`Skill(loop)` with `/maintain-dotfiles --_looped`, then continue below; the loop re-enters this
+skill each round. Changes land here from other sessions amending a skill after their own task, on
+no schedule anyone announces, so a one-shot run only lands what happened to be pending when
+someone remembered to ask: one backlog of seven files sat uncommitted for three weeks that way.
+A standing watch is what keeps the repos current; `--once` is for when this round is all you want.
 
 ### Pacing, when watching
 
