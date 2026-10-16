@@ -168,6 +168,9 @@ They do not stay current the same way:
 `./tools/devin/sync-plugin.sh` pushes and refreshes in one step (`--no-push` to refresh only).
 Re-run `./tools/claude/install.sh` as well if a skill was added, renamed or removed, or if the
 private overlay changed — symlinks do not appear on their own.
+`local/config.example.json` is copied, not linked, so a schema change needs refreshing too:
+`cp local/config.example.json ~/.agents/local/`, the one line of install it needs, which leaves
+`settings.json` alone.
 
 ## Step 7 — Capture learnings (self-educate)
 
