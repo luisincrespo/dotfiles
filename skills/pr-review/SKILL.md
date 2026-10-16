@@ -133,7 +133,9 @@ whether the thing is load-bearing for a documented invariant: a `[]` dep array p
 the value to whoever consumes it — threading a field through a command whose only handler ignores it
 relocates the problem instead of fixing it. For a type change, enumerate producers **including
 tests**: loosely typed spec helpers (`Array<{ field: string }>`) are what a production-only sweep
-misses, so "free to tighten" becomes a red build.
+misses, so "free to tighten" becomes a red build. A claim about how an external engine behaves (a
+template language's escaping or scoping, a query planner) gets checked against that engine when a
+read-only call is available; a repo convention is a hint, not proof.
 
 ### 3.5 Second opinion, different model
 Only when the repo has a `second_opinion_review` entry in local config — the same per-repo opt-in
