@@ -20,8 +20,10 @@
     "  skipAutoPermissionPrompt Suppresses the automatic permission prompt on startup.",
     "  enabledPlugins           Plugins to turn on. Only public-marketplace ones belong here;",
     "                           install them first (see README), an unknown one is a no-op.",
-    "  preferredNotifChannel    How Claude signals it needs you. 'terminal_bell' rings the",
-    "                           terminal's bell, which works in any terminal."
+    "  preferredNotifChannel    How Claude signals it needs you. 'ghostty' sends the desktop",
+    "                           notification cmux turns into a macOS banner; 'terminal_bell'",
+    "                           only rings the bell, which cmux doesn't surface. Assumes cmux",
+    "                           is the terminal — see cmux/README.md."
   ],
 
   "permissions": {
@@ -30,7 +32,7 @@
   "effortLevel": "xhigh",
   "tui": "fullscreen",
   "skipAutoPermissionPrompt": true,
-  "preferredNotifChannel": "terminal_bell",
+  "preferredNotifChannel": "ghostty",
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true
   }

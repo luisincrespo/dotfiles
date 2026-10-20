@@ -22,7 +22,10 @@ Roughly in order — each step has something later that depends on it.
 4. **Shell** — Homebrew, `ohmyzsh`, the plugins and their prerequisites:
    [`zsh/README.md`](./zsh/README.md). Do this before the Claude install, which needs
    `python3` to merge settings.
-5. **Git identity** — a fresh Mac has no `~/.gitconfig` at all, so nothing commits until:
+5. **Terminal** — cmux, so an agent waiting on you raises a macOS banner:
+   [`cmux/README.md`](./cmux/README.md). The Claude install below sets the notification channel
+   it relies on, and its `cmux hooks setup` runs once the other agents you use are installed.
+6. **Git identity** — a fresh Mac has no `~/.gitconfig` at all, so nothing commits until:
 
    ```shell
    git config --global user.name  "<name>"
@@ -30,11 +33,11 @@ Roughly in order — each step has something later that depends on it.
    git config --global pull.rebase false   # CLAUDE.md rule 10 — default to merge, not rebase
    ```
 
-6. **Claude Code** — `cd ~/code/dotfiles && ./tools/claude/install.sh`, then fill in the
+7. **Claude Code** — `cd ~/code/dotfiles && ./tools/claude/install.sh`, then fill in the
    machine-local files and install plugins: [`tools/claude/README.md`](./tools/claude/README.md).
-7. **Forge CLIs** — `gh auth login`, plus `glab auth login` if the job uses GitLab. Both
+8. **Forge CLIs** — `gh auth login`, plus `glab auth login` if the job uses GitLab. Both
    need a real terminal for the browser handshake.
-8. **Devin**, if you use it — one key in `~/.config/devin/config.json` points it at the Claude
+9. **Devin**, if you use it — one key in `~/.config/devin/config.json` points it at the Claude
    config, so the same rules and skills serve both: [`tools/devin/README.md`](./tools/devin/README.md).
 
 Anything that prompts for `sudo` or opens a browser needs a TTY, so run it in a terminal
@@ -54,6 +57,7 @@ adapters under `tools/` are the only vendor-specific parts.
 | `.devin-plugin/` | adapter | plugin manifest — must sit at the repo root, not under `tools/` |
 | `.githooks/` | repo hygiene | leak guard; vendor-neutral |
 | `zsh/` | shell | nothing to do with agents |
+| `cmux/` | terminal | setup only; the notification setting it needs is in `tools/claude/` |
 
 Anything that can't be published lives in a private companion repo,
 [`dotfiles-private`](https://github.com/luisincrespo/dotfiles-private), which mirrors this layout.
@@ -75,6 +79,11 @@ standard anyway.
 ### ZSH
 
 Personal `zsh` config: `ohmyzsh` setup and plugins. Follow the instructions [here](./zsh/README.md).
+
+### cmux
+
+The terminal app, for the macOS banner it raises when an agent needs input. Follow the
+instructions [here](./cmux/README.md).
 
 ### Claude Code
 
