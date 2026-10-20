@@ -1,0 +1,21 @@
+{
+  "//": [
+    "Durable preferences for Claude Code's GLOBAL config, MERGED into ~/.claude.json every",
+    "time install.sh runs — the same key-by-key, additive merge as settings.stable.json.",
+    "",
+    "A separate file because some preferences exist only as global-config keys, which Claude",
+    "Code reads from ~/.claude.json, not settings.json. That file is also Claude Code's live",
+    "state (account, per-project history), rewritten by every running session, so only name",
+    "a key here when it has no settings.json equivalent. A session writing the file at the",
+    "moment of the merge can undo it; re-running install.sh puts it back.",
+    "",
+    "WHAT EACH KEY BELOW DOES:",
+    "  defaultToAgentsView  Running `claude` with no arguments opens agent view (the",
+    "                       `claude agents` dashboard) instead of a new conversation, so",
+    "                       sessions start there as background sessions and stay listed.",
+    "                       `claude \"<prompt>\"` still starts an ordinary session. Agent view",
+    "                       is a research preview, so its behaviour may change."
+  ],
+
+  "defaultToAgentsView": true
+}

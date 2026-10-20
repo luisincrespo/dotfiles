@@ -68,8 +68,8 @@ repo's hooks stay authoritative, so the two can't drift — don't edit the copy.
 | Mode | Files | Why |
 |---|---|---|
 | **Linked** | `skills/`, `CLAUDE.md` | Edited deliberately; writing back to the repo is the point |
-| **Merged on install** | the six keys in `settings.stable.json` | Preferences that should hold on every machine |
-| **Yours alone** | everything else in `settings.json`; `local/config.json`; `local/commit-denylist.txt` | Rewritten by the tool, or machine-specific by nature |
+| **Merged on install** | the keys in `settings.stable.json` and `global.stable.json` | Preferences that should hold on every machine |
+| **Yours alone** | everything else in `settings.json` and `~/.claude.json`; `local/config.json`; `local/commit-denylist.txt` | Rewritten by the tool, or machine-specific by nature |
 
 `settings.json` can't be linked: Claude Code rewrites it at runtime, and a `/model` switch strips the
 `model` pin — which showed up here as spurious deletions and two pointless restore commits. But most
@@ -77,11 +77,18 @@ of what's in it *is* worth carrying, so the durable half lives in `settings.stab
 `install.sh` merges it in key-by-key. Anything not named there is left untouched, so `model`,
 `modelSettings` and anything Claude Code writes later all survive.
 
+**Global config is merged the same way, from `global.stable.json`.** Some preferences exist only as
+keys in `~/.claude.json`, Claude Code's global config, with no `settings.json` equivalent —
+`defaultToAgentsView` is one. That file is also Claude Code's live state (account, per-project
+history), rewritten by every running session, so the merge replaces it atomically and keeps its
+mode, and skips it until Claude Code's first run has created it. A session writing the file at the
+same moment can still undo the merge; re-running install puts it back.
+
 **`model` and `modelSettings` are deliberately excluded.** Both encode a model id (`opus[1m]`,
 `claude-opus-5`) that ages out as new models ship, so the intent worth carrying is "newest Opus,
 1M context, xhigh effort" rather than the literal strings. Set them per machine with `/model`.
 
-Two consequences of merging rather than seeding: re-running install **re-asserts** those five keys,
+Two consequences of merging rather than seeding: re-running install **re-asserts** the stable keys,
 so a local `/config` change to one of them gets overwritten — set machine-specific preferences on
 keys outside the stable set. And the merge needs `python3`; without it the step is skipped with a
 warning and you copy the values by hand.
@@ -96,6 +103,7 @@ here.
 |---|---|
 | `install.sh` | Links the root `AGENTS.md` and `skills/` into `~/.claude`; `--dry-run` and `--uninstall` supported |
 | `settings.stable.json` | Durable preferences, merged into `~/.claude/settings.json` on install (see below) |
+| `global.stable.json` | Durable global-config preferences, merged into `~/.claude.json` on install (see below) |
 | `merge-settings.py` | Does that merge, key-by-key |
 | `local/config.example.json` | Schema for the machine-local skill overrides (see below) |
 | `local/commit-denylist.example.txt` | Starting point for the machine-local leak-guard denylist |

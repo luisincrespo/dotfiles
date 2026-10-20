@@ -173,8 +173,21 @@ if command -v python3 >/dev/null 2>&1; then
   else
     python3 "${TOOL_DIR}/merge-settings.py" "${TOOL_DIR}/settings.stable.json" "${CLAUDE_DIR}/settings.json"
   fi
+
+  # Global config is Claude Code's own state file, so it's merged only once Claude Code has
+  # created it: seeding it here with a lone key would come before onboarding ever ran.
+  if [[ -f "${HOME}/.claude.json" ]]; then
+    log "merging   durable global preferences into ~/.claude.json"
+    if (( DRY_RUN )); then
+      python3 "${TOOL_DIR}/merge-settings.py" "${TOOL_DIR}/global.stable.json" "${HOME}/.claude.json" --dry-run
+    else
+      python3 "${TOOL_DIR}/merge-settings.py" "${TOOL_DIR}/global.stable.json" "${HOME}/.claude.json"
+    fi
+  else
+    log "SKIPPED   global merge — no ~/.claude.json until Claude Code's first run; re-run after it"
+  fi
 else
-  log "SKIPPED   settings merge — python3 not found; copy settings.stable.json by hand"
+  log "SKIPPED   settings merge — python3 not found; copy settings.stable.json and global.stable.json by hand"
 fi
 
 echo
