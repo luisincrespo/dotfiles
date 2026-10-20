@@ -139,15 +139,18 @@ Written then, it survives a paused loop or a new session; held in context until 
 doesn't.
 
 Findings that assert **absence** ("this will never exist"), **equivalence** ("this changes nothing
-observable"), **redundancy** ("this buys nothing"), or **implementability** ("we could just pass X
-here") are where reviews go wrong — verify each before drafting, not after the author pushes back.
+observable"), **redundancy** ("this buys nothing"), **detectability** ("this would only show up as
+X"), or **implementability** ("we could just pass X here") are where reviews go wrong — verify
+each before drafting, not after the author pushes back.
 For equivalence, check side-effect ordering separately from rendered output. For redundancy, check
 whether the thing is load-bearing for a documented invariant: a `[]` dep array plus an
-`eslint-disable` is usually protecting a "runs exactly once" contract. For implementability, follow
-the value to whoever consumes it — threading a field through a command whose only handler ignores it
-relocates the problem instead of fixing it. For a type change, enumerate producers **including
-tests**: loosely typed spec helpers (`Array<{ field: string }>`) are what a production-only sweep
-misses, so "free to tighten" becomes a red build. A claim about how an external engine behaves (a
+`eslint-disable` is usually protecting a "runs exactly once" contract. For detectability, follow the
+bad case down every early return: an empty-input path that skips the check makes it silent, not
+visible as X. For implementability, follow the value to whoever consumes it — threading a field
+through a command whose only handler ignores it relocates the problem instead of fixing it. For a
+type change, enumerate producers **including tests**: loosely typed spec helpers
+(`Array<{ field: string }>`) are what a production-only sweep misses, so "free to tighten" becomes
+a red build. A claim about how an external engine behaves (a
 template language's escaping or scoping, a query planner) gets checked against that engine when a
 read-only call is available; a repo convention is a hint, not proof.
 
@@ -167,8 +170,9 @@ away. Pipe the configured `command`, from a scratch directory rather than the ch
 Ask for correctness defects, with an explicit verdict line when it finds none.
 
 What comes back are candidates, not comments. Verify each the way Step 3 verifies your own (the
-absence, equivalence, redundancy and implementability checks catch a second model as often as the
-first), dedupe against your findings and the existing threads, and drop what doesn't hold up. In
+absence, equivalence, redundancy, detectability and implementability checks catch a second model
+as often as the first), dedupe against your findings and the existing threads, and drop what
+doesn't hold up. In
 the Step 4 rounds, name the model that ran, and mark the findings only it raised so the user can
 weigh them; the posted comment never says so. It reviews; it never posts or replies.
 
