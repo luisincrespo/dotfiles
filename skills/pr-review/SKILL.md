@@ -171,12 +171,11 @@ away. Pipe the configured `command`, from a scratch directory rather than the ch
 
 Ask for correctness defects, with an explicit verdict line when it finds none.
 
-What comes back are candidates, not comments. Verify each the way Step 3 verifies your own (the
-absence, equivalence, redundancy, detectability and implementability checks catch a second model
-as often as the first), dedupe against your findings and the existing threads, and drop what
-doesn't hold up. In
-the Step 4 rounds, name the model that ran, and mark the findings only it raised so the user can
-weigh them; the posted comment never says so. It reviews; it never posts or replies.
+What comes back are candidates, not comments. Verify each the way Step 3 verifies your own (its
+claim checks catch a second model as often as the first), dedupe against your findings and the
+existing threads, and drop what doesn't hold up. In the Step 4 rounds, name the model that ran,
+and mark the findings only it raised so the user can weigh them; the posted comment never says
+so. It reviews; it never posts or replies.
 
 On a re-review (Step 6), re-run it only for a push that substantially changes the code, up to the
 entry's `max_rounds`. A one-line fix for one of your comments doesn't need a second pair of eyes.
@@ -277,17 +276,17 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
   review-comment and issue-comment counts **taken excluding the account this session posts as**,
   since your own replies would otherwise wake you on your own previous cycle. Leave CI out (see
   below). When an API call fails, skip that poll instead of emitting a placeholder, which would
-  fire twice. A Monitor expires after 30 minutes at most, so re-arm it on each expiry, and end any
-  interactive turn about this PR by re-arming too: a conversation replaces the turn that would
-  have done it. On each wake, re-run this step until all comments are resolved, then do Step 7. Surface anything that needs the user (a reply asking a question, a
-  pushback you don't buy, CI gone red) instead of forcing resolution. Stop polling only when
+  fire twice. A Monitor expires after 30 minutes at most, so re-arm it on each expiry — waiting on
+  an answer included, rather than swapping it for a slow timer — and end any interactive turn
+  about this PR by re-arming too: a conversation replaces the turn that would have done it. On
+  each wake, re-run this step until all comments are resolved, then do Step 7. Surface anything
+  that needs the user (a reply asking a question, a pushback you don't buy, CI gone red) instead
+  of forcing resolution. Stop polling only when
   approved or the user calls it off. Watch commits and comments, not CI state — a red check on an
   unchanged SHA is noise — and verify any alarm your own tooling raises against the PR before
   relaying it. If the PR goes quiet for a day or more, say so and offer to stop rather than
   accruing silent ticks, especially when every prior fix came from one bot answering another:
-  ordinary human-review threads have nothing automated to pick them up. Keep re-arming the Monitor
-  while you wait for an answer rather than swapping it for a slow timer: a reply then waits for the
-  next tick instead of landing within minutes.
+  ordinary human-review threads have nothing automated to pick them up.
 
 ### 7. Approve (when asked, or once Step 6's loop clears every comment)
 `gh pr review <N> --repo <repo> --approve --body "<short note>"`
@@ -340,10 +339,9 @@ Then:
 - If something generalizes, **propose the exact edit** — which section, the new/changed
   wording — and apply it once the user confirms. (Editing this skill changes every future
   review, so it follows the same show-first rule as posting comments.) Prefer refining or
-  replacing an existing line over adding a new one.
+  replacing an existing line over adding a new one; if an edit grows a section, cut a sentence.
 - Keep the bar high. Skip anything specific to this one PR — that's a fact, not a skill rule,
   and a memory feedback note may fit it better. If nothing generalizes, say so and change nothing.
-- Watch for bloat: if an edit grows a section, find a sentence to cut.
 - **Keep the edit confidential-free.** This skill lives in a portable dotfiles repo that travels
   between machines and employers, so an edit must never name a real person, private repo, internal
   host, ticket id, or proprietary identifier. Capture the transferable *rule* and let the specifics
@@ -354,8 +352,8 @@ Then:
 - Lead with the ask, then the problem as someone using it would see it; keep the mechanism (which
   component or query causes it) to a clause, or the comment reads as being about whatever you
   named first. Stick to problem and fix against the current code, and leave out the PR's own
-  history ("the first commit did X") and behavior that's working as intended. Keep it short.
-  Plain words. After drafting, do a trim pass —
+  history ("the first commit did X") and behavior that's working as intended. After drafting, do
+  a trim pass —
   cut hedges, qualifiers, and idiom doing rhetorical rather than factual work ("that lands", "fair enough",
   "something smaller underneath", "reads as incidental"). Open an acknowledgement with the
   plainest words available ("Got it, makes sense.") and go straight to the point.
@@ -364,8 +362,6 @@ Then:
   "like the table does".
 - For a JSDoc/doc suggestion, give the reason as helping devs understand what the code does —
   not "to match the convention".
-- Suggestion/question framing: "Could we pull this into a hook…", "Small thing: make this
-  `readonly`…", "Worth picking one — simplest is to wrap these two to match."
 - For non-trivial suggestions, include a **code example as a proper fenced block** (not inline),
   using the PR's own variable/type names so it drops in. When a finding hinges on two
   conditions/values that must agree, show both literally side by side — naming them abstractly
@@ -396,7 +392,6 @@ Then:
 
 ## Reference
 
-- Repo: `<repo>` from Config (always pass `--repo`).
 - Honors the user's global rules already in CLAUDE.md/memory: `gh` for GitHub, JSDoc coverage,
   `readonly`/required-first interface props, `!== undefined` over `!= null`.
 - Also honors whatever the **target repo's own** `CLAUDE.md` mandates — design-system preferences,
