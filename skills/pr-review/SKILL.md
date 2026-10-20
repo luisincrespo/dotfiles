@@ -209,7 +209,9 @@ When you do run it:
 
 ### 4. Review with the user, in rounds
 Present each round's draft comments with `file:line` + exact text. Let the user cut, reword,
-re-home points between rounds, and request code examples. Lock wording before moving on.
+re-home points between rounds, and request code examples. Lock wording before moving on. When the
+user hasn't read the code, put a few plain lines with each draft on the mechanism it hinges on and
+what happens with and without the change, so they can judge it and answer the author.
 
 **Verify any code you hand over the way CI will**, not just the way that's quickest. Know which of
 your local commands actually enforce what you're claiming: a test runner that strips types instead of
