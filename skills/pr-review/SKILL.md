@@ -283,7 +283,9 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
   unchanged SHA is noise — and verify any alarm your own tooling raises against the PR before
   relaying it. If the PR goes quiet for a day or more, say so and offer to stop rather than
   accruing silent ticks, especially when every prior fix came from one bot answering another:
-  ordinary human-review threads have nothing automated to pick them up.
+  ordinary human-review threads have nothing automated to pick them up. Keep re-arming the Monitor
+  while you wait for an answer rather than swapping it for a slow timer: a reply then waits for the
+  next tick instead of landing within minutes.
 
 ### 7. Approve (when asked, or once Step 6's loop clears every comment)
 `gh pr review <N> --repo <repo> --approve --body "<short note>"`
