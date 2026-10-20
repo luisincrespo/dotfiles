@@ -221,7 +221,8 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
 
 ### 5. Post — inline, via `gh api`
 - Get the **full 40-char head SHA** (a short SHA returns HTTP 422):
-  `gh pr view <N> --repo <repo> --json headRefOid --jq .headRefOid`
+  `gh pr view <N> --repo <repo> --json headRefOid --jq .headRefOid`. If it moved since you
+  drafted, re-check that each anchored line still says what the comment describes.
 - Write each comment body to a temp file (preserves markdown/newlines). Post one at a time —
   **do not wrap the `gh api` calls in a bash helper function** (it loses `PATH` in this sandbox):
   ```bash
