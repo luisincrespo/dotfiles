@@ -64,7 +64,6 @@ freshness rules. Read the relevant one rather than re-deriving it.
 skill each round. Changes land here from other sessions amending a skill after their own task, on
 no schedule anyone announces, so a one-shot run only lands what happened to be pending when
 someone remembered to ask: one backlog of seven files sat uncommitted for three weeks that way.
-A standing watch is what keeps the repos current; `--once` is for when this round is all you want.
 
 ### Pacing, when watching
 
@@ -78,24 +77,22 @@ turn that touched these repos by re-arming, and say when the next check is. If y
 whether a wakeup is pending, re-arm: a duplicate replaces the old one, a missing one goes
 unnoticed until someone asks why nothing has been committed for four days.
 
-Start around 30 minutes and stretch when rounds come back clean — 50, then an hour. What this
-catches is a skill amending itself after a task elsewhere, which happens on the scale of hours,
-and an uncommitted change sitting a little longer costs nothing. Polling an idle tree costs
-more than it saves. Say so and stop if the user is plainly done for the day: the skill works
-the same run on demand.
+Start around 30 minutes and stretch when rounds come back clean — 50, then an hour. Skills
+amend themselves on the scale of hours, and an uncommitted change sitting a little longer costs
+nothing; polling an idle tree costs more than it saves. Say so and stop if the user is plainly
+done for the day: the skill works the same when run on demand.
 
 ## Step 1 — Survey
 
 `git status --porcelain` in both repos, and `git fetch` to see if either is behind. Behind →
 `git pull` (merge, never rebase — global rule 10) before anything else.
 
-Clean and in sync → skip to Step 8. That is the common outcome, and it's the one time there's room to trim.
+Clean and in sync → skip to Step 8. That is the common outcome.
 
 ## Step 2 — Is anything still being written?
 
-**Other sessions edit these files while working.** Check the mtime of everything modified.
-Committing half a skill is worse than committing nothing, and these files change under you —
-that is normal here, not a fault.
+**Other sessions edit these files while working** — normal here, not a fault. Check the mtime
+of everything modified: committing half a skill is worse than committing nothing.
 
 **Hold per file, not per round.** A file touched in the last ~10 minutes waits; the rest
 proceed. Backlogs here run to nine files spanning seven hours, and parking the settled ones
@@ -112,8 +109,8 @@ Two things the clock alone won't tell you, so check both before acting on the se
 
 ## Step 3 — Judge where each change belongs
 
-Read every diff in full, then ask of each: **should this be world-readable?** The public repo
-is public; a push publishes immediately.
+Read every diff in full, then ask of each: **should this be world-readable?** A push publishes
+immediately.
 
 The leak guard is mechanical. It catches credentials, real addresses, internal hostnames,
 ticket ids, denylisted employer terms, and commit identities. It cannot catch a change that is
@@ -154,9 +151,7 @@ Complete it, or say why you left it.
 - **Stage explicitly by path.** Never `git add -A` — it sweeps in whatever another session
   touched thirty seconds ago, and the message will not mention it.
 - **Message style:** imperative subject, then a body saying what was wrong and why the fix
-  takes the shape it does. No "co-authored with Claude" footer (global rule 2).
-- **Never `--no-verify`.** If the guard blocks, fix the content. A false positive is a bug in
-  the check worth fixing in `.githooks/`, not a reason to bypass it.
+  takes the shape it does.
 
 ## Step 6 — Push and resync the surfaces
 
@@ -216,8 +211,10 @@ next round can find the last trim and measure growth since.
 
 ## Hard constraints
 
-- **Never `--no-verify`**, and never edit the allowlist to silence a finding you have not
-  understood. A pinned blob id is a reviewed exception; a path prefix is a hole.
+- **Never `--no-verify`.** If the guard blocks, fix the content: a false positive is a bug in
+  the check worth fixing in `.githooks/`, not a reason to bypass it. Never edit the allowlist to
+  silence a finding you have not understood — a pinned blob id is a reviewed exception; a path
+  prefix is a hole.
 - **Never move private content into the public checkout**, even behind `.gitignore`. One
   missed entry publishes it and no check here would notice.
 - **Stop and ask** on: a guard block you cannot cleanly fix, a change that looks private, a
