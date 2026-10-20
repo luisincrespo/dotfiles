@@ -55,6 +55,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   If it could mean two things, ask Luis which one rather than picking one and arguing it.
 - **Frame the ask honestly.** Don't downplay a real decision/clarification as a "sanity check" or a
   "quick question" — if you're asking someone to decide something, say that.
+- **Leave "optional" to Luis.** Don't close a suggestion with "not blocking" or "fine as a
+  follow-up" by default. Add that framing only when he calls the point optional.
 - **Don't rank your own findings.** Skip "the big one", "the critical thing",
   "most importantly". State each finding plainly and let the reader weigh it.
 - **Concrete over abstract.** When explaining how something works, name the actual things (the agents,
