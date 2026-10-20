@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Merge the repo's durable preferences into a machine's Claude settings.
+"""Merge the repo's durable preferences into one of a machine's Claude Code JSON files.
 
-Additive and key-by-key: a key named in settings.stable.json is set, one that
-isn't is left untouched, so machine-owned settings (model, modelSettings) and
+Additive and key-by-key: a key named in the stable file is set, one that isn't
+is left untouched, so machine-owned settings (model, modelSettings) and
 anything Claude Code writes at runtime survive. Nested objects merge one level
 deep, so `permissions.allow` is preserved while `permissions.defaultMode` is set.
+
+The target is replaced atomically, keeping its permissions: a running Claude
+Code session reads these files at any moment, and must see the old version or
+the new one, never half of one.
 
 Usage: merge-settings.py <stable.json> <target.json> [--dry-run]
 """
@@ -43,7 +47,12 @@ def main():
     for c in changes:
         print(f"      {'would set' if dry else 'set'} {c}")
     if not dry:
-        io.open(target_path, 'w', encoding='utf-8').write(json.dumps(target, indent=2) + "\n")
+        tmp = f"{target_path}.merge-{os.getpid()}"
+        with io.open(tmp, 'w', encoding='utf-8') as f:
+            f.write(json.dumps(target, indent=2) + "\n")
+        if os.path.exists(target_path):
+            os.chmod(tmp, os.stat(target_path).st_mode & 0o7777)
+        os.replace(tmp, target_path)
     return 0
 
 if __name__ == '__main__':
