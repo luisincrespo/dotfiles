@@ -51,6 +51,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   sentences and says the thing outright; clipped fragments and aphorisms are a tic, not his voice.
 
 ## Substance
+- **Answer the point they made.** Before replying to someone's reason, pin down what it refers to.
+  If it could mean two things, ask Luis which one rather than picking one and arguing it.
 - **Frame the ask honestly.** Don't downplay a real decision/clarification as a "sanity check" or a
   "quick question" — if you're asking someone to decide something, say that.
 - **Don't rank your own findings.** Skip "the big one", "the critical thing",
