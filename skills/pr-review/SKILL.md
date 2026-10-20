@@ -123,7 +123,9 @@ Ask the user what to focus on if they didn't say. Common lenses for this repo (f
 - **Naming** — components should be nouns, not verb phrases; align with the design-system /
   domain vocabulary already in the codebase (e.g. prefer the UI-kit's existing noun). Watch for
   a component name colliding with a domain type name.
-- **Reuse / simplification / correctness** — does it reinvent an existing util/pattern?
+- **Reuse / simplification / correctness** — does it reinvent an existing util/pattern? Hold your
+  own suggested code to the same bar: when it would repeat a calculation other callers already
+  inline, propose the one shared function they'd all call, not another copy.
 
 ### 3. Analyze → group findings into rounds/categories
 Organize by theme (e.g. "hooks", "naming", "misc nits") rather than one flat list. Tag each
