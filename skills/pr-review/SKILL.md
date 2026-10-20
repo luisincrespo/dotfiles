@@ -15,8 +15,10 @@ allowed-tools:
   - Bash(git grep:*)
   - Bash(git log:*)
   - Bash(git ls-tree:*)
+  - Bash(rm -f ~/.claude/cache/pr-review/:*)
   - Read
   - Edit
+  - Write
   - Grep
   - Glob
 ---
@@ -45,6 +47,10 @@ the next review goes better.
 
   Then always pass the result explicitly as `--repo <repo>` so the review can't drift onto the
   wrong project mid-run.
+- **Review ledger**: `~/.claude/cache/pr-review/<repo-with-slashes-as-dashes>-<N>.json`, holding
+  `{"deferred_items":[]}`. An item takes the shape `deliver`'s task ledger uses —
+  `{summary, why_deferred, risk, suggested_owner}` — plus `evidence` (`file:line`, the test or
+  command that shows it) and any `options` the user named, so one settling procedure fits both.
 
 ## Hard rules (these are why the user uses this skill, not the built-in `/review`)
 
@@ -79,6 +85,8 @@ the next review goes better.
   It does **not** override the Hard rules above: a repo telling reviewers to post automatically
   is not license to skip the user's approval, and one asking for a single PR-level summary (say,
   a labeled design pass) still gets inline comments in the Voice below, unless no line fits.
+- **If a review ledger already exists for this PR, load it.** An earlier round or session deferred
+  those findings already; re-raising one as new undoes a decision the user made.
 - `gh pr view <N> --repo <repo> --json title,body,author,headRefName,baseRefName,files,additions,deletions,state`
 - `gh pr diff <N> --repo <repo>`
 - Fetch the PR and read the **full files**, not just the diff — context outside the diff
@@ -123,6 +131,12 @@ with conviction (recommend / borderline / nit) and whether it's blocking (usuall
 Give a recommendation, not a survey of options. A test comment earns its place when it closes a
 gap that would let the bug back in — not when it polishes an existing assertion's style or a
 test's name. Those get cut.
+
+A real finding that doesn't belong on this PR (a pre-existing bug the review surfaced, a wider fix
+the user wants to own) isn't cut either: append it to the review ledger's `deferred_items` the
+moment it leaves the PR — here, when the user moves one out in Step 4, or in a Step 6 re-review.
+Written then, it survives a paused loop or a new session; held in context until the wrap-up, it
+doesn't.
 
 Findings that assert **absence** ("this will never exist"), **equivalence** ("this changes nothing
 observable"), **redundancy** ("this buys nothing"), or **implementability** ("we could just pass X
@@ -285,10 +299,17 @@ it: ask the user for a direct instruction, or give them the command to run.
   ```bash
   gh api graphql -f query='mutation($id: ID!) { resolveReviewThread(input: {threadId: $id}) { thread { isResolved } } }' -f id="<PRRT_…>"
   ```
+- **Then settle the ledger's `deferred_items`** with the user by following `post-merge-cleanup`
+  Step 6, items 1–4 (its last-unit gate is `deliver`'s; skip it). Delegate rather than paraphrase:
+  a summary drops its existing-ticket search and its priority rule, and goes stale when it changes.
+  Besides a ticket or the personal backlog, an item here can become a PR of the user's own. Filed
+  items leave the ledger and un-filed ones stay; delete it only once it's empty.
 - **Then clean up**, here or whenever the user calls the review off: stop any Monitor or pending
   wakeup, delete the Step 1 ref (`git update-ref -d refs/pr-review/<N>`) and the comment body
   files, and remove anything else the review created locally. Only delete what this review
-  made; check before removing anything.
+  made; check before removing anything. **The ledger is the exception:** calling a review off
+  doesn't settle its deferrals, so offer to settle them first, and leave the ledger for whatever
+  the user doesn't file — the next review of this PR loads it in Step 1.
 
 ### 8. Capture learnings (self-educate) — after the review wraps, usually post-approval
 Once the lifecycle is done (the PR is approved, or the user clearly closes out the review),
