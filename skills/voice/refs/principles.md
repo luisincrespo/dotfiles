@@ -45,7 +45,9 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   writing ("merge bottom up", `A → this → C`) read as noise, or as wrong, to someone meeting it
   once. Same for an implicit comparison: "before or after" attaches to the nearest thing in the
   sentence, not the one you meant, so name the baseline. And watch for names that collide with
-  their context, like "the main list" in a message that also discusses `main`.
+  their context, like "the main list" in a message that also discusses `main`. When a message
+  points at something (a PR, a stack, a comment, a doc), link it inline; link a stack through
+  its first PR.
 - **Short.** As brief as it can be while still clear. He trims; so should you. But short means
   cutting noise, not compressing feeling — on sincere or personal content he writes full, warm
   sentences and says the thing outright; clipped fragments and aphorisms are a tic, not his voice.
