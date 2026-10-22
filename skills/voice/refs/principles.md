@@ -113,6 +113,9 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 - **Keep process state out of a PR/MR description.** Where a change sits in *your* workflow (waiting
   on someone, why it's a draft, what you'll do if the answer is no) is conversation, not description.
   The description says what the change is and why; the humans handle the rest in Slack.
+- **Before a broadcast, check it hasn't already been said.** When drafting a heads-up for a broad
+  channel, search Slack for an existing announcement on the topic first. If there is one, reply in
+  its thread with only what it doesn't cover, instead of a new post that repeats it.
 
 ## Hard rules
 - **Never send/post without explicit approval.**
