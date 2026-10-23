@@ -159,10 +159,11 @@ template language's escaping or scoping, a query planner) gets checked against t
 read-only call is available; a repo convention is a hint, not proof.
 
 ### 3.5 Second opinion, different model
-Only when the repo has a `second_opinion_review` entry in local config — the same per-repo opt-in
-`self-review` Step 3.6 uses, for the same reason: whatever the reviewer is handed can reach its
-vendor, and that's a per-codebase decision. Read that step's rationale before the first run; this
-one differs only where the code is someone else's. No entry → skip and say so in one line.
+Only when local config's `second_opinion_review` covers the repo, looked up as `self-review` Step
+3.6 does (the repo's own `github/<repo>` entry, else `*`) — the same opt-in, for the same reason:
+whatever the reviewer is handed can reach its vendor, and that's a per-codebase decision. Read that
+step's rationale before the first run; this one differs only where the code is someone else's. Not
+covered → skip and say so in one line.
 **Read the entry from local config on every run**, not from earlier in the session: a resumed
 session otherwise runs whatever model was pinned when it first looked (once, three days after the
 pin had moved on).

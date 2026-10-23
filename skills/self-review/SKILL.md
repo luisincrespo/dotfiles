@@ -93,10 +93,13 @@ If the environment is broken for reasons unrelated to the diff, say so plainly a
 
 ## Step 3.6 — Second opinion, different model
 
-Only when this repo has a `second_opinion_review` entry in local config. No entry → skip and say
-so in one line. **Read the entry from local config on every run**, not from earlier in the
-session: a resumed session otherwise runs whatever model was pinned when it first looked (once,
-three days after the pin had moved on).
+Only when local config's `second_opinion_review` covers this repo: its own `github/<owner>/<repo>`
+entry, else the `*` fallback, never when its entry is `false`. Look it up directly rather than
+scanning a dump, which can truncate away the key you're after:
+`jq --arg k github/<owner>/<repo> '(.second_opinion_review // {}) | if has($k) then .[$k] else .["*"] end' ~/.agents/local/config.json`.
+`null` or `false` → skip and say so in one line. **Read the entry from local config on every
+run**, not from earlier in the session: a resumed session otherwise runs whatever model was pinned
+when it first looked (once, three days after the pin had moved on).
 
 A second model is worth running because the failure modes that survive Step 3 are the ones a
 reviewer shares with the author — the same blind spot that wrote the bug reads past it. A
@@ -120,10 +123,10 @@ explore and takes the repo out of arm's reach; it does not remove the *ability*.
 has your filesystem and, in the case tested here, read access everywhere with no deny rules. Assume
 anything it decides to open can go to its vendor.
 
-That is precisely why this is **opt-in per repo**. Enable it where a reviewer reading beyond the
-payload would be acceptable anyway; leave it off where it would not. Don't reason from "we handed it
-only the diff" — that was the first claim this step made, and the first second-opinion run
-falsified it.
+That is precisely why this is **opt-in**, per repo or, with `*`, per machine. Enable it where a
+reviewer reading beyond the payload would be acceptable anyway; leave it off where it would not.
+Don't reason from "we handed it only the diff" — that was the first claim this step made, and the
+first second-opinion run falsified it.
 
 Ask for correctness defects, and for an explicit verdict line when it finds none, so "clean" is
 distinguishable from "crashed" or "ran out of turns".

@@ -201,9 +201,10 @@ reliably produces nothing — `self-review` Step 6 already records passes that c
 when it re-does what an earlier stage already established. "This seems slow" is not enough; a step
 that catches one bad merge in twenty is worth its time on the other nineteen.
 
-**Check nothing was lost.** Where the repo has a `second_opinion_review` entry, hand it the old and
-new text and ask for any instruction the old version gives that the new one doesn't. That's a
-precise question, and a second model is better at it than the author of the cut.
+**Check nothing was lost.** Where `second_opinion_review` covers the repo (its own entry, else `*`;
+see self-review Step 3.6), hand it the old and new text and ask for any instruction the old version
+gives that the new one doesn't. That's a precise question, and a second model is better at it than
+the author of the cut.
 
 Then it's a skill edit like any other: show the exact diff and apply only on confirmation. One skill
 per commit, subject starting `Trim`, with the before and after word counts in the body — so the
