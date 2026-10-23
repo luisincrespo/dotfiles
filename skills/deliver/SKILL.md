@@ -111,7 +111,7 @@ For each unit:
 
 ### B3. Open
 - Invoke `Skill(pr-open)` with `--target <unit base>` and `--task-slug <slug>`. It creates the PR (draft-if-stacked) and records `pr_number` / `status:"open"` in the unit. For a **ready** PR it also asks for review (Step 7): reviewers proposed for the PR itself where the repo works that way, else a Slack ping drafted via `voice`. Neither blocks — the PR is already open, so carry straight on to B4 and add reviewers when he answers. Pass `--no-review-ping` through.
-- **Ticket → In Review** (once per task): the first time the task has an open PR — right after this `pr-open` returns for the first unit, or on adoption when A0 found an open PR — move the ticket forward per `## Ticket status sync`.
+- **Ticket → In Review** (once per task): when the task's **last** unit has an open PR — right after this `pr-open` returns for a single-unit task; for a breakdown, only once every unit is open, since In Review while units are still being built tells teammates the work is done. On adoption, when A0 found every unit's PR open. Move the ticket forward per `## Ticket status sync`.
 
 ### B4. Babysit → merge → cleanup
 - Invoke `Skill(pr-babysit)` with the unit's PR ref, `--task-slug <slug>` (and `--interval` if set). It loops on CI/comments/keep-current and, when merge-ready, chains `Skill(pr-merge)` → `Skill(post-merge-cleanup)`.
@@ -148,7 +148,7 @@ When the task has an associated tracker ticket (`task_ref`) and `ticket_sync.ena
 
 Three milestones:
 - **→ In Progress** — start of Phase B (first unit's execute begins). Fires once.
-- **→ In Review** — the first time the task has an open PR (after the first `pr-open`, or on adoption when A0 finds one). Fires once.
+- **→ In Review** — once every unit has an open PR (after the last unit's `pr-open`, or on adoption when A0 finds them all open). Fires once.
 - **→ Done** — owned by `post-merge-cleanup`, **not here**: `pr-babysit` self-wraps in `/loop`, so the merge happens detached from this conductor across later turns. `post-merge-cleanup` runs *at* merge completion, on the **last** unit, and does the Done transition there (gated on the same `ticket_sync.enabled`).
 
 Guards (all in the ref): skip silently if no ticket / the tracker MCP is absent this session / `--no-ticket-sync`; never move a ticket backward or fight a manual move (forward-only via a status-rank table); record each transition in `ticket_sync` so it's idempotent across `/loop` cycles and resumes.
