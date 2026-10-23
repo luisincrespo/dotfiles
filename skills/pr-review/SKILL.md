@@ -293,9 +293,9 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
   that needs the user (a reply asking a question, a pushback you don't buy, CI gone red) instead
   of forcing resolution. Stop polling only when approved (by a requested reviewer, when the user
   is only helping) or the user calls it off. Watch commits and comments, not CI state — a red
-  check on an unchanged SHA is noise — and verify any alarm your own tooling raises against the PR before
-  relaying it. If the PR goes quiet for a day or more, say so and offer to stop rather than
-  accruing silent ticks, especially when every prior fix came from one bot answering another:
+  check on an unchanged SHA is noise — and verify any alarm your own tooling raises against the
+  PR before relaying it. If the PR goes quiet for a day or more, say so and offer to stop rather
+  than accruing silent ticks, especially when every prior fix came from one bot answering another:
   ordinary human-review threads have nothing automated to pick them up.
 
 ### 7. Approve (when asked, or once Step 6's loop clears every comment)
