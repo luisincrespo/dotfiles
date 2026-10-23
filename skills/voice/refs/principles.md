@@ -135,8 +135,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   line inline**, not on its own line, and the descriptor takes a trailing period. The descriptor
   itself stays context-free (no CI/status/caveats). Anything worth adding goes on a line **after the
   link**, which may or may not cc someone. For a **multi-PR stack**, open with "Here's a PR stack for
-  <what>", one line per PR as `<purpose> — <link>` (mark draft/stacked inline), and a sentence or two
-  of context is fine here (unlike the single-PR form). **No JIRA ticket** in team Slack. **Broadcasting to a broad channel** — nobody addressed — takes a greeting and a sized ask instead of the `@handle` form: "Hey, team! Here's a small PR to <what it does>." Whoever picks it up is volunteering, so saying how big it is does the work the handle would have.
+  <what>", one numbered line per PR in merge order, as `1. <purpose> — <link>` (mark draft/stacked inline), and a sentence or two
+  of context is fine here (unlike the single-PR form). **No JIRA ticket** in team Slack. **Broadcasting to a broad channel** — nobody addressed — takes a greeting and a sized ask instead of the `@handle` form: "Hey, team! Here's a small PR to <what it does>." Whoever picks it up is volunteering, so saying how big it is does the work the handle would have. When you've already added reviewers, the message still goes to the channel: name them in a closing line with a one-clause reason for each.
 - **The `@handle PR to …` shape is for a COLD ask.** When you're following up with someone you were
   just talking to, or who just reviewed something adjacent, write it as conversation instead: open
   with where this sits relative to what they already know ("Here's one last PR related to <the work
