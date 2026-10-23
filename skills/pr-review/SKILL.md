@@ -67,7 +67,9 @@ the next review goes better.
    action, but posting a round is the go-ahead for the Step 6 loop: watch the PR, iterate as
    replies and pushes land, and approve once every comment on the PR is addressed, other
    reviewers' included, without asking first or each round. Outside that loop, approve only when
-   the user asks.
+   the user asks. When the PR already has other requested reviewers, ask once, before the first
+   post, whether the user is approving or only helping: a helper comments but never approves,
+   and their watch ends when a requested reviewer approves or the PR merges.
 
 ## Workflow
 
@@ -289,9 +291,9 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
   saw, not a fresh read, so anything that landed in the gap still fires. On
   each wake, re-run this step until all comments are resolved, then do Step 7. Surface anything
   that needs the user (a reply asking a question, a pushback you don't buy, CI gone red) instead
-  of forcing resolution. Stop polling only when
-  approved or the user calls it off. Watch commits and comments, not CI state — a red check on an
-  unchanged SHA is noise — and verify any alarm your own tooling raises against the PR before
+  of forcing resolution. Stop polling only when approved (by a requested reviewer, when the user
+  is only helping) or the user calls it off. Watch commits and comments, not CI state — a red
+  check on an unchanged SHA is noise — and verify any alarm your own tooling raises against the PR before
   relaying it. If the PR goes quiet for a day or more, say so and offer to stop rather than
   accruing silent ticks, especially when every prior fix came from one bot answering another:
   ordinary human-review threads have nothing automated to pick them up.
