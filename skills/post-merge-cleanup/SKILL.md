@@ -50,8 +50,6 @@ allowed-tools:
 
 Runs after a **confirmed merge**. This is the last stage of the `deliver` pipeline (create → `pr-open`, babysit → `pr-babysit`, merge → `pr-merge`). Platform detected from `git remote get-url origin`. Write **"PR"** on GitHub, **"MR"** on GitLab.
 
-Do everything from the **main worktree root**, never from inside the worktree being removed.
-
 ## Args
 
 - `<source_branch>`: the merged branch to clean up (required; `pr-merge` passes it). If omitted, resolve from the merged MR/PR ref.
@@ -81,7 +79,7 @@ When a PR in a stack merges, the rest of the stack must be advanced **before** d
 - **Merge the target forward into each dependent's head** so its diff is clean against the new base. If the pre-commit hook fails only on files dragged in from the target that belong to a separate toolchain (e.g. `apps/extension`'s own lint) and are already CI-green, commit the forward-merge with `--no-verify` (the **only** sanctioned `--no-verify`; CI re-runs on push).
 - **After a squash merge, expect conflicts in files both PRs touched.** The platform may retarget a dependent without rebasing it, and the dependent still carries the parent's original commits, which the squash replaced. When the target's copy of a conflicted file matches the parent's final head (`git diff --quiet origin/<target_branch> <parent_head> -- <file>`), take the dependent's side: it already holds the parent's version plus its own changes. Then check the dependent's diff against the target lists only its own files.
 - **Promote the new front-of-stack** out of draft: `gh pr ready <number>` / `glab mr update <iid> --ready`. It's now up for review → draft (don't send) its review-request ping via `Skill(voice)`, per `pr-open` Step 7.
-- Only after all dependents are retargeted is it safe to delete `<source_branch>`. (Recovery if you slipped: recreate the branch at its last sha `git push origin <sha>:refs/heads/<source_branch>`, reopen the closed PR, retarget, then delete.)
+- **Deleted the base too early?** Recreate the branch at its last sha (`git push origin <sha>:refs/heads/<source_branch>`), reopen the closed PR, retarget, then delete.
 
 ## Step 2: Delete the remote branch
 If it still exists (`git ls-remote --exit-code --heads origin <source_branch>`): `git push origin --delete <source_branch>`. Some repos auto-delete on merge — already gone → skip without error.
@@ -121,7 +119,7 @@ If it still exists (`git -C <main_root> show-ref --verify --quiet refs/heads/<so
 ## Step 5.5: Ticket → Done (last unit)
 Run only when `--task-slug` is set, this was the **last** unit (all `units[]` in the ledger `status:"merged"`), and `ticket_sync.enabled == true` with a `task_ref` ticket. The task is now fully merged → move its ticket to Done: Read `refs/ticket-status.md` and follow it with target intent **`done`** (forward-only — skips silently if already Done, or if the tracker MCP is absent this session). Autonomous by default; if the ledger's `ticket_sync` carries a done-confirm flag, propose the transition and wait for approval instead. This is the definitive completion moment — `deliver` can't do it (the merge happened detached inside `pr-babysit`'s `/loop`), so it lives here. When `task_ref.tracker == "personal_backlog"`, mark that page done per `personal_backlog.layout` instead — same `--task-slug` and last-unit gates, but **not** the `ticket_sync.enabled` one, which `understand-task` never sets for a backlog page — a finished item left looking open gets picked up twice.
 
-## Step 6: Raise deferred follow-ups (NEW — approval-gated)
+## Step 6: Raise deferred follow-ups (approval-gated)
 This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when `--task-slug` is set AND this was the **last** unit of the task (all `units[]` in the ledger are `status:"merged"`). If earlier units remain open, skip for now — the last unit's cleanup will do it.
 
 1. Read `deferred_items` from the task ledger. Empty → announce `No deferred follow-ups for this task.` and skip.
@@ -146,7 +144,7 @@ This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when
 - **If the merged PR carried the repo's needs-testing label** (`staging_verification.needs_testing_label` in local config), set `needs_staging_verification: true` on its unit. The deploy gets tested later, in another session, so this step only records it — `deliver` B5 is what acts on it.
 - Once every unit's PR is merged and cleaned, mark the task ledger done. **Keep the ledger** while any unit still has `needs_staging_verification: true` and `staging_verified: null`, or unrecorded `prod_checks` — deleting it there would strand the pending verification; delete only when no un-filed follow-ups and no pending verification remain. If the user wants it closed anyway, move each pending item into the next task's ledger under `carried_over` (`deliver` § Handoff / resume) rather than dropping it, and archive the closed ledger next to the task's evidence instead of only deleting it.
 
-**Session / integration worktree.** The same recipe (Steps 3–4) applies to the worktree this session runs in once all its PRs are merged/closed — remove it decisively even though it's the current cwd; that's normal end-of-session cleanup. Hard prerequisite: no *unpushed, unmerged* work — verify `git -C <wt> status --porcelain` is empty and its HEAD is merged or still on a remote branch (`git -C <wt> for-each-ref --format='%(upstream:short)' refs/heads/<branch>`) before removing.
+**Session / integration worktree.** The same recipe (Steps 3–4) applies to the worktree this session runs in once all its PRs are merged/closed. Hard prerequisite: no *unpushed, unmerged* work — verify `git -C <wt> status --porcelain` is empty and its HEAD is merged or still on a remote branch (`git -C <wt> for-each-ref --format='%(upstream:short)' refs/heads/<branch>`) before removing.
 
 ## Step 8: Capture learnings (self-educate)
 Once cleanup finishes, ask whether anything about how this ran warrants a durable edit. Never invent one — "nothing to capture" is the usual answer and deserves a line, not a paragraph.
