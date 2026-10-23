@@ -55,10 +55,14 @@ cmux puts a wrapper in front of `claude` that adds `--session-id` and `--setting
 session so its hooks reach cmux, so Claude Code never sees a bare launch. Subcommands like
 `claude agents` pass through the wrapper untouched.
 
-So the dashboard is asked for by name: a `claude` shell function in `~/.zshrc`, listed in
-[`zsh/README.md`](../zsh/README.md), runs `claude agents` when there are no arguments and
-passes anything else through. Outside cmux it changes nothing, because the setting already
-does the same.
+So the dashboard is asked for by name, `claude agents`, when there are no arguments. That
+can't be a plain `claude()` in `~/.zshrc`: cmux's zsh integration defines its own `claude()`
+(it's how its wrapper stays first) and reinstalls it at the first prompt, deliberately
+replacing whatever startup files defined. Its integration loads from `.zshenv`, before
+`~/.zshrc`, so its `precmd` hook runs first; a one-shot `precmd` hook registered in `~/.zshrc`
+runs after it and wraps cmux's function rather than replacing it. The hook is listed in
+[`zsh/README.md`](../zsh/README.md). Outside cmux it wraps the real binary, and changes
+nothing, because the setting already does the same.
 
 A session started from the dashboard is run by Claude Code's background service, not launched
 from a cmux terminal, so cmux's wrapper may never add its hooks to it. If those sessions don't
