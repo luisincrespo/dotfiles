@@ -83,6 +83,12 @@
     }
   },
 
+  "//project_context": "Maps a tracker project to the one page holding its engineering background, read by understand-task and deliver. Keyed by '<tracker>:<project id>': a Linear project, a Jira epic, whatever the tracker groups tickets by; ids rather than names, which change. The value is the page's URL, wherever it lives (Notion, Linear, Drive, a Slack canvas), or null for a project known to have none, so it isn't asked about again. understand-task adds an entry when it asks about a project it hasn't seen.",
+  "project_context": {
+    "linear:<project id>": "<url of the project's background page>",
+    "jira:<epic key>": null
+  },
+
   "//verification_addenda": "Extra verification commands for repos whose nested apps own a separate pipeline. Run by self-review and pr-merge when a changed path starts with when_paths_under.",
   "verification_addenda": [
     {

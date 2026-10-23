@@ -28,6 +28,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 - `--stage <understand|plan|execute|verify|open|babysit|verify-staging>` (alias `--from`): force the entry stage for a task with no ledger — e.g. `--stage babysit` on a branch whose PR is already open. Overrides A0's auto-detection.
 - `--interval <time>`: passed through to `pr-babysit`'s loop.
 - `--no-ticket-sync`: don't touch the associated tracker ticket's status (see `## Ticket status sync`). Default: sync when a ticket + a connected tracker exist.
+- `--project-ref <url>`: the task's project background page, passed to `understand-task`. On a resumed or running task it adds the page late (see `## Project page`).
 - `--no-review-ping`: passed through to `pr-open` — skip the review request (the reviewer proposal, or the Slack draft where that's the mechanism).
 
 ## Config
@@ -39,12 +40,12 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 - `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.
 - **Task ledger**: `~/.claude/cache/deliver/task-<repo-with-slashes-as-dashes>-<task-slug>.json`
   ```json
-  {"task_ref":null,"requirements":null,"acceptance":null,"plan_summary":null,"phase":"understand",
+  {"task_ref":null,"project_ref":null,"requirements":null,"acceptance":null,"plan_summary":null,"phase":"understand",
    "deferred_items":[],"carried_over":[],
    "ticket_sync":{"enabled":false,"in_progress":false,"in_review":false,"done":false},
    "units":[{"id":1,"title":null,"branch":null,"base":null,"kind":"independent","depends_on":null,"pr_number":null,"status":"pending","needs_staging_verification":false,"staging_verified":null,"prod_checks":[]}]}
   ```
-  `task_slug` = the ticket id if there is one (lowercased, e.g. `abc-1234`), else a short kebab slug of the task. `task_ref` holds `{tracker, id, url, current_status}` when the task has an associated ticket, else `null`.
+  `task_slug` = the ticket id if there is one (lowercased, e.g. `abc-1234`), else a short kebab slug of the task. `task_ref` holds `{tracker, id, url, current_status}` when the task has an associated ticket, else `null`. `project_ref` holds `{url, title, source}` when the task has a project background page (see `understand-task` Step 1), else `null`.
 - `TICKET_SYNC`: **on by default** when `task_ref` has a ticket AND its tracker connector (the Atlassian / Linear MCP) is available this session; `--no-ticket-sync` forces it off. Governs the `## Ticket status sync` transitions.
 - `TICKET_DONE_CONFIRM`: `false` — set `true` to confirm before the final **Done** transition (the others always run autonomously).
 
@@ -67,19 +68,20 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
      | clean branch with nothing ahead (or on the default branch) | **understand** (fresh start) |
 
    - **Reconcile the signals:** session context is authoritative for *task identity, requirements, plan, and deferred items*; **git/PR state is authoritative for artifacts** (which commits/PRs actually exist). If they disagree on the stage, trust the artifacts and say so; if it's ambiguous or material, ask rather than guess.
-   - **Adopt into the ledger:** set `phase` = entry stage and mark earlier phases done. For every open PR found, add a `unit` with its `branch`, `base` (target branch), `pr_number`, `kind` (`stacked` if base ≠ default branch), `status:"open"`; if the branch has dependent PRs (a stack), adopt them all in stack order. For commits-no-PR, add one unit for the current branch (`status:"pending"`). Record `task_ref` if one was given.
+   - **Adopt into the ledger:** set `phase` = entry stage and mark earlier phases done. For every open PR found, add a `unit` with its `branch`, `base` (target branch), `pr_number`, `kind` (`stacked` if base ≠ default branch), `status:"open"`; if the branch has dependent PRs (a stack), adopt them all in stack order. For commits-no-PR, add one unit for the current branch (`status:"pending"`). Record `task_ref` if one was given, and `project_ref` from `--project-ref` or a `project_context` entry for the ticket's project.
    - Announce the decision: `deliver: adopting <task> at the <stage> stage (<N> existing PR(s): <refs>).`
 
 When the resolved entry stage is past understand/plan (adoption, `--stage`, or work already covered by this session), **skip A1/A2** — don't re-understand or re-plan work already in flight; go straight to Phase B at the entry stage. (A light read of an adopted PR's description to seed `requirements`/`plan_summary` is fine, but don't gate on it.)
 
 ### A1. Understand *(skip when adopting past this stage)*
-- Invoke `Skill(understand-task)` with `<task-ref>` and `--task-slug <slug>`. It writes `requirements`, `acceptance`, seeds `deferred_items`, and — when the task has a ticket — records `task_ref` (tracker/id/url/current status). If a ticket + a connected tracker MCP exist and `--no-ticket-sync` wasn't passed, set `ticket_sync.enabled = true`.
+- Invoke `Skill(understand-task)` with `<task-ref>`, `--task-slug <slug>`, and `--project-ref` when given. It writes `project_ref`, `requirements`, `acceptance`, seeds `deferred_items`, and — when the task has a ticket — records `task_ref` (tracker/id/url/current status). If a ticket + a connected tracker MCP exist and `--no-ticket-sync` wasn't passed, set `ticket_sync.enabled = true`.
 - **Ambiguity gate:** if it stopped to ask, relay the question and wait. Otherwise continue.
 
 ### A2. Plan + PR breakdown *(skip when adopting past this stage)*
 - From the brief, form the smallest approach that satisfies the acceptance criteria (reuse existing code first). Decide the **breakdown**:
   - One cohesive, reviewable change → **one unit** (`kind:"independent"`).
   - Genuinely separable or too large for one review → **multiple units**. Mark them `stacked` when a later unit builds on an earlier unit's not-yet-merged code (base = the previous unit's branch); `independent` when they can each target the default branch on their own.
+- **Follow the brief's Project context.** A plan that departs from a decision recorded on the project page says so at the plan checkpoint, rather than quietly diverging.
 - Write `plan_summary` and the ordered `units[]` (with `title`, `base`, `kind`, `depends_on`) into the ledger.
 - **Plan checkpoint (gate) — always, no exceptions.** Present the plan + breakdown for approval via `EnterPlanMode` → `ExitPlanMode` before building, however small the change looks. "Straightforward" is your own estimate of work you have not done yet, and the runs where that estimate is wrong are precisely the ones worth catching while the cost is a sentence rather than a diff. Approving a one-line plan takes seconds; finding out the approach was wrong once a PR is open costs the review.
 - **Size the plan to the change.** A single-unit fix deserves a line or two — what you'll change, and why it's the smallest thing that satisfies the acceptance criteria. Don't pad it to justify the gate: a long plan for a small change is harder to check than a short one, which defeats the point of asking. A multi-unit or stacked breakdown is where detail belongs, because the stack is itself the decision.
@@ -144,6 +146,14 @@ Everything else runs autonomously — including auto-fixing CI, addressing clear
 The ledger is the single source of truth. On any pause (a gate, `/loop` between babysit cycles, end of session), it already holds `phase`, per-unit `status`, `deferred_items`, and PR numbers — so a later `deliver --resume` (or a fresh session) picks up exactly where this left off. Keep a one-line status when you pause: `deliver: task <slug> — unit <i>/<N> in <phase>; <what's next>.`
 
 **One ledger per task; hand items across explicitly.** When one session runs two tasks, keep each task's work in its own ledger and its own loop. When a finished task's ledger should close but an item is still pending (a post-deploy check, a reminder), move it into the active task's ledger under `carried_over` as `{from, item, owner}`, then close and archive the old one. On resume, handle `carried_over` items before the task's own next step, and drop each once done.
+
+## Project page
+
+A task can belong to a project whose engineering background lives on one page (`project_ref`, resolved by `understand-task` Step 1). The page is shared: the user and other agents edit it too, so what you read is a snapshot.
+
+- **Re-read it before relying on it** — on resume, at the plan checkpoint, before each unit's execute, and right before writing to it. A change since the last read that bears on finished work goes to the user as a question, as a late page does.
+- **It can arrive late** — in the conversation, or as `deliver --resume --project-ref <url>`. Record it as `project_ref`, offer to save it under `project_context`, read it as `understand-task` Step 1 does, and apply it from the current stage on: add a Project context section to the brief, follow it for units not yet built, and check what's already built or open against it. A conflict with finished work goes to the user as a question; don't rework a unit or an open PR on your own.
+- **Update it when the task settles something the rest of the project should know**: a decision approved at the plan checkpoint, a constraint found in the code, a change of direction the user agreed to. Not task progress, PR links, or anything only this task needs. Re-read it first, then make the smallest edit that records it — add to or amend the relevant section; never rewrite the page or remove what someone else wrote — and say what you changed in your report. When what you learned contradicts the page, ask the user rather than editing the page to match: it's the source of direction. A connector that can't write → give the user the text to add.
 
 ## Ticket status sync
 
