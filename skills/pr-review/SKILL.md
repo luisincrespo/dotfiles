@@ -281,7 +281,9 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
   below). When an API call fails, skip that poll instead of emitting a placeholder, which would
   fire twice. A Monitor expires after 30 minutes at most, so re-arm it on each expiry — waiting on
   an answer included, rather than swapping it for a slow timer — and end any interactive turn
-  about this PR by re-arming too: a conversation replaces the turn that would have done it. On
+  about this PR by re-arming too: a conversation replaces the turn that would have done it. A
+  Monitor also dies with the session. When resuming, seed the new one with the last signature you
+  saw, not a fresh read, so anything that landed in the gap still fires. On
   each wake, re-run this step until all comments are resolved, then do Step 7. Surface anything
   that needs the user (a reply asking a question, a pushback you don't buy, CI gone red) instead
   of forcing resolution. Stop polling only when
