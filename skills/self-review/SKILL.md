@@ -94,7 +94,9 @@ If the environment is broken for reasons unrelated to the diff, say so plainly a
 ## Step 3.6 — Second opinion, different model
 
 Only when this repo has a `second_opinion_review` entry in local config. No entry → skip and say
-so in one line.
+so in one line. **Read the entry from local config on every run**, not from earlier in the
+session: a resumed session otherwise runs whatever model was pinned when it first looked (once,
+three days after the pin had moved on).
 
 A second model is worth running because the failure modes that survive Step 3 are the ones a
 reviewer shares with the author — the same blind spot that wrote the bug reads past it. A

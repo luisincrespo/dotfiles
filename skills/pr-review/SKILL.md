@@ -161,6 +161,9 @@ Only when the repo has a `second_opinion_review` entry in local config — the s
 `self-review` Step 3.6 uses, for the same reason: whatever the reviewer is handed can reach its
 vendor, and that's a per-codebase decision. Read that step's rationale before the first run; this
 one differs only where the code is someone else's. No entry → skip and say so in one line.
+**Read the entry from local config on every run**, not from earlier in the session: a resumed
+session otherwise runs whatever model was pinned when it first looked (once, three days after the
+pin had moved on).
 
 Run it after your own pass and before drafting, and **don't show it your findings**: a second
 model earns its place by not sharing your blind spots, and leading it toward yours throws that
