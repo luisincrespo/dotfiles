@@ -143,13 +143,22 @@ Everything else runs autonomously — including auto-fixing CI, addressing clear
 
 ## Handoff / resume
 
-The ledger is the single source of truth. On any pause (a gate, `/loop` between babysit cycles, end of session), it already holds `phase`, per-unit `status`, `deferred_items`, and PR numbers — so a later `deliver --resume` (or a fresh session) picks up exactly where this left off. Keep a one-line status when you pause: `deliver: task <slug> — unit <i>/<N> in <phase>; <what's next>.`
+The ledger is the single source of truth for the task's state. On any pause (a gate, `/loop` between babysit cycles, end of session), it already holds `phase`, per-unit `status`, `deferred_items`, and PR numbers — so a later `deliver --resume` (or a fresh session) picks up exactly where this left off. Keep a one-line status when you pause: `deliver: task <slug> — unit <i>/<N> in <phase>; <what's next>.`
 
 **One ledger per task; hand items across explicitly.** When one session runs two tasks, keep each task's work in its own ledger and its own loop. When a finished task's ledger should close but an item is still pending (a post-deploy check, a reminder), move it into the active task's ledger under `carried_over` as `{from, item, owner}`, then close and archive the old one. On resume, handle `carried_over` items before the task's own next step, and drop each once done.
 
 ## Project page
 
-A task can belong to a project whose engineering background lives on one page (`project_ref`, resolved by `understand-task` Step 1). The page is shared: the user and other agents edit it too, so what you read is a snapshot.
+A task can belong to a project whose engineering background lives on one page (`project_ref`, resolved by `understand-task` Step 1). It is not the ledger, and the two never swap roles:
+
+| | Ledger | Project page |
+|---|---|---|
+| **Scope** | this task | the whole project, across tasks |
+| **Holds** | the pipeline's state: stage, units, PRs, deferred items | background: decisions, constraints, direction |
+| **Written by** | this pipeline, constantly | the user, other agents, and this pipeline, narrowly |
+| **Lives** | a private local cache file | a shared page |
+
+So task state never goes on the page, and a project decision never lives only in the ledger, which stores the page's link, never its content. The page is shared: the user and other agents edit it too, so what you read is a snapshot.
 
 - **Re-read it before relying on it** — on resume, at the plan checkpoint, before each unit's execute, and right before writing to it. A change since the last read that bears on finished work goes to the user as a question, as a late page does.
 - **It can arrive late** — in the conversation, or as `deliver --resume --project-ref <url>`. Record it as `project_ref`, offer to save it under `project_context`, read it as `understand-task` Step 1 does, and apply it from the current stage on: add a Project context section to the brief, follow it for units not yet built, and check what's already built or open against it. A conflict with finished work goes to the user as a question; don't rework a unit or an open PR on your own.
