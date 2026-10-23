@@ -47,6 +47,23 @@ it in on every machine, with nothing to set by hand. Two consequences:
 - **It assumes cmux.** In a terminal that doesn't understand the `ghostty` sequence, a session
   needing you may signal nothing at all. Moving off cmux means revisiting this key.
 
+## A bare `claude` and the agents dashboard
+
+`defaultToAgentsView` (in [`tools/claude/global.stable.json`](../tools/claude/global.stable.json))
+opens the agents dashboard when `claude` runs with no arguments. Inside cmux it never does:
+cmux puts a wrapper in front of `claude` that adds `--session-id` and `--settings` to every
+session so its hooks reach cmux, so Claude Code never sees a bare launch. Subcommands like
+`claude agents` pass through the wrapper untouched.
+
+So the dashboard is asked for by name: a `claude` shell function in `~/.zshrc`, listed in
+[`zsh/README.md`](../zsh/README.md), runs `claude agents` when there are no arguments and
+passes anything else through. Outside cmux it changes nothing, because the setting already
+does the same.
+
+A session started from the dashboard is run by Claude Code's background service, not launched
+from a cmux terminal, so cmux's wrapper may never add its hooks to it. If those sessions don't
+raise a banner when they need input, that's why.
+
 ## Config
 
 cmux reads `~/.config/cmux/cmux.json` (JSON with comments). A setting there is managed by the

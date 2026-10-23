@@ -100,6 +100,15 @@ if [[ -x /opt/homebrew/bin/brew ]] && ! command -v brew >/dev/null 2>&1; then
 fi
 ```
 
+and, anywhere in the file, make a bare `claude` open the agents dashboard even inside cmux,
+whose wrapper adds flags to every launch (the why is in [`cmux/README.md`](../cmux/README.md)):
+
+```shell
+claude() {
+  if (( $# == 0 )); then command claude agents; else command claude "$@"; fi
+}
+```
+
 Nothing else is needed. The `autojump`, `pyenv` and `nvm` plugins all locate their own
 installs, so none of the `source` lines from the various install caveats belong here.
 

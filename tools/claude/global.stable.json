@@ -14,7 +14,9 @@
     "                       `claude agents` dashboard) instead of a new conversation, so",
     "                       sessions start there as background sessions and stay listed.",
     "                       `claude \"<prompt>\"` still starts an ordinary session. Agent view",
-    "                       is a research preview, so its behaviour may change."
+    "                       is a research preview, so its behaviour may change. Inside cmux",
+    "                       it never applies, since cmux's wrapper adds flags to every",
+    "                       launch; a zsh function covers that — see cmux/README.md."
   ],
 
   "defaultToAgentsView": true
