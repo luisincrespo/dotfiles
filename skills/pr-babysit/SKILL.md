@@ -129,6 +129,10 @@ conversation, the likelier it is off. While a babysit is active, end *any* turn 
 PR by re-arming, and say when the next check is. If you cannot tell whether a wakeup is pending,
 re-arm: a duplicate is replaced, a missing one is not noticed until the user asks.
 
+**One loop per PR, one task per loop.** Don't append another task's chores (a staging check, another
+PR's watch) to this loop's prompt. Every firing re-reads that prompt, so piggybacked work runs under
+the wrong task's state and blurs which ledger owns it. Give that work its own loop or monitor.
+
 ## Phase 0: Detect platform, resolve MR/PR, load state
 
 ### 0.0 Platform
