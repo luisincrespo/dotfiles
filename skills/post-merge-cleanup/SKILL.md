@@ -126,11 +126,12 @@ Same gate as Step 5.5. List the other open tickets assigned to the user in the t
 This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when `--task-slug` is set AND this was the **last** unit of the task (all `units[]` in the ledger are `status:"merged"`). If earlier units remain open, skip for now — the last unit's cleanup will do it.
 
 1. Read `deferred_items` from the task ledger. Empty → announce `No deferred follow-ups for this task.` and skip.
-2. **Before drafting, search the tracker for an existing ticket covering the item; if one exists, report it instead of proposing a new one.** **Then re-check each item against the current target branch** — a finding logged days ago may already be fixed by someone else's merge; drop it, with the evidence, if so. Then, for each item that survives, draft a concise follow-up (title + one-line why + risk + suggested owner + **a proposed priority**). **Propose the full list to the user and ask which to file** — filing tickets/issues is outward-facing and often cross-team, so it always needs explicit approval (never auto-file; ties to the user's "scope: low-lift only, document the rest" and "no outward action without approval" habits).
-   **Every ticket you file gets a priority** — leaving it unset pushes triage onto whoever finds
-   it later. Propose one per ticket alongside the filing decision and get it signed off with the
-   rest; never pick a priority unilaterally. A proposal-shaped ticket takes the lowest rung, since
-   anything higher implies the idea is already agreed.
+2. **Before drafting, search the tracker for an existing ticket covering the item; if one exists, report it instead of proposing a new one.** **Then re-check each item against the current target branch** — a finding logged days ago may already be fixed by someone else's merge; drop it, with the evidence, if so. Then, for each item that survives, draft a concise follow-up (title + one-line why + risk + suggested owner + **a proposed priority and status, per the rule below**). **Propose the full list to the user and ask which to file** — filing tickets/issues is outward-facing and often cross-team, so it always needs explicit approval (never auto-file; ties to the user's "scope: low-lift only, document the rest" and "no outward action without approval" habits).
+   **Match how the tracker project already uses priority and status.** If its tickets carry
+   priorities, propose one per ticket alongside the filing decision and get it signed off with
+   the rest (a proposal-shaped ticket takes the lowest rung, since anything higher implies the idea
+   is already agreed); if they don't, leave it unset rather than being the only one. File the
+   ticket in the status its siblings use for ready work, not the tracker's untriaged inbox.
 3. On approval, file the approved ones and skip the rest:
    - GitHub issue: `gh issue create --title "<title>" --body "<body>"`.
    - Jira/Linear, or a repo that ships its own ticket skill: delegate to that skill / MCP rather than guessing field values. Do NOT invent tracker field values.
