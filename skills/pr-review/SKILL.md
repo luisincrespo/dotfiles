@@ -387,7 +387,10 @@ Then:
   reliable order; **link** to the other comment via its `#discussion_r<id>` URL instead. It also
   means no vocabulary you coined while working the problem out: name the real symbols ("the
   `OpenCoordinatorAgent` and `MessageAgent` commands"), not a shorthand the author has never
-  seen ("the two halves of the compound").
+  seen ("the two halves of the compound"). When two of your comments offer alternative fixes for
+  the same problem, say in one of them which you'd pick and link the other ("This is the one I'd
+  go with: … so the X from [this comment] wouldn't be needed"). A conditional like "if we go this
+  way" leaves them reading as two conflicting asks.
 - It's fine to ask a genuine question ("If there's always one per message, can you note that in
   the JSDoc?") rather than assert a change. When a finding rests on an assumption about intent
   or coupling you haven't confirmed, default to a question, not an assertion ("Is this meant
