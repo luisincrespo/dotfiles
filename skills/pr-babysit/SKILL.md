@@ -113,12 +113,16 @@ If args contain `--_looped` or `--once` → skip to Phase 0. Otherwise invoke `S
 
 **Monitor signature — poll the signal, not the churn.** When `loop` arms a Monitor for the MR/PR,
 build its change signature from: `state`, `is_draft`, `reviewDecision`, `head_sha`, the **names** of
-failing checks, a binary `running`/`all-done` for CI, and the three comment/review counts **taken
-excluding the account this session posts as**: a reply you post lands under that account (on GitHub a
-thread reply registers as an empty-bodied review), so raw totals wake the loop on its own previous
-cycle. Leave out `mergeStateStatus` and any per-check running *count* — both flap on their own (GitHub
-recomputes merge state unprompted, and a draft is permanently `BLOCKED`), so each flip burns a wakeup
-on nothing. Resist widening any of these "so nothing is missed": every false wake this produces is
+failing checks, a binary `running`/`all-done` for CI, the number of **open review threads**, and the
+counts of **human** reviews and of comments, **taken excluding the account this session posts as**:
+a reply you post lands under that account (on GitHub a thread reply registers as an empty-bodied
+review), so raw totals wake the loop on its own previous cycle. Count open threads rather than every
+review: a bot reviewer's clean re-review on each push adds a review but no thread, so a raw review
+count wakes the loop on nothing, while a real finding, from a bot or a human, always opens one.
+Don't drop a bot from the signature to quiet it; that hides its findings too. Leave out
+`mergeStateStatus` and any per-check running *count* — both flap on their own (GitHub recomputes
+merge state unprompted, and a draft is permanently `BLOCKED`), so each flip burns a wakeup on
+nothing. Resist widening any of these "so nothing is missed": every false wake this produces is
 churn you caused or churn nobody caused, and the skipped/neutral check states are the usual way in.
 And when any API call in the loop fails, **skip the cycle** rather than substituting a placeholder
 like `?` — a placeholder changes the signature and fires twice, once out and once back.
