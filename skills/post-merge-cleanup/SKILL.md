@@ -119,6 +119,9 @@ If it still exists (`git -C <main_root> show-ref --verify --quiet refs/heads/<so
 ## Step 5.5: Ticket → Done (last unit)
 Run only when `--task-slug` is set, this was the **last** unit (all `units[]` in the ledger `status:"merged"`), and `ticket_sync.enabled == true` with a `task_ref` ticket. The task is now fully merged → move its ticket to Done: Read `refs/ticket-status.md` and follow it with target intent **`done`** (forward-only — skips silently if already Done, or if the tracker MCP is absent this session). Autonomous by default; if the ledger's `ticket_sync` carries a done-confirm flag, propose the transition and wait for approval instead. This is the definitive completion moment — `deliver` can't do it (the merge happened detached inside `pr-babysit`'s `/loop`), so it lives here. When `task_ref.tracker == "personal_backlog"`, mark that page done per `personal_backlog.layout` instead — same `--task-slug` and last-unit gates, but **not** the `ticket_sync.enabled` one, which `understand-task` never sets for a backlog page — a finished item left looking open gets picked up twice.
 
+## Step 5.6: Revisit sibling tickets (last unit)
+Same gate as Step 5.5. List the other open tickets assigned to the user in the task's milestone (or project, if it has none). Propose a change only where this task moved one: now unblocked (raise it), superseded or partly done by this work (lower or close it), or newly blocked by something it found. Give a one-line reason each, apply only what the user approves, and never touch other people's tickets. Nothing moved → say so in a line.
+
 ## Step 6: Raise deferred follow-ups (approval-gated)
 This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when `--task-slug` is set AND this was the **last** unit of the task (all `units[]` in the ledger are `status:"merged"`). If earlier units remain open, skip for now — the last unit's cleanup will do it.
 
