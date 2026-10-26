@@ -367,8 +367,10 @@ Then:
 - Lead with the ask, then the problem as someone using it would see it; keep the mechanism (which
   component or query causes it) to a clause, or the comment reads as being about whatever you
   named first. Stick to problem and fix against the current code, and leave out the PR's own
-  history ("the first commit did X") and behavior that's working as intended. After drafting, do
-  a trim pass —
+  history ("the first commit did X") and behavior that's working as intended. Give it the ask and
+  one reason. What you checked to be sure of it (an exception filter, another PR, how many call
+  sites do the same) goes in your notes to the user, not the comment: a stack of cross-references
+  reads as an audit report, not as something the user wrote. After drafting, do a trim pass —
   cut hedges, qualifiers, and idiom doing rhetorical rather than factual work ("that lands", "fair enough",
   "something smaller underneath", "reads as incidental"). Open an acknowledgement with the
   plainest words available ("Got it, makes sense.") and go straight to the point.
