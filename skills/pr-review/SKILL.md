@@ -155,7 +155,10 @@ whether the thing is load-bearing for a documented invariant: a `[]` dep array p
 `eslint-disable` is usually protecting a "runs exactly once" contract. For detectability, follow the
 bad case down every early return: an empty-input path that skips the check makes it silent, not
 visible as X. For implementability, follow the value to whoever consumes it — threading a field
-through a command whose only handler ignores it relocates the problem instead of fixing it. For a
+through a command whose only handler ignores it relocates the problem instead of fixing it — and to
+whoever else can supply it: a framework hook that reads request input before the handler's result
+lets the caller set the value. A caveat you notice in your own suggestion goes in your notes to the
+user even when it looks minor. For a
 type change, enumerate producers **including tests**: loosely typed spec helpers
 (`Array<{ field: string }>`) are what a production-only sweep misses, so "free to tighten" becomes
 a red build. A claim about how an external engine behaves (a
