@@ -110,7 +110,7 @@ the next review goes better.
   credibility.
 
 ### 2. Decide the focus
-Ask the user what to focus on if they didn't say. Common lenses for this repo (frontend/React):
+Ask the user what to focus on if they didn't say. Common lenses:
 - **React best practices & re-renders** — and verify memoization is *actually effective*:
   `useCallback`/`useMemo` that buy nothing (unstable deps, fresh object returned each render,
   non-memoized child that re-wraps handlers) are worth flagging as dead ceremony → simplify,
@@ -128,6 +128,10 @@ Ask the user what to focus on if they didn't say. Common lenses for this repo (f
 - **Reuse / simplification / correctness** — does it reinvent an existing util/pattern? Hold your
   own suggested code to the same bar: when it would repeat a calculation other callers already
   inline, propose the one shared function they'd all call, not another copy.
+- **API shape** (endpoints) — failures returned as a 200 with a `success: false` body rather than
+  an error status, which hides them from status-code monitoring and from anything that only sees
+  thrown errors; and when a PR already breaks a request shape, whether the route and field names
+  still say what it does now, since renaming later is a second break.
 
 ### 3. Analyze → group findings into rounds/categories
 Organize by theme (e.g. "hooks", "naming", "misc nits") rather than one flat list. Tag each
