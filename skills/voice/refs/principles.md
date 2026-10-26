@@ -144,5 +144,9 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   where…"), and close with "Mind taking a look?". Cut the comparison to the previous PR, the reason
   a bot could not approve it, and any second thing it also fixes. All true, none of it load-bearing
   for a yes.
+- **A follow-up to a reviewer who already did a pass isn't a review request.** Thank them for the
+  pass, say what you did with their feedback, and leave the ask open ("Let me know if there's
+  anything else you'd like addressed"). A related PR can go in the same message, with what it is
+  and, if it's a draft, why.
 - **In a dedicated review channel, drop the explicit "please review" ask** — the channel's purpose
   makes it implicit. (This is the one place the usual "end with a single ask" doesn't apply.)
