@@ -368,7 +368,8 @@ Then:
   new wording), unless it's consequential (global rule 13). Prefer refining or replacing an
   existing line over adding a new one; if an edit grows a section, cut a sentence.
 - Keep the bar high. Skip anything specific to this one PR — that's a fact, not a skill rule,
-  and a memory feedback note may fit it better. If nothing generalizes, say so and change nothing.
+  and a memory feedback note may fit it better. A review procedure that recurs on one project is
+  a project skill (global rule 13). If nothing generalizes, say so and change nothing.
 - **Keep the edit confidential-free.** This skill lives in a portable dotfiles repo that travels
   between machines and employers, so an edit must never name a real person, private repo, internal
   host, ticket id, or proprietary identifier. Capture the transferable *rule* and let the specifics
