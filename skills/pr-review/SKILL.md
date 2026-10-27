@@ -356,10 +356,9 @@ Scan the session for **reusable** signals:
 - **Repo knowledge** — a convention, gotcha, or pattern you had to discover mid-review.
 
 Then:
-- If something generalizes, **propose the exact edit** — which section, the new/changed
-  wording — and apply it once the user confirms. (Editing this skill changes every future
-  review, so it follows the same show-first rule as posting comments.) Prefer refining or
-  replacing an existing line over adding a new one; if an edit grows a section, cut a sentence.
+- If something generalizes, **apply the edit and say what you changed** (which section, the
+  new wording), unless it's consequential (global rule 13). Prefer refining or replacing an
+  existing line over adding a new one; if an edit grows a section, cut a sentence.
 - Keep the bar high. Skip anything specific to this one PR — that's a fact, not a skill rule,
   and a memory feedback note may fit it better. If nothing generalizes, say so and change nothing.
 - **Keep the edit confidential-free.** This skill lives in a portable dotfiles repo that travels

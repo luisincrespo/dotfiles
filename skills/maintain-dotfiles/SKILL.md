@@ -219,9 +219,8 @@ the second opinion clears, a wording or formatting fix, a stale reference or wro
 finishing a half-done edit (Step 4), and a lesson whose fix is local and plainly what the user
 would want. The user asked for this after a week of approving every trim and small fix one by one.
 
-Bring a change to the user first only when it's big, or small but consequential to how a skill
-behaves: it adds, removes or reorders a step; changes when a skill asks, publishes, merges, files
-or sends; or touches permissions, the leak guard, or what goes public, which Step 3 already flags.
+Bring a change to the user first only when it's big, or consequential as global rule 13 defines
+it. Step 3 already flags anything that should stay private.
 
 ## Hard constraints
 

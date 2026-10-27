@@ -159,7 +159,7 @@ Once the PR is open, ask whether anything about how this ran warrants a durable 
 
 What recurs at this stage: a template section filled or dropped wrongly; a title or summary convention the user corrected; where a repo actually keeps its template, or which one it picks for a given path.
 
-Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Apply the edit yourself and say what you changed**, unless it's consequential (global rule 13); prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
 
 ## Hard constraints
 

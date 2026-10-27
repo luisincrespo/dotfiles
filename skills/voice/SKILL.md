@@ -70,7 +70,7 @@ robotic", "you don't say it like that") — capture it **before moving on**:
    - **❌ draft** — the version that missed (verbatim), if there was one.
    - **✅ final** — his approved/edited wording (verbatim — this is the most valuable signal).
    - **What changed** — one line on the tone shift, so the lesson is explicit.
-2. If it reveals a new or sharper rule, **show the exact `refs/principles.md` edit first — the line, new or changed — and apply it only once he confirms** (a principle shapes every future draft; prefer refining an existing line over adding one). The step-1 ✅ example append needs no approval — it's his own approved words.
+2. If it reveals a new or sharper rule, **apply the `refs/principles.md` edit and say what you changed** (the line, new or changed), unless it's consequential (global rule 13); prefer refining an existing line over adding one. The step-1 ✅ example append needs no approval — it's his own approved words.
 
 3. **Anonymize as you write it — before it lands on disk.** These files live in a portable dotfiles
    repo that travels between machines and employers, so an entry must never carry confidential

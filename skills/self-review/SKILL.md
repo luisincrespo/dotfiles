@@ -179,7 +179,7 @@ Route by **portability**, which decides the file:
 
 **Under `deliver`** (`--task-slug` set): don't edit a skill here. Hand the lesson up with the batch — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice.
 
-**Show the exact edit before applying it** — which file, which section, the new or changed wording — and apply only once the user confirms. Prefer refining an existing line to adding one; if a section grows, cut a sentence elsewhere.
+**Apply the edit yourself and say what you changed** (which file, which section, the new wording), unless it's consequential (global rule 13). Prefer refining an existing line to adding one; if a section grows, cut a sentence elsewhere.
 
 ## Hard constraints
 - Review *your* changes only; don't wander outside the diff hunting for unrelated issues (that's not the job, and it inflates scope).

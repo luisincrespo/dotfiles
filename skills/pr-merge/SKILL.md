@@ -151,7 +151,7 @@ Once the merge lands or returns not-ready, ask whether anything about how this r
 
 What recurs at this stage: a merge condition the platform reports differently than expected; a strategy the repo enforces; a semantic conflict the local pre-merge check caught — or missed, which is the one actually worth encoding.
 
-Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Show the exact edit and apply it only once the user confirms**; prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
+Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a lesson that would hold at any job → this skill; a durable one-off → a memory. **When `deliver` invoked you**, hand it up with your report instead of editing — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice. **Apply the edit yourself and say what you changed**, unless it's consequential (global rule 13); prefer refining an existing line to adding one, and if a section grows, cut a sentence elsewhere.
 
 ## Hard constraints
 

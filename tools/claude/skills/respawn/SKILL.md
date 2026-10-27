@@ -110,8 +110,8 @@ What recurs here:
   `RESPAWN UNCONFIRMED` for a session that had in fact restarted.
 
 Route by portability: Claude Code's restart behaviour → this skill; anything specific to one
-machine → `~/.agents/local/`; a one-off → a memory. **Show the exact edit and apply it only once
-the user confirms**; prefer fixing a row or line to adding one.
+machine → `~/.agents/local/`; a one-off → a memory. **Apply the edit yourself and say what you
+changed**, unless it's consequential (global rule 13); prefer fixing a row or line to adding one.
 
 ## Fleet mode
 
