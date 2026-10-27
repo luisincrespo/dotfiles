@@ -13,7 +13,7 @@ description: >-
 
 A conductor for the whole task lifecycle. It owns only the **spine** — phase sequencing, the gates between phases, a per-task **ledger**, and handoff — and delegates the actual work to focused sub-skills.
 
-**Mostly autonomous, past one unconditional stop.** The **plan checkpoint** always runs (A2). Beyond it, flow straight through the phases and stop only for a genuine **ambiguity** or **risk** gate (below). Don't manufacture check-ins other than those.
+**Mostly autonomous.** Stop only at the `## Gates` below, the plan checkpoint always among them; don't manufacture other check-ins.
 
 **Terminology.** Write **"PR"** on GitHub and **"MR"** on GitLab in everything you say to the user.
 
@@ -74,7 +74,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 When the resolved entry stage is past understand/plan (adoption, `--stage`, or work already covered by this session), **skip A1/A2** — don't re-understand or re-plan work already in flight; go straight to Phase B at the entry stage. (A light read of an adopted PR's description to seed `requirements`/`plan_summary` is fine, but don't gate on it.)
 
 ### A1. Understand *(skip when adopting past this stage)*
-- Invoke `Skill(understand-task)` with `<task-ref>`, `--task-slug <slug>`, and `--project-ref` when given. It writes `project_ref`, `requirements`, `acceptance`, seeds `deferred_items`, and — when the task has a ticket — records `task_ref` (tracker/id/url/current status). If a ticket + a connected tracker MCP exist and `--no-ticket-sync` wasn't passed, set `ticket_sync.enabled = true`.
+- Invoke `Skill(understand-task)` with `<task-ref>`, `--task-slug <slug>`, and `--project-ref` when given. It writes `project_ref`, `requirements`, `acceptance`, seeds `deferred_items`, and — when the task has a ticket — records `task_ref` (tracker/id/url/current status) and `ticket_sync` (see Config's `TICKET_SYNC`).
 - **Ambiguity gate:** if it stopped to ask, relay the question and wait. Otherwise continue.
 
 ### A2. Plan + PR breakdown *(skip when adopting past this stage)*
@@ -88,7 +88,7 @@ When the resolved entry stage is past understand/plan (adoption, `--stage`, or w
 
 ## Phase B — Per-unit loop
 
-Set up **one integration worktree per task** if not already working in one; create a branch per unit inside it. Use the repo's own worktree tooling when it ships any — a skill or script that creates them, or a documented location — since it usually encodes setup steps (certs, secrets, direnv) you'd otherwise rediscover the hard way; fall back to `<repo_root>/.claude/worktrees/<task-slug>` only when there is none (rule #12). Say which you used.
+Set up **one integration worktree per task** if not already working in one, per global rule 12 (the repo's own worktree tooling first, since it encodes setup like certs, secrets and direnv; else `<repo_root>/.claude/worktrees/<task-slug>`), and create a branch per unit inside it.
 
 **Follow the repo's location convention even when you skip its setup steps.** "I won't need a running stack" is a prediction about work you haven't done, and the location is not where it pays off: a worktree nested inside the main checkout silently inherits that checkout's `.envrc` and breaks every sibling-relative path the repo resolves (a template or asset checkout beside the repo root). And if you do skip the setup, still verify **in that worktree** — verifying from a checkout that is already installed and built hides exactly the missing-prerequisite failures a collaborator will hit first.
 
