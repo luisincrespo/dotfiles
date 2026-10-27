@@ -173,9 +173,10 @@ private overlay changed — symlinks do not appear on their own.
 ## Step 7 — Capture learnings (self-educate)
 
 Ask once whether the round warranted a durable edit. "Nothing to capture" is the usual answer.
-Route by portability: repo- or employer-specific facts → `~/.agents/local/`; a lesson that
-holds anywhere → the relevant skill; a durable one-off → a memory. Make the edit yourself
-unless it needs the user (see `## Deciding without asking`), and say what you changed.
+Route by portability: repo- or employer-specific facts → `~/.agents/local/`; a procedure that
+recurs on one project → a project skill (global rule 13); a lesson that holds anywhere → the
+relevant skill; a durable one-off → a memory. Make the edit yourself unless it needs the user
+(see `## Deciding without asking`), and say what you changed.
 
 ## Step 8 — Trim (the counterweight to Step 7)
 

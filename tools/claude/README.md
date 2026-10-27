@@ -129,8 +129,10 @@ every other agent for the second, and there is one file behind both.
 
 **Every one of them self-educates.** Each ends by asking whether the run warranted a durable edit,
 and routes what it finds by portability — repo- or employer-specific facts to `~/.agents/local/`, a
-lesson that holds anywhere into the skill, a one-off into a memory. Nothing is written without
-showing the exact edit first. Run under `deliver`, a skill hands its lesson up rather than editing,
+procedure that recurs on one project into a [project skill](#project-skills), a lesson that holds
+anywhere into the skill, a one-off into a memory. Edits apply without asking and are reported for
+review after the fact, unless they change how a skill behaves (the self-educate rule in
+`AGENTS.md`). Run under `deliver`, a skill hands its lesson up rather than editing,
 so `deliver`'s end-of-run reflection routes it once instead of two skills recording it twice.
 
 ## Also read by Devin

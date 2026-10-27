@@ -174,6 +174,7 @@ What actually recurs here:
 
 Route by **portability**, which decides the file:
 - **Repo- or employer-specific mechanics** (the actual command, a nested pipeline, a host) → `verification_addenda` or another key in `~/.agents/local/config.json`. This skill travels between jobs; a build command naming a private package doesn't belong in it.
+- **A procedure that recurs on one project** → a project skill (global rule 13).
 - **A lesson that would hold at any job** → the relevant section of this skill.
 - **A durable one-off fact** → a memory, not a rule.
 
