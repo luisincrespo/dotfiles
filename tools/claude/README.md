@@ -67,7 +67,7 @@ repo's hooks stay authoritative, so the two can't drift — don't edit the copy.
 
 | Mode | Files | Why |
 |---|---|---|
-| **Linked** | `skills/`, `CLAUDE.md` | Edited deliberately; writing back to the repo is the point |
+| **Linked** | `skills/`, `tools/claude/skills/`, `CLAUDE.md` | Edited deliberately; writing back to the repo is the point |
 | **Merged on install** | the keys in `settings.stable.json` and `global.stable.json` | Preferences that should hold on every machine |
 | **Yours alone** | everything else in `settings.json` and `~/.claude.json`; `local/config.json`; `local/commit-denylist.txt` | Rewritten by the tool, or machine-specific by nature |
 
@@ -101,7 +101,8 @@ here.
 
 | Path | What |
 |---|---|
-| `install.sh` | Links the root `AGENTS.md` and `skills/` into `~/.claude`; `--dry-run` and `--uninstall` supported |
+| `install.sh` | Links the root `AGENTS.md` and `skills/`, plus `skills/` here, into `~/.claude`; `--dry-run` and `--uninstall` supported |
+| `skills/` | Skills only Claude Code can run, installed beside the portable ones (see the root README for which go where) |
 | `settings.stable.json` | Durable preferences, merged into `~/.claude/settings.json` on install (see below) |
 | `global.stable.json` | Durable global-config preferences, merged into `~/.claude.json` on install (see below) |
 | `merge-settings.py` | Does that merge, key-by-key |

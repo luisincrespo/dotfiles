@@ -113,7 +113,7 @@ echo "Skills:"
 # entry would publish it, and no leak check would catch it, the corpus being
 # anonymized by design. A public-only skill stays a single directory symlink.
 overlay() {
-  local name="$1" dest="${CLAUDE_DIR}/skills/$1" src rel
+  local root="$1" name="$2" dest="${CLAUDE_DIR}/skills/$2" src rel
   if [[ -L "$dest" ]]; then
     run rm "$dest"
   elif [[ -d "$dest" ]]; then
@@ -125,7 +125,7 @@ overlay() {
       run rm -rf "$dest"
     fi
   fi
-  for src in "${REPO_ROOT}/skills/$name" "${PRIVATE_ROOT}/skills/$name"; do
+  for src in "${REPO_ROOT}/${root}/$name" "${PRIVATE_ROOT}/${root}/$name"; do
     [[ -d "$src" ]] || continue
     while IFS= read -r rel; do
       run mkdir -p "$dest/$(dirname "$rel")"
@@ -141,13 +141,25 @@ else
   log "private   none found — public content only"
 fi
 
-for skill in "$REPO_ROOT"/skills/*/; do
-  name="$(basename "$skill")"
-  if [[ -d "${PRIVATE_ROOT}/skills/${name}" ]]; then
-    overlay "$name"
-  else
-    link "${skill%/}" "${CLAUDE_DIR}/skills/${name}"
-  fi
+# Two skill roots, installed side by side. skills/ is portable: every harness reads it,
+# and the Devin plugin packages it. tools/claude/skills/ holds skills whose whole purpose
+# is a Claude Code mechanism, so only this adapter installs them. The private repo mirrors
+# both paths. Both land in ~/.claude/skills/, so a name used in both roots would collide.
+seen=" "
+for root in skills tools/claude/skills; do
+  for skill in "$REPO_ROOT/$root"/*/; do
+    [[ -d "$skill" ]] || continue
+    name="$(basename "$skill")"
+    case "$seen" in
+      *" $name "*) echo "skill '${name}' exists in more than one skill root; rename one" >&2; exit 1 ;;
+    esac
+    seen+="$name "
+    if [[ -d "${PRIVATE_ROOT}/${root}/${name}" ]]; then
+      overlay "$root" "$name"
+    else
+      link "${skill%/}" "${CLAUDE_DIR}/skills/${name}"
+    fi
+  done
 done
 
 echo

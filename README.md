@@ -48,11 +48,17 @@ window rather than through a pipe or an agent's shell.
 Split by **what a thing is**, not by which tool reads it. The content at the top is portable; the
 adapters under `tools/` are the only vendor-specific parts.
 
+That holds for skills too. A skill belongs in `skills/` when what it does makes sense in any
+harness, even if it uses a Claude Code tool where one exists; most fall back gracefully elsewhere.
+It belongs in `tools/claude/skills/` when its whole purpose is a Claude Code mechanism, so another
+harness has nothing to fall back to: `respawn`, which restarts a Claude Code background session,
+is the first.
+
 | Path | | |
 |---|---|---|
 | `AGENTS.md` | the rules | **portable** — the cross-tool standard for agent instructions |
 | `skills/` | the skills | **portable** — `SKILL.md` is one format shared by Devin, Claude Code, Copilot and Windsurf |
-| `tools/claude/` | adapter | installer, settings, machine-local schemas |
+| `tools/claude/` | adapter | installer, settings, machine-local schemas, and the skills only Claude Code can run |
 | `tools/devin/` | adapter | plugin packaging, config |
 | `.devin-plugin/` | adapter | plugin manifest — must sit at the repo root, not under `tools/` |
 | `.githooks/` | repo hygiene | leak guard; vendor-neutral |

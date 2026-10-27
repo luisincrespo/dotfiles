@@ -42,7 +42,10 @@ reason: it names an account.
 
 `tools/claude/install.sh` symlinks the skills into `~/.claude/skills/`, and Devin follows those
 links back here — so one copy of each skill serves both tools, and a skill edited from
-either lands in this repo ready to commit.
+either lands in this repo ready to commit. That includes the Claude-only skills under
+`tools/claude/skills/`: locally Devin sees them too, so each one checks it's running under Claude
+Code and stops otherwise. The plugin packages only the root `skills/`, so cloud sessions never get
+them.
 
 ## What does NOT carry across
 
