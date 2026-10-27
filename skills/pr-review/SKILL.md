@@ -152,7 +152,9 @@ Findings that assert **absence** ("this will never exist"), **equivalence** ("th
 observable"), **redundancy** ("this buys nothing"), **detectability** ("this would only show up as
 X"), or **implementability** ("we could just pass X here") are where reviews go wrong — verify
 each before drafting, not after the author pushes back.
-For equivalence, check side-effect ordering separately from rendered output. For redundancy, check
+For equivalence, check side-effect ordering separately from rendered output, and when a change
+alters how many rows stand for one thing, check every reader that iterates them, inside the diff or
+not: work fanned out per row (a job queued per row's key) shrinks with it. For redundancy, check
 whether the thing is load-bearing for a documented invariant: a `[]` dep array plus an
 `eslint-disable` is usually protecting a "runs exactly once" contract. For detectability, follow the
 bad case down every early return: an empty-input path that skips the check makes it silent, not
