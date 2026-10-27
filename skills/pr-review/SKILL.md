@@ -258,7 +258,9 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
 
 ### 6. Re-review after the author pushes changes (and monitor until fully addressed)
 - `git fetch … --force`, look at the new commit, and **map each of your comments to a concrete
-  change** in a small table (addressed / partially / missed). Also check thread replies
+  change** in a small table (addressed / partially / missed). For a test written in answer to your
+  comment, check that it would fail if the bug came back: walk the fixture through the broken
+  version of the code. A bot's "this proves X" is a claim, not evidence. Also check thread replies
   (`gh api repos/.../pulls/<N>/comments`) — a reasoned "won't do" reply
   counts as addressed; a question back to you is yours to relay, not to silently resolve. Judge an
   ack against the head, not its tense, and give a silent comment one cycle before calling it punted
