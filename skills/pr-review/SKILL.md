@@ -389,8 +389,10 @@ Then:
 - No shorthands or jargon. Write the word out ("Is this intended?", not "Q:"), and name the actual
   file or element instead of an acronym or a vague pointer: a permalink to the code you mean, not
   "like the table does".
-- For a JSDoc/doc suggestion, give the reason as helping devs understand what the code does —
-  not "to match the convention".
+- For a doc-comment suggestion (a `//` line documenting an export or interface member), the
+  reason is that code documentation follows the language's own doc-comment format, so keep the
+  suggestion even when the text is already good. Not IDE hover (most code is written through
+  agents), and not "to match the convention".
 - For non-trivial suggestions, include a **code example as a proper fenced block** (not inline),
   using the PR's own variable/type names so it drops in. When a finding hinges on two
   conditions/values that must agree, show both literally side by side — naming them abstractly
