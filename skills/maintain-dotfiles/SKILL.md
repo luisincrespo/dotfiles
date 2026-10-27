@@ -174,8 +174,8 @@ private overlay changed — symlinks do not appear on their own.
 
 Ask once whether the round warranted a durable edit. "Nothing to capture" is the usual answer.
 Route by portability: repo- or employer-specific facts → `~/.agents/local/`; a lesson that
-holds anywhere → the relevant skill; a durable one-off → a memory. Show the exact edit and
-apply it only once the user confirms.
+holds anywhere → the relevant skill; a durable one-off → a memory. Make the edit yourself
+unless it needs the user (see `## Deciding without asking`), and say what you changed.
 
 ## Step 8 — Trim (the counterweight to Step 7)
 
@@ -206,9 +206,22 @@ see self-review Step 3.6), hand it the old and new text and ask for any instruct
 gives that the new one doesn't. That's a precise question, and a second model is better at it than
 the author of the cut.
 
-Then it's a skill edit like any other: show the exact diff and apply only on confirmation. One skill
-per commit, subject starting `Trim`, with the before and after word counts in the body — so the
-next round can find the last trim and measure growth since.
+Then apply it yourself: a trim the second opinion clears doesn't need the user, and where the check
+flags a cut, keep the text rather than ask. One skill per commit, subject starting `Trim`, with the
+before and after word counts in the body — so the next round can find the last trim and measure
+growth since.
+
+## Deciding without asking
+
+Trims and small skill fixes are yours to make. Apply them, commit, and name each in the round's
+summary, so they're reviewed after the fact rather than approved in advance. That covers a trim
+the second opinion clears, a wording or formatting fix, a stale reference or wrong rule number,
+finishing a half-done edit (Step 4), and a lesson whose fix is local and plainly what the user
+would want. The user asked for this after a week of approving every trim and small fix one by one.
+
+Bring a change to the user first only when it's big, or small but consequential to how a skill
+behaves: it adds, removes or reorders a step; changes when a skill asks, publishes, merges, files
+or sends; or touches permissions, the leak guard, or what goes public, which Step 3 already flags.
 
 ## Hard constraints
 
