@@ -53,7 +53,7 @@ allowed-tools:
 
 Merges one open MR/PR **only when every condition holds**, after a local verification against the merged state. This is the merge stage of the `deliver` pipeline (create → `pr-open`, babysit → `pr-babysit`, cleanup → `post-merge-cleanup`). Platform detected from `git remote get-url origin`. Write **"PR"** on GitHub, **"MR"** on GitLab.
 
-**Safe to call speculatively.** `pr-babysit` invokes this whenever a cycle looks plausibly ready; this skill is the authoritative gate — it re-checks all conditions and simply returns "not ready — keep watching" if any fails. It never merges on partial confidence.
+**Safe to call speculatively.** `pr-babysit` invokes this whenever a cycle looks plausibly ready; this skill is the authoritative gate — it re-checks all conditions and simply returns "not ready — keep watching" if any fails.
 
 ## Args (all optional)
 
@@ -92,7 +92,7 @@ Any condition unmet → announce which one and **return** `Not merge-ready (<rea
 
 ## Phase 2: Merge (when all conditions pass)
 
-**Merge with confidence — don't hesitate.** Once the conditions hold and the local verification passes, merging is the correct, expected action. Don't stall or re-confirm with the user "to be safe" — the conditions ARE the safety check. (Only hold off if a condition is genuinely unmet, or the user explicitly said not to merge.)
+**Merge with confidence.** Once the conditions hold and the local verification passes, merging is the expected action: don't re-confirm with the user "to be safe", since the conditions are the safety check. Hold off only if one is unmet or the user said not to merge.
 
 CI passed on the source alone; a semantic conflict with the current target can still break lint/build/tests. Verify against the merged state first:
 
@@ -136,9 +136,9 @@ CI passed on the source alone; a semantic conflict with the current target can s
    - Any failure → batch `Pre-merge verification failed on merged state: <target> in <pkg>. <20-line error>. CI passed on source alone; likely semantic conflict.` and return (don't merge).
    - If `merged_locally`: `git merge --abort` (always, pass or fail).
 3. Announce: `✅ Pre-merge verification passed. Merging !<number> now...`
-4. **Merge — respect the repo's enforced/default strategy** (merge commit, squash, or rebase); don't impose your own:
-   - **GitLab**: `glab mr merge <number> --yes` (uses the project's default/enforced strategy; pass `--squash` only if `squash_on_merge` requires it). **Do NOT pass `--delete-branch`** — cleanup is delegated (a stacked dependent may still base on this branch).
-   - **GitHub**: rulesets override repo settings, so check them first: `gh api "repos/<repo_id>/rulesets" --jq '.[] | select(.target=="branch") | .id'` → for the ruleset covering `<target_branch>`, read `.rules[] | select(.type=="pull_request") | .parameters.allowed_merge_methods`. Use that list when present; fall back to `gh api "repos/<repo_id>" --jq '.allow_merge_commit, .allow_squash_merge, .allow_rebase_merge'` only when no ruleset constrains it. Exactly one allowed → use it (`--merge`/`--squash`/`--rebase`). Several → break the tie on the target's own history, not a fixed order: `git log --format='%p' -20 origin/<target_branch>` — all one-parent means the repo squashes or rebases; two-parent commits mean it takes real merges. Match what's there. Don't use `--auto` (already verified). **Do NOT pass `--delete-branch`.** **Stacked PRs** reject `gh pr merge` (*"must be merged using the asynchronous merge REST API"*) and `PUT .../merge` (403). Use `gh api -X PUT "repos/<repo_id>/pulls/<number>/merge-async" -f merge_method=<method> -f sha=<head_sha>`.
+4. **Merge — respect the repo's enforced/default strategy** (merge commit, squash, or rebase); don't impose your own. **Never pass `--delete-branch`** on either platform: cleanup is delegated, and a stacked dependent may still base on this branch.
+   - **GitLab**: `glab mr merge <number> --yes` (uses the project's default/enforced strategy; pass `--squash` only if `squash_on_merge` requires it).
+   - **GitHub**: rulesets override repo settings, so check them first: `gh api "repos/<repo_id>/rulesets" --jq '.[] | select(.target=="branch") | .id'` → for the ruleset covering `<target_branch>`, read `.rules[] | select(.type=="pull_request") | .parameters.allowed_merge_methods`. Use that list when present; fall back to `gh api "repos/<repo_id>" --jq '.allow_merge_commit, .allow_squash_merge, .allow_rebase_merge'` only when no ruleset constrains it. Exactly one allowed → use it (`--merge`/`--squash`/`--rebase`). Several → break the tie on the target's own history, not a fixed order: `git log --format='%p' -20 origin/<target_branch>` — all one-parent means the repo squashes or rebases; two-parent commits mean it takes real merges. Match what's there. Don't use `--auto` (already verified). **Stacked PRs** reject `gh pr merge` (*"must be merged using the asynchronous merge REST API"*) and `PUT .../merge` (403). Use `gh api -X PUT "repos/<repo_id>/pulls/<number>/merge-async" -f merge_method=<method> -f sha=<head_sha>`.
 5. **Success** → a returned merge call is not a merge: confirm the PR reports `state == MERGED` before anything else (`merge-async` returns `status: pending|enqueued|merged|failed` — poll until terminal; `failed` means it never merged, and an `enqueued` merge-queue entry can still fail). Only then announce `✅ Merged !<number>.` and invoke `Skill(post-merge-cleanup)` with `<source_branch>`, `<target_branch>`, `<number>`, and `--task-slug <slug>` if set. Return.
 6. **Failure** (race, etc.) → announce the error verbatim and return (no cleanup — not merged). The caller's next cycle re-checks.
 
