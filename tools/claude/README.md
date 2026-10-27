@@ -67,7 +67,7 @@ repo's hooks stay authoritative, so the two can't drift — don't edit the copy.
 
 | Mode | Files | Why |
 |---|---|---|
-| **Linked** | `skills/`, `tools/claude/skills/`, `CLAUDE.md` | Edited deliberately; writing back to the repo is the point |
+| **Linked** | `skills/`, `tools/claude/skills/`, `~/.agents/local/skills/*/*/`, `CLAUDE.md` | Edited deliberately; writing back to the source is the point |
 | **Merged on install** | the keys in `settings.stable.json` and `global.stable.json` | Preferences that should hold on every machine |
 | **Yours alone** | everything else in `settings.json` and `~/.claude.json`; `local/config.json`; `local/commit-denylist.txt` | Rewritten by the tool, or machine-specific by nature |
 
@@ -158,6 +158,18 @@ from it on first run only — an existing one is never overwritten.
 | `sonar_host_url` | Turns the SonarQube phase on (unset ⇒ skipped entirely) |
 | `bot_noise_body_markers_extra` | More bot-comment markers to treat as noise |
 | `verification_addenda` | Extra build/test commands for nested apps with their own pipeline |
+
+### Project skills
+
+A procedure specific to one employer or project, one that names its buckets, paths or tickets, is a
+skill in `~/.agents/local/skills/<project>/<skill>/`, never committed anywhere. `install.sh` links
+each into `~/.claude/skills/` like the repo's own, and refuses a name another skill root already
+uses, so a project skill can't shadow a portable one. `--uninstall` removes the links and leaves
+the skills.
+
+The `<project>/` level only groups them on disk; Claude Code sees a flat list of names and finds a
+skill by its description, so the description is what has to say when it applies. None are listed
+anywhere in advance: which ones a project needs shows up as the work repeats itself.
 
 ## Plugins
 
@@ -264,4 +276,5 @@ backstop rather than the only defence.
 
 Credentials, tokens, chat history, caches and session state all live under `~/.claude` and stay
 there — `.credentials.json`, `secrets/`, `history.jsonl`, `projects/`, `sessions/`, `plugins/`.
-So do `local/config.json` and `local/commit-denylist.txt`. Nothing here should ever contain a secret.
+So do `local/config.json`, `local/commit-denylist.txt` and the project skills in `local/skills/`.
+Nothing here should ever contain a secret.

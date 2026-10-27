@@ -54,6 +54,13 @@ It belongs in `tools/claude/skills/` when its whole purpose is a Claude Code mec
 harness has nothing to fall back to: `respawn`, which restarts a Claude Code background session,
 is the first.
 
+A skill that only makes sense on one project, because it names that employer's buckets, paths or
+tickets, belongs in neither repo: this one publishes, and the private one's leak guard blocks
+employer terms by design. It lives in `~/.agents/local/skills/<project>/<skill>/`, machine-local
+like the rest of `~/.agents/local/`, and `install.sh` links it in beside the others. Nobody plans
+these up front. One appears when a procedure on a project recurs and a session turns it into a
+skill rather than walking through it again (the self-educate rule in `AGENTS.md`).
+
 | Path | | |
 |---|---|---|
 | `AGENTS.md` | the rules | **portable** — the cross-tool standard for agent instructions |

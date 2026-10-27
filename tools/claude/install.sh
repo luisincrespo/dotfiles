@@ -60,16 +60,16 @@ link() {
   log "linked    ${dest/#$HOME/$TILDE}"
 }
 
-# Remove any symlink under ~/.claude that points into this repo, then put the
-# most recent backup back. Leaves ~/.agents/local/* alone — that is machine
-# state, not repo content.
+# Remove any symlink under ~/.claude that points into this repo or into
+# ~/.agents/local/skills, then put the most recent backup back. Leaves
+# ~/.agents/local/* itself alone — that is machine state, not repo content.
 if (( UNINSTALL )); then
   echo "Unlinking Claude config from ${REPO_ROOT}"
   echo
   for target in "${CLAUDE_DIR}/skills/"* "${CLAUDE_DIR}/CLAUDE.md"; do
     if [[ -L "$target" ]]; then
       case "$(readlink "$target")" in
-        "${REPO_ROOT}"/*) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
+        "${REPO_ROOT}"/*|"${LOCAL_DIR}/skills"/*) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
       esac
     elif [[ -d "$target" && -z "$(find "$target" -type f -not -type l -print -quit 2>/dev/null)" ]]; then
       # An overlaid skill: a real directory holding nothing but symlinks.
@@ -160,6 +160,20 @@ for root in skills tools/claude/skills; do
       link "${skill%/}" "${CLAUDE_DIR}/skills/${name}"
     fi
   done
+done
+
+# Employer- and project-specific skills: ~/.agents/local/skills/<project>/<skill>/. They name
+# buckets, paths and tickets, so neither repo can hold them: the public one publishes, and the
+# private one's leak guard blocks employer terms by design. Machine-local like the rest of
+# ~/.agents/local/, and linked in beside the others, under the same no-collision rule.
+for skill in "${LOCAL_DIR}"/skills/*/*/; do
+  [[ -f "${skill}SKILL.md" ]] || continue
+  name="$(basename "$skill")"
+  case "$seen" in
+    *" $name "*) echo "skill '${name}' exists in more than one skill root; rename one" >&2; exit 1 ;;
+  esac
+  seen+="$name "
+  link "${skill%/}" "${CLAUDE_DIR}/skills/${name}"
 done
 
 echo
