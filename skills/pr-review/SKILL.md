@@ -228,8 +228,10 @@ When you do run it:
 ### 4. Review with the user, in rounds
 Present each round's draft comments with `file:line` + exact text. Let the user cut, reword,
 re-home points between rounds, and request code examples. Lock wording before moving on. When the
-user hasn't read the code, put a few plain lines with each draft on the mechanism it hinges on and
-what happens with and without the change, so they can judge it and answer the author.
+user hasn't read the code, open with two plain sentences on what the PR does, and note under each
+draft, without identifiers, what breaks and for whom, so they can judge it and answer the author.
+Pitch those drafts at the depth they can defend in a reply: the ask, one reason, "I think" where
+you're inferring, and fix code held back until the author asks.
 
 **Verify any code you hand over the way CI will**, not just the way that's quickest. Know which of
 your local commands actually enforce what you're claiming: a test runner that strips types instead of
