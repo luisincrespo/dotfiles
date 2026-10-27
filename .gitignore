@@ -9,3 +9,9 @@ local/commit-denylist.txt
 # Built plugin bundles. Reproducible from the tree by devin/package-plugin.sh,
 # so there is nothing to gain from committing one.
 dist/
+
+# Claude Code's per-repo directory. Only settings.json is shared config; everything
+# else here is runtime state for one machine or session: the scheduled-task lock,
+# worktrees created under .claude/worktrees/, and any settings.local.json.
+.claude/*
+!.claude/settings.json
