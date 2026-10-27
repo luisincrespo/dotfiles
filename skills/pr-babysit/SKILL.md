@@ -104,7 +104,7 @@ Polls an open MR/PR and drives it toward merge. This is the babysit stage of the
 - `BOT_USERNAME_PATTERN`: `/^project_\d+_bot_/`
 - `BOT_NOISE_BODY_MARKERS` (skip on match): `<!-- STORYBOOK SNAPSHOT MESSAGE`, `<!-- STORYBOOK PREVIEW MESSAGE`, `<!-- SNAPSHOT MESSAGE`, `<!-- build-artifacts`, `<!-- definition-of-ready-status -->` + `bot_noise_body_markers_extra`
 - `BOT_ACTIONABLE_BODY_MARKERS`: `["DangerID: danger-id-Danger", "dangerJS"]` — match, then `/(\d+)\s+failure:/`: 0 → noise, >0 → actionable
-- `REBASE_SYNC_REPOS`: `[]` + `rebase_sync_repos` — repos whose `CLAUDE.md` mandates rebase-before-push. For these, sync/conflict steps **rebase onto the target and force-push with `--force-with-lease`** instead of merging forward. Derive `SYNC_STRATEGY = "rebase"` if `repo_id` matches, else `"merge"`. This is the ONLY place force-push/rebase is permitted, lease-only, never a bare `--force`; discard-and-batch if the remote advanced.
+- `REBASE_SYNC_REPOS`: `[]` + `rebase_sync_repos` — repos whose `CLAUDE.md` mandates rebase-before-push. For these, sync/conflict steps **rebase onto the target and force-push with `--force-with-lease`** instead of merging forward. Derive `SYNC_STRATEGY = "rebase"` if `repo_id` matches, else `"merge"`.
 - **State file**: `~/.claude/cache/deliver/pr-<platform>-<repo-with-slashes-as-dashes>-<number>.json` (the `deliver`-family namespace).
 
 ## Phase -1: Auto-wrap in /loop
@@ -254,7 +254,7 @@ Surfaces the specific Sonar issues (the platform check only shows pass/fail). ID
 
 ## Phase 2: Comments
 
-> **STOP — Phase 2 runs on EVERY cycle. Never optional, never abbreviated.** Fetch **all three** GitHub streams (2.0) every cycle — even when "just waiting on CI/approval," and **especially right after an approval lands** (reviewers often leave line comments *with* their approval). Never conclude "nothing new" without having swept all three streams.
+> **STOP — Phase 2 runs on EVERY cycle. Never optional, never abbreviated.** Fetch **every** GitHub stream (2.0) every cycle — even when "just waiting on CI/approval," and **especially right after an approval lands** (reviewers often leave line comments *with* their approval). Never conclude "nothing new" without having swept them all.
 
 ### 2.0 Fetch threads
 Unified per thread: `{ thread_id, resolvable, resolved, notes:[{note_id, author, body, system, url}] }`.
@@ -277,7 +277,7 @@ Reply/resolve: GitLab reply `glab api --method POST ".../discussions/<thread_id>
 - **ask-user**: skip if in `shown_but_unaddressed_thread_ids`. Else batch `AI reviewer (unclear): <url> — <summary> — why unsure: <reason>`, append to `shown_but_unaddressed_thread_ids`.
 - **ignore-as-noise**: reply (one polite sentence) → resolve → append to `addressed_thread_ids`.
 
-**Voice.** Reply *prose* is in Luis's voice — follow the `voice` skill's ground truth (`refs/principles.md` + `refs/examples-pr-comments.md`, the source of truth for his written style). A bounded ack like `Addressed in <sha>.` is fine as-is; apply the voice to anything with latitude (the `ignore-as-noise` sentence, an explanatory reply). These go to a **bot** reviewer → they post autonomously. A reply to a **human** thread is a message to a person → draft it via the full `Skill(voice)` (draft → his approval → post); this loop never auto-replies to humans (2b batches them). The keep-current title/description (Phase 2.5) inherits `pr-open`'s voice too.
+**Voice.** Reply *prose* is in Luis's voice — follow the `voice` skill's ground truth (`refs/principles.md` + `refs/examples-pr-comments.md`, the source of truth for his written style). A bounded ack like `Addressed in <sha>.` is fine as-is; apply the voice to anything with latitude (the `ignore-as-noise` sentence, an explanatory reply). These go to a **bot** reviewer → they post autonomously. A reply to a **human** thread is a message to a person → draft it via the full `Skill(voice)` (draft → his approval → post). The keep-current title/description (Phase 2.5) inherits `pr-open`'s voice too.
 
 ### 2b. Human / unfiltered bot comment
 Filter notes with `note_id` not in `state.seen_human_note_ids` and not system. Batch each: `Human (@<author>): <url> — <body trunc 200>`. Append note IDs to `seen_human_note_ids`. **Never reply to or resolve human threads.**
@@ -330,6 +330,5 @@ Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a 
 
 ## Notes
 
-- State per-MR/PR under `~/.claude/cache/deliver/`, deleted on terminal state (Phase 0.3).
 - `addressed_thread_ids` (won't re-surface) vs `shown_but_unaddressed_thread_ids` (silent until the user resolves on-platform).
 - Approval-reset-on-push clears approvals after a rebase force-push (0.5b) — expected; re-approve, next cycle hands off to `pr-merge` again. Rebase-sync repos churn approvals every sync.
