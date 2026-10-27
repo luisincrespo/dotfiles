@@ -20,6 +20,7 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   - **"shout"** — never "shout if you'd rather…". Use **"let me know"** or something similar.
   - **"bolt" / "bolt on"** — not for tacking something onto a change. Say it plainly: "not part of this change", "not something to add here".
   - **"nah"** — reads impolite in an outward message, even when the answer really is no. Open with a plain "I don't think we need it" / "I don't think so" instead.
+  - **"agreed on X" / "Agreed, …"** as a way to agree in conversation. He says "yeah, I agree that…" instead.
 
 ## Punctuation
 - **No em dashes (`—`).** Luis rarely uses them, so an em dash is a dead giveaway the text was
@@ -94,7 +95,9 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 - **Stay out of their domain.** In someone else's area of ownership, don't assign who does the next
   piece of work, and don't tell them how their own system behaves — even when you've verified it and
   you're right. State your part, ask your question, let them own theirs. If the gap you spotted
-  matters, it surfaces on their side or comes up when they ask.
+  matters, it surfaces on their side or comes up when they ask. When your design touches their work,
+  suggest where it could fit and ask where they see it ("I think your X could be …, but I'm curious
+  to see where you think it fits"), instead of placing it for them.
 - **When two things relate, say precisely how.** "overlap but aren't the same" beats "you get both".
 - **When the author has answered and the outcome is settled, reply with the acknowledgement only.**
   No clarifying what your original comment meant, no restating the mechanism already sitting in the
@@ -123,6 +126,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   channel autocomplete. A link that *is* the message (a review request) goes on its own line; a link
   that merely supports the ask goes inline in parentheses ("(here's the corresponding PR: <url>)").
 - **@-mention people by their Slack handle**, not their GitHub/GitLab username.
+- **A term the reader may not know gets its link on the term itself** (the word as link text), not a
+  bare URL beside it.
 - **Slack MR/PR review-request format** (his standing convention):
   ```
   @<handle> MR to <brief description of the changes>.
