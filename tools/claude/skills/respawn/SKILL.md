@@ -79,6 +79,25 @@ The helper's completion notice starts a turn. Its last line says how it went:
 - **`RESPAWN FAILED` or `RESPAWN UNCONFIRMED`**: you're still the old process, and everything
   you had running still is. Re-arm nothing. Quote the line, keep the note for a retry, and stop.
 
+## Step 4 — Capture learnings (self-educate)
+
+After the pickup, or a failed respawn, ask whether the run showed something this skill didn't
+know. Never invent one: "nothing to capture" is the usual answer, said in a line.
+
+What recurs here:
+- **A table row that proved wrong**: something meant to carry over didn't, or the reverse. Fix the
+  row and note the Claude Code version you saw it on, since a later release can change it again.
+- **Running work the note missed**: state the restart dropped that Step 1 doesn't list. Add it,
+  with how to restore it.
+- **A recovery that failed**: a re-arm that errored, or couldn't be done the way Step 3 says
+  (re-entering a worktree, say). Record what worked instead.
+- **A helper result that misled**: a `RESPAWN COMPLETE` with something still missing, or a
+  `RESPAWN UNCONFIRMED` for a session that had in fact restarted.
+
+Route by portability: Claude Code's restart behaviour → this skill; anything specific to one
+machine → `~/.agents/local/`; a one-off → a memory. **Show the exact edit and apply it only once
+the user confirms**; prefer fixing a row or line to adding one.
+
 ## Hard constraints
 
 - **Never restart a background command or subagent** after a respawn. They're still running.
