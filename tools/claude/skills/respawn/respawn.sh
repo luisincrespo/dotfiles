@@ -43,7 +43,10 @@ fi
 sleep "${delay}"
 
 if ! out="$(claude respawn "${id}" 2>&1)"; then
-  echo "RESPAWN FAILED: ${out}"
+  case "$out" in
+    *"not trusted"*) echo "RESPAWN FAILED: ${out}. Run \`claude respawn ${id}\` from an interactive terminal in $(pwd), then tell the session to pick up from ${handoff}" ;;
+    *) echo "RESPAWN FAILED: ${out}" ;;
+  esac
   exit 1
 fi
 

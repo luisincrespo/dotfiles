@@ -40,6 +40,13 @@ unset, this isn't a Claude Code background session, and `claude respawn` can't r
 interactive Claude Code session, say that exiting and running `claude --continue` resumes it on the
 installed version; in any other agent, say that respawn only applies to Claude Code. Then stop.
 
+Then check where the session runs: its `cwd` in `claude agents --json`. Sent from a background
+command, `claude respawn` refuses a session in a workspace Claude Code doesn't trust, and the home
+directory is one ("Workspace not trusted", seen Oct 26). For such a session, skip Step 2: write the
+handoff note, then tell the user to run `claude respawn <id>` from an interactive terminal in that
+directory and, once it's back, to message the session "pick up from the handoff note". A restart
+started that way has no helper to wake it, so that message is what starts Step 3.
+
 ## Step 1 — Write the handoff note
 
 Write `$CLAUDE_JOB_DIR/tmp/respawn-handoff.md` from your own context. You armed this work, so you
@@ -65,7 +72,8 @@ Any tool call still running when the restart lands is cut off.
 
 ## Step 3 — Pick up in the new process
 
-The helper's completion notice starts a turn. Its last line says how it went:
+The helper's completion notice starts a turn, or, after a manual respawn, the user's message
+does. The helper's last line says how it went:
 
 - **`RESPAWN COMPLETE`**: read the note, then:
   1. Re-enter the worktree with `EnterWorktree` `path` if you're no longer in it.
@@ -77,7 +85,8 @@ The helper's completion notice starts a turn. Its last line says how it went:
 
   Delete the note, then report in one line: the version from the notice, and what you re-armed.
 - **`RESPAWN FAILED` or `RESPAWN UNCONFIRMED`**: you're still the old process, and everything
-  you had running still is. Re-arm nothing. Quote the line, keep the note for a retry, and stop.
+  you had running still is. Re-arm nothing. Quote the line, keep the note for a retry, and stop;
+  for a "not trusted" refusal, give the user the manual route from Step 0.
 
 ## Step 4 — Capture learnings (self-educate)
 
