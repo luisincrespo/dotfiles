@@ -55,7 +55,9 @@ the next review goes better.
 ## Hard rules (these are why the user uses this skill, not the built-in `/review`)
 
 1. **Always review the draft comments WITH the user before posting.** Present every
-   comment with its `file:line` placement and exact wording. Wait for explicit go-ahead.
+   comment with its `file:line` placement and exact wording, in the same message that asks for
+   the go-ahead — repeat it rather than pointing back, since notification turns push earlier
+   drafts out of view. Wait for explicit go-ahead.
    Iterate on wording/placement as long as they want. Posting prematurely is the worst failure mode.
 2. **Inline comments only.** No review body, no top-level summary comment — unless a point
    genuinely can't attach to a specific line (rare). Cross-cutting points (e.g. a naming
