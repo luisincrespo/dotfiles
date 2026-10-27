@@ -7,7 +7,7 @@ description: >-
   restarts the session from a background command that outlives the restart, and re-arms
   everything from the note when that command's completion wakes the new process. Use for
   "respawn", "restart this session", "get this session onto the latest version". Background
-  sessions only.
+  sessions only; with --all, asks every other background session to respawn itself.
 ---
 
 # respawn — restart this session without dropping its watches
@@ -18,6 +18,12 @@ never idle, so it stays behind until it's restarted. `claude respawn <id>` resta
 conversation intact, but not everything the session had running.
 
 The skill's own folder is the base dir for the relative paths below.
+
+## Args
+
+- `--all`: fleet mode. Go to `## Fleet mode` instead of Step 0: it asks the other background
+  sessions to respawn themselves and never restarts the one it runs in. Without it, Steps 0–4
+  restart only this session.
 
 ## What a respawn keeps
 
@@ -106,6 +112,26 @@ What recurs here:
 Route by portability: Claude Code's restart behaviour → this skill; anything specific to one
 machine → `~/.agents/local/`; a one-off → a memory. **Show the exact edit and apply it only once
 the user confirms**; prefer fixing a row or line to adding one.
+
+## Fleet mode
+
+For moving every background session onto the installed version at once. Run it from a session,
+interactive or background, not from the `claude agents` dashboard: the dashboard isn't a session,
+and `/respawn` typed there starts a new one, which then respawns itself.
+
+1. **List the candidates**: the rows of `claude agents --json` with `kind: "background"`, minus this
+   session (its `id` is `$CLAUDE_JOB_DIR`'s basename, when that's set). Leave out any the JSON
+   reports as idle: the supervisor moves those by itself.
+2. **Sort out the ones in an untrusted workspace**: a `cwd` in the home directory, as in Step 0.
+   They still need asking, so they write their handoff note, but their restart is yours to run.
+3. **Show the plan and wait for a go-ahead**: each session to be asked, and for the untrusted
+   ones, the `claude respawn <id>` to run from an interactive terminal in its `cwd` once it has
+   written its note. A restart cuts off whatever each session is doing, so don't send unasked.
+4. **Ask each one**: `SendMessage` to its name from `ListAgents`, with "Run the respawn skill to
+   restart this session onto the installed Claude Code version." Each then runs Steps 0–4 itself,
+   so every restart gets its own handoff note and pickup.
+5. **Report**: who was asked, and the manual commands still to run. This session isn't among them;
+   if it needs restarting too, run `/respawn` here afterwards.
 
 ## Hard constraints
 
