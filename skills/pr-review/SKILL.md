@@ -223,7 +223,9 @@ that doesn't compile costs the author a CI round and the comment its credibility
   change** in a small table (addressed / partially / missed). For a test written in answer to your
   comment, check that it would fail if the bug came back (`claims.md`, *Protection*). Also check
   thread replies (`gh api repos/.../pulls/<N>/comments`) — a reasoned "won't do" reply counts as
-  addressed; a question back to you is yours to relay, not to silently resolve. Judge an
+  addressed; a question back to you is yours to relay, not to silently resolve. A reply that points
+  to a discussion elsewhere (a chat thread, a doc) gets read before you relay it: it usually
+  answers what you'd otherwise send back to the author. Judge an
   ack against the head, not its tense, and give a silent comment one cycle before calling it punted
   — partial pushes often land ahead of the replies on the rest. Once it's punted, draft a one-line
   question to the author on that thread rather than waiting longer: an agent's fix round works
