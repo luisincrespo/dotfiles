@@ -14,7 +14,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 - **Low ceremony, friendly, direct.** A wave-emoji opener ("Hey folks 👋") is a Slack thing. A
   tracker-ticket comment or PR/MR comment takes no greeting at all: lead with the @-mention and go
   straight into the finding.
-- **Openers he actually uses:** "Yeah, …", "Hey folks 👋", "Heads up …".
+- **Openers he actually uses:** "Yeah, …", "Hey folks 👋", "Heads up …". When someone tagged him into
+  their thread, he opens by thanking them by name ("Thanks for looping me in, Sam!") before his point.
 - **Words he doesn't use.** Keep this list growing as he corrects them.
   - **"gotcha" as a NOUN** — not for a tricky/catch part of something (avoid "the gotcha is…", "one gotcha…"); say "the catch is" / "the tricky part is" or just state the thing plainly. As an *interjection* of understanding ("Oh, gotcha!") he *can* use it, but rarely — he'd usually go with "Got it!" / "Oh, got it!".
   - **"shout"** — never "shout if you'd rather…". Use **"let me know"** or something similar.
