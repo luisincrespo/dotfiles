@@ -29,6 +29,10 @@ Reviews a PR in `<repo>` (see Config). The goal is a small set of
 high-signal comments, written so they read like Luis wrote them, posted inline, and
 **never posted without showing them to the user first.**
 
+The checks themselves are shared with `self-review`, in its `passes/` folder
+(`../self-review/passes/` from this skill's). This file decides which run on someone else's PR and
+what their findings become.
+
 As you work, keep a light note of anything the user corrects (wording, calibration) or
 anything you had to dig to find out — Step 8 folds those back into this skill at the end so
 the next review goes better.
@@ -76,16 +80,13 @@ the next review goes better.
 ## Workflow
 
 ### 1. Gather context (do this thoroughly — it's what makes the review good)
-- **Read the repo's own review conventions before anything else.** Claude Code auto-loads
-  `CLAUDE.md` but **not** `REVIEW.md`, so fetch it explicitly — the root one, plus any `REVIEW.md`
-  in a directory that is an ancestor of a changed file:
+- **Read the repo's own review conventions before anything else**: the `CLAUDE.md` and
+  `REVIEW.md` files `conventions.md` names. Fetch each `REVIEW.md` from the PR's repo, the root one
+  and any in an ancestor directory of a changed file:
   `gh api repos/<repo>/contents/REVIEW.md --jq .content | base64 -d` (404 = the repo has none, move
-  on). A repo that keeps one encodes what a general reviewer can't infer: PR classes to skip
-  outright, a mandated review/dedupe/post order, change types needing human sign-off, and recurring
-  domain gotchas worth flagging on sight. Treat it as **overriding this skill's review defaults**,
-  with a more specific file beating the root one for the paths it covers. Two consequences: if it
-  names PR classes to skip and this PR is one, say so and stop rather than reviewing it; and if it
-  marks a changed path as needing human sign-off, say so in the review instead of approving.
+  on). Treat it as **overriding this skill's review defaults**. Two consequences: if it names PR
+  classes to skip and this PR is one, say so and stop rather than reviewing it; and if it marks a
+  changed path as needing human sign-off, say so in the review instead of approving.
   It does **not** override the Hard rules above: a repo telling reviewers to post automatically
   is not license to skip the user's approval, and one asking for a single PR-level summary (say,
   a labeled design pass) still gets inline comments in the Voice below, unless no line fits.
@@ -100,8 +101,6 @@ the next review goes better.
 - Read what the PR **depends on and mirrors**: the types it consumes (e.g. UI-kit prop
   types), and any "analogous"/"mirrors X" code it references. Comparing against the existing
   pattern is often where the best comments come from.
-- Note new files/dirs → check CODEOWNERS implications (see repo CLAUDE.md). New components in a
-  package with Storybook → stories expected.
 - If the PR is part of a stack, read every PR in it before claiming something is absent or won't
   exist — grep all branches, not just this one. Read the existing review threads first
   (`gh api repos/…/pulls/<N>/comments`): dedupe against them, and note which findings other
@@ -112,32 +111,18 @@ the next review goes better.
   credibility.
 
 ### 2. Decide the focus
-Ask the user what to focus on if they didn't say. Common lenses:
-- **React best practices & re-renders** — and verify memoization is *actually effective*:
-  `useCallback`/`useMemo` that buy nothing (unstable deps, fresh object returned each render,
-  non-memoized child that re-wraps handlers) are worth flagging as dead ceremony → simplify,
-  or complete the chain (stabilize + `React.memo`).
-- **Hooks usage** — suggest extracting hooks for testability/perf; pure derivations belong at
-  render time (or in a `useMemo`), **not** in a `useEffect`. Check Rules of Hooks.
-- **Component/hook API** — `readonly` props, required-before-optional, prop names that match
-  the value. (JSDoc-coverage and import-style nits are low-priority here — they tend to get
-  cut, so keep them last and brief.) Before calling a prop "wider than needed" or unused, check
-  the component's public-export surface and sibling components' prop types — a widening that
-  matches an exported/sibling API is deliberate, not dead code.
-- **Naming** — components should be nouns, not verb phrases; align with the design-system /
-  domain vocabulary already in the codebase (e.g. prefer the UI-kit's existing noun). Watch for
-  a component name colliding with a domain type name.
+Ask the user what to focus on if they didn't say. Each pass file says when it applies; read it when
+it's in play and apply it to the diff.
+
+- **Whatever the focus, when they apply**: `performance.md` and `accessibility.md`,
+  plus `conventions.md` on every PR. Their findings join the rounds like any other. A performance
+  comment says what grows and what it costs. JSDoc-coverage and import-style nits are
+  low-priority: they tend to get cut, so keep them last and brief.
+- **Lenses to offer**: `react.md` (memoization that buys nothing, derivations in effects, hooks,
+  component API) and `api-shape.md` (endpoints).
 - **Reuse / simplification / correctness** — does it reinvent an existing util/pattern? Hold your
   own suggested code to the same bar: when it would repeat a calculation other callers already
   inline, propose the one shared function they'd all call, not another copy.
-- **Performance** — whenever the diff touches work that grows with data or traffic, whatever focus
-  the user picked: apply `passes/performance.md` from the `self-review` skill's folder
-  (`../self-review/` from this one), the same checklist a self-review runs. Its findings join the
-  rounds like any other, and each comment says what grows and what it costs as it does.
-- **API shape** (endpoints) — failures returned as a 200 with a `success: false` body rather than
-  an error status, which hides them from status-code monitoring and from anything that only sees
-  thrown errors; and when a PR already breaks a request shape, whether the route and field names
-  still say what it does now, since renaming later is a second break.
 
 ### 3. Analyze → group findings into rounds/categories
 Organize by theme (e.g. "hooks", "naming", "misc nits") rather than one flat list. Tag each
@@ -152,51 +137,20 @@ moment it leaves the PR — here, when the user moves one out in Step 4, or in a
 Written then, it survives a paused loop or a new session; held in context until the wrap-up, it
 doesn't.
 
-Findings that assert **absence** ("this will never exist"), **equivalence** ("this changes nothing
-observable"), **redundancy** ("this buys nothing"), **detectability** ("this would only show up as
-X"), or **implementability** ("we could just pass X here") are where reviews go wrong — verify
-each before drafting, not after the author pushes back.
-For equivalence, check side-effect ordering separately from rendered output, and when a change
-alters how many rows stand for one thing, check every reader that iterates them, inside the diff or
-not: work fanned out per row (a job queued per row's key) shrinks with it. For redundancy, check
-whether the thing is load-bearing for a documented invariant: a `[]` dep array plus an
-`eslint-disable` is usually protecting a "runs exactly once" contract. For detectability, follow the
-bad case down every early return: an empty-input path that skips the check makes it silent, not
-visible as X. For implementability, follow the value to whoever consumes it — threading a field
-through a command whose only handler ignores it relocates the problem instead of fixing it — and to
-whoever else can supply it: a framework hook that reads request input before the handler's result
-lets the caller set the value. A caveat you notice in your own suggestion goes in your notes to the
-user even when it looks minor. For a
-type change, enumerate producers **including tests**: loosely typed spec helpers
-(`Array<{ field: string }>`) are what a production-only sweep misses, so "free to tighten" becomes
-a red build. A claim about how an external engine behaves (a
-template language's escaping or scoping, a query planner) gets checked against that engine when a
-read-only call is available; a repo convention is a hint, not proof.
+Findings that assert **absence**, **equivalence**, **redundancy**, **detectability** or
+**implementability**, that a type is free to tighten, or how an external engine behaves are where
+reviews go wrong: check each as `claims.md` says before drafting, not after the author pushes back.
+A caveat you notice in your own suggestion goes in your notes to the user even when it looks minor.
 
 ### 3.5 Second opinion, different model
-Only when local config's `second_opinion_review` covers the repo, looked up as `self-review` Step
-3.6 does (the repo's own `github/<repo>` entry, else `*`) — the same opt-in, for the same reason:
-whatever the reviewer is handed can reach its vendor, and that's a per-codebase decision. Read that
-step's rationale before the first run; this one differs only where the code is someone else's. Not
-covered → skip and say so in one line.
-**Read the entry from local config on every run**, not from earlier in the session: a resumed
-session otherwise runs whatever model was pinned when it first looked (once, three days after the
-pin had moved on).
-
-Run it after your own pass and before drafting, and **don't show it your findings**: a second
-model earns its place by not sharing your blind spots, and leading it toward yours throws that
-away. Pipe the configured `command`, from a scratch directory rather than the checkout:
+Follow `second-opinion.md`, after your own pass and before drafting. Here the payload is:
 - `gh pr diff <N>`, which is already relative to the merge-base, so it carries only this PR;
 - the full text of each changed file from `refs/pr-review/<N>`;
 - the PR's title and description, so it can judge the change against what it claims to do.
 
-Ask for correctness defects, with an explicit verdict line when it finds none.
-
-What comes back are candidates, not comments. Verify each the way Step 3 verifies your own (its
-claim checks catch a second model as often as the first), dedupe against your findings and the
-existing threads, and drop what doesn't hold up. In the Step 4 rounds, name the model that ran,
-and mark the findings only it raised so the user can weigh them; the posted comment never says
-so. It reviews; it never posts or replies.
+What comes back are candidates, not comments, checked like your own and deduped against the existing
+threads too. In the Step 4 rounds, name the model that ran, and mark the findings only it raised so
+the user can weigh them; the posted comment never says so. It reviews; it never posts or replies.
 
 On a re-review (Step 6), re-run it only for a push that substantially changes the code, up to the
 entry's `max_rounds`. A one-line fix for one of your comments doesn't need a second pair of eyes.
@@ -218,10 +172,9 @@ Either fails → skip it, and mention that in one line only if the user might ex
 When you do run it:
 - **Check it out in its own worktree**, never by switching the user's checkout — they may have
   work in flight there. Commit and push nothing to the author's branch.
-- **Drive the actual path as `self-review` Step 3.5 does** — same rules for shared environments,
-  same two checks: the change works as intended, and the neighbouring case still does. A finding
-  you reproduced is one the author can't wave off; a suspicion that doesn't reproduce gets cut
-  before it costs the review credibility.
+- **Run it as `exercise.md` says**: the change works as intended, and the neighbouring case still
+  does. A finding you reproduced is one the author can't wave off; a suspicion that doesn't
+  reproduce gets cut before it costs the review credibility.
 - **A fork, or an author outside the org → ask before running anything.** Running the branch
   executes their code on this machine, install scripts included.
 - With the round's drafts, tell the user which states you exercised and what stayed unverified.
@@ -237,11 +190,8 @@ draft, without identifiers, what breaks and for whom, so they can judge it and a
 Pitch those drafts at the depth they can defend in a reply: the ask, one reason, "I think" where
 you're inferring, and fix code held back until the author asks.
 
-**Verify any code you hand over the way CI will**, not just the way that's quickest. Know which of
-your local commands actually enforce what you're claiming: a test runner that strips types instead of
-checking them (vitest via esbuild, say) will happily pass code that fails the build, so a green scratch
-test proves nothing about types — run the real build/typecheck (`nx build <package>`, `tsc --noEmit`,
-`mypy`, `cargo check`, …). A snippet that doesn't compile costs the author a CI round and the comment its credibility.
+**Verify any code you hand over the way CI will** (`claims.md`, *Evidence that isn't*). A snippet
+that doesn't compile costs the author a CI round and the comment its credibility.
 
 ### 5. Post — inline, via `gh api`
 - Get the **full 40-char head SHA** (a short SHA returns HTTP 422):
@@ -267,10 +217,9 @@ test proves nothing about types — run the real build/typecheck (`nx build <pac
 ### 6. Re-review after the author pushes changes (and monitor until fully addressed)
 - `git fetch … --force`, look at the new commit, and **map each of your comments to a concrete
   change** in a small table (addressed / partially / missed). For a test written in answer to your
-  comment, check that it would fail if the bug came back: walk the fixture through the broken
-  version of the code. A bot's "this proves X" is a claim, not evidence. Also check thread replies
-  (`gh api repos/.../pulls/<N>/comments`) — a reasoned "won't do" reply
-  counts as addressed; a question back to you is yours to relay, not to silently resolve. Judge an
+  comment, check that it would fail if the bug came back (`claims.md`, *Protection*). Also check
+  thread replies (`gh api repos/.../pulls/<N>/comments`) — a reasoned "won't do" reply counts as
+  addressed; a question back to you is yours to relay, not to silently resolve. Judge an
   ack against the head, not its tense, and give a silent comment one cycle before calling it punted
   — partial pushes often land ahead of the replies on the rest. Once it's punted, draft a one-line
   question to the author on that thread rather than waiting longer: an agent's fix round works
@@ -369,7 +318,9 @@ Scan the session for **reusable** signals:
 
 Then:
 - If something generalizes, **apply the edit and say what you changed** (which section, the
-  new wording), unless it's consequential (global rule 13). Prefer refining or replacing an
+  new wording), unless it's consequential (global rule 13). A lesson about a check itself goes in
+  its file in `../self-review/passes/`, worded for both skills that read it: what the check looks
+  for, not what a finding becomes here. Prefer refining or replacing an
   existing line over adding a new one; if an edit grows a section, cut a sentence.
 - Keep the bar high. Skip anything specific to this one PR — that's a fact, not a skill rule,
   and a memory feedback note may fit it better. A review procedure that recurs on one project is
@@ -431,8 +382,6 @@ Then:
 
 ## Reference
 
-- Honors the user's global rules already in CLAUDE.md/memory: `gh` for GitHub, JSDoc coverage,
-  `readonly`/required-first interface props, `!== undefined` over `!= null`.
-- Also honors whatever the **target repo's own** `CLAUDE.md` mandates — design-system preferences,
-  barrel-file rules, changeset/versioning conventions. Read it before the first round rather than
-  assuming this machine's conventions apply.
+- `gh` for everything GitHub (global rule 5).
+- The conventions a review checks, the user's and the target repo's, are in `conventions.md`. Read
+  the target repo's own before the first round rather than assuming this machine's apply.

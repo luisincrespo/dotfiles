@@ -205,7 +205,7 @@ when it re-does what an earlier stage already established. "This seems slow" is 
 that catches one bad merge in twenty is worth its time on the other nineteen.
 
 **Check nothing was lost.** Where `second_opinion_review` covers the repo (its own entry, else `*`;
-see self-review Step 3.6), hand it the old and new text and ask for any instruction the old version
+see `self-review`'s `passes/second-opinion.md`), hand it the old and new text and ask for any instruction the old version
 gives that the new one doesn't. That's a precise question, and a second model is better at it than
 the author of the cut.
 

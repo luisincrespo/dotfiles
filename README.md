@@ -62,11 +62,13 @@ these up front. One appears when a procedure on a project recurs and a session t
 skill rather than walking through it again (the self-educate rule in `AGENTS.md`).
 
 Skills share text the way code shares a module. A checklist two skills apply lives once, in the
-folder of the skill that owns it, and the other reads it from there:
-`skills/self-review/passes/performance.md` is the performance pass both `self-review` and
-`pr-review` run. Pointing at a sibling's step also works for a rule, but loads that whole skill to
-read one paragraph. Don't give shared files a folder of their own under `skills/`, because
-`install.sh` links every directory there as a skill.
+folder of the skill that owns it, and the other reads it from there. `skills/self-review/passes/`
+holds every check `self-review` and `pr-review` both run, from performance to the second-model
+review: each file says what the check looks for and when it applies, and each skill decides what a
+finding becomes, a fix in one and a drafted comment in the other. A pass loads only when it runs.
+Pointing at a sibling's step also works for a rule, but loads that whole skill to read one
+paragraph. Don't give shared files a folder of their own under `skills/`, because `install.sh`
+links every directory there as a skill.
 
 | Path | | |
 |---|---|---|
