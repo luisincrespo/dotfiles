@@ -207,7 +207,9 @@ that doesn't compile costs the author a CI round and the comment its credibility
     -f body="$(cat /tmp/cN.md)" \
     --jq '"OK " + (.id|tostring) + " -> " + .path + ":" + (.line|tostring)'
   ```
-  - `side=RIGHT` for added/changed lines (all lines of an added file are RIGHT).
+  - `side=RIGHT` for added/changed lines (all lines of an added file are RIGHT). A leftover the
+    change creates outside its hunks (an import whose last use was deleted) anchors on that
+    deleted line: `side=LEFT` with its base line number, plus a permalink to the leftover.
   - Multi-line anchor: add `-F start_line=<n>` (with `-f start_side=RIGHT`) alongside `line`.
   - Reply on an existing thread: `-F in_reply_to=<comment_id>`.
 - Edit a posted comment: `gh api -X PATCH "repos/.../pulls/comments/<comment_id>" -f body="$(cat …)"`.
