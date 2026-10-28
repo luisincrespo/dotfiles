@@ -127,9 +127,11 @@ it's in play and apply it to the diff.
 ### 3. Analyze → group findings into rounds/categories
 Organize by theme (e.g. "hooks", "naming", "misc nits") rather than one flat list. Tag each
 with conviction (recommend / borderline / nit) and whether it's blocking (usually nothing is).
-Give a recommendation, not a survey of options. A test comment earns its place when it closes a
-gap that would let the bug back in — not when it polishes an existing assertion's style or a
-test's name. Those get cut.
+Give a recommendation, not a survey of options. Cut a finding that asks one path to behave
+differently from what the surface already does on every other path (one entry point skipping a save
+the rest make): the special case costs more than the drift. A test comment earns its place when it
+closes a gap that would let the bug back in — not when it polishes an existing assertion's style or
+a test's name. Those get cut.
 
 A real finding that doesn't belong on this PR (a pre-existing bug the review surfaced, a wider fix
 the user wants to own) isn't cut either: append it to the review ledger's `deferred_items` the
