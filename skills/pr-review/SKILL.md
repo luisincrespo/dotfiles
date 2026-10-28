@@ -372,6 +372,9 @@ Then:
   or coupling you haven't confirmed, default to a question, not an assertion ("Is this meant
   to…? If so…"). That includes removing something that looks unused: ask "Do we need X?"
   before "Could we drop X?".
+- On a product or UX concern, assume the author may already have design input: ask to revisit and
+  say which option the user prefers, rather than asking them to loop someone in. When accepting a
+  decision, credit its reasoning, not who proposed it.
 
 ## Examples of the target style
 
