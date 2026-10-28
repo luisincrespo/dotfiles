@@ -2,10 +2,11 @@
 name: self-review
 description: >-
   Review your OWN branch or uncommitted changes before pushing or opening a PR. Runs the repo's
-  gates (lint, typecheck, build, tests), then correctness, simplification, security and, for
-  frontend changes, accessibility passes over the diff; fixes the clear findings and batches
-  judgment calls for you, looping until the diff is clean. Use for "self-review", "check my diff",
-  or before pr-open. For someone ELSE's PR use pr-review.
+  gates (lint, typecheck, build, tests), then correctness, simplification and security passes
+  over the diff, plus performance and accessibility passes when the change touches what they
+  cover; fixes the clear findings and batches judgment calls for you, looping until the diff is
+  clean. Use for "self-review", "check my diff", or before pr-open. For someone ELSE's PR use
+  pr-review.
 allowed-tools:
   - Skill(simplify)
   - Skill(security-review)
@@ -58,6 +59,7 @@ The **verify** stage: put your own diff through the same scrutiny a reviewer wou
 ## Step 1 — Scope the diff
 - Compute the changeset: `git diff --name-only <base>...HEAD` plus any uncommitted changes (`git status --porcelain`). List the affected packages. **Resolve `<base>` to its remote-tracking ref (`origin/<base>`) when one exists** — in a worktree the local branch ref is frozen at creation time, so a bare name can be far behind and silently widen the diff to include other people's commits.
 - Flag whether **frontend** files changed (`*.tsx`/`*.jsx`/`*.vue`/`*.svelte`/`*.css`/`*.scss`/`*.html`, or the repo's equivalent templates) — gates the accessibility pass.
+- Flag whether the diff touches **work that grows with data or traffic**: database queries or ORM calls, network or API calls, loops over collections that grow with usage, request handlers, jobs and queue consumers, or UI rendering (components, hooks, state) — gates the performance pass.
 - Note new components: a new `*.tsx` component in a package that has Storybook (`.storybook/` or existing `*.stories.*`) **must** have a story when the repo's `CLAUDE.md` requires one — flag if missing.
 
 ## Step 2 — Automated gates (fix failures)
@@ -77,6 +79,7 @@ Run these over the diff and collect findings:
 - **Correctness / bugs** (the primary hunt) — `/code-review` is a native built-in *command*, not a Skill-tool skill, so it can't be called via `Skill()`. Default (autonomous): launch a native review-focused `Agent` over the diff. Alternative: the user runs `/code-review` themselves and feeds findings back.
 - **Reuse / simplification** — `Skill(simplify)` (native built-in; quality only, applies its own fixes).
 - **Security** — `Skill(security-review)` (native built-in) over the pending changes.
+- **Performance (when Step 1 flagged it)** — launch a native `Agent` (general-purpose) over the diff to find work that grows with data or traffic: a query or request inside a loop (N+1); a fetch, list or scan with no limit or pagination; repeated work on a hot path (the same fetch twice, recomputing on every render, re-rendering on every keystroke, an effect whose dependencies change every render); a new query no index serves; a large new dependency in what the client downloads. Each finding must name what grows and what it costs as it does, so it's a claim to check rather than a hunch: micro-optimizations on cold paths are noise. A fix that trades something away, like a cache or an index migration, is a judgment call to batch. Skip when Step 1 flagged nothing, and say so. *Why a pass of its own:* `simplify`'s efficiency check catches local waste, not cost under load, and these defects look correct in isolation, so the correctness pass and tests on small fixtures both let them through; agent-written code produces them readily.
 - **Accessibility (frontend only)** — launch a native `Agent` (general-purpose) to review the changed frontend files against WCAG 2.2 AA in the source. Skip when no frontend files changed. *(Deliberately plugin-free: native tools and the user's own skills, until the user vets a dedicated accessibility-reviewer plugin to swap in.)*
 Run the independent passes in parallel where the tooling allows.
 
@@ -136,7 +139,7 @@ and then nobody reviewed the result.
 
 ## Step 4 — Triage & fix (loop)
 Triage fix-now vs batch:
-- **Fix now** — clear, bounded, and you can verify the fix (obvious bugs, a missing `const`, a reuse the simplify pass surfaced, a genuine a11y defect). Apply, then re-run the relevant Step-2 check.
+- **Fix now** — clear, bounded, and you can verify the fix (obvious bugs, a missing `const`, a reuse the simplify pass surfaced, a genuine a11y defect, a query hoisted out of a loop). Apply, then re-run the relevant Step-2 check.
 - **Batch** — anything ambiguous, opinion-driven, cross-cutting, or where the "fix" needs a judgment call (including a Sonar/linter rule that fights another). Present these to the user with `file:line` + why-unsure; don't guess.
 - After applying fixes, **re-review the changed areas** — don't stop at one pass; a fix can introduce a new issue. Loop Steps 2–4 until the automated gates are green and no clear findings remain.
 
