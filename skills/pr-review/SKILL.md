@@ -130,6 +130,10 @@ Ask the user what to focus on if they didn't say. Common lenses:
 - **Reuse / simplification / correctness** — does it reinvent an existing util/pattern? Hold your
   own suggested code to the same bar: when it would repeat a calculation other callers already
   inline, propose the one shared function they'd all call, not another copy.
+- **Performance** — whenever the diff touches work that grows with data or traffic, whatever focus
+  the user picked: apply `passes/performance.md` from the `self-review` skill's folder
+  (`../self-review/` from this one), the same checklist a self-review runs. Its findings join the
+  rounds like any other, and each comment says what grows and what it costs as it does.
 - **API shape** (endpoints) — failures returned as a 200 with a `success: false` body rather than
   an error status, which hides them from status-code monitoring and from anything that only sees
   thrown errors; and when a PR already breaks a request shape, whether the route and field names

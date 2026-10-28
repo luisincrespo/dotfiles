@@ -61,6 +61,13 @@ like the rest of `~/.agents/local/`, and `install.sh` links it in beside the oth
 these up front. One appears when a procedure on a project recurs and a session turns it into a
 skill rather than walking through it again (the self-educate rule in `AGENTS.md`).
 
+Skills share text the way code shares a module. A checklist two skills apply lives once, in the
+folder of the skill that owns it, and the other reads it from there:
+`skills/self-review/passes/performance.md` is the performance pass both `self-review` and
+`pr-review` run. Pointing at a sibling's step also works for a rule, but loads that whole skill to
+read one paragraph. Don't give shared files a folder of their own under `skills/`, because
+`install.sh` links every directory there as a skill.
+
 | Path | | |
 |---|---|---|
 | `AGENTS.md` | the rules | **portable** — the cross-tool standard for agent instructions |
