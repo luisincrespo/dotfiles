@@ -41,6 +41,13 @@ Nothing wakes the new process on its own, so step 2 starts a background command 
 
 ## Step 0 — Guard
 
+**Started just to run this?** If `/respawn` is this session's first message, the `claude agents`
+dashboard started the session to run it: the dashboard isn't a session, so a command typed there
+gets a new one. There's nothing here to restart. Say so, and say how to reach the session meant:
+open it from the dashboard and send `/respawn` there, or reply `all` to run fleet mode from here,
+which never restarts this session. Write no handoff note and offer no restart: one session started
+this way (Oct 27) wrote an empty note and asked the user to restart it by hand.
+
 `$CLAUDE_JOB_DIR` names this session's job folder, and its basename is the session's ID. If it's
 unset, this isn't a Claude Code background session, and `claude respawn` can't reach it. In an
 interactive Claude Code session, say that exiting and running `claude --continue` resumes it on the
@@ -115,9 +122,10 @@ changed**, unless it's consequential (global rule 13); prefer fixing a row or li
 
 ## Fleet mode
 
-For moving every background session onto the installed version at once. Run it from a session,
-interactive or background, not from the `claude agents` dashboard: the dashboard isn't a session,
-and `/respawn` typed there starts a new one, which then respawns itself.
+For moving every background session onto the installed version at once. Run it from any session,
+interactive or background. `/respawn --all` typed in the `claude agents` dashboard works too: the
+dashboard starts a new session to run it, which leaves itself out like any other. Stop that session
+once it has reported.
 
 1. **List the candidates**: the rows of `claude agents --json` with `kind: "background"`, minus this
    session (its `id` is `$CLAUDE_JOB_DIR`'s basename, when that's set). Leave out any the JSON
