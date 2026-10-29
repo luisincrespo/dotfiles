@@ -15,6 +15,8 @@ allowed-tools:
   - Bash(gh pr list:*)
   - Bash(gh pr create:*)
   - Bash(gh pr edit:*)
+  - Bash(gh stack link:*)
+  - Bash(gh extension list:*)
   - Bash(gh repo view:*)
   - Bash(git remote get-url:*)
   - Bash(git status:*)
@@ -111,7 +113,7 @@ Opens **one** MR/PR for the current branch and returns. This is the create stage
   - **Drop a template section this diff can't fill** — e.g. a `## Changeset` section when the change touches no versioned package. Check the repo's own layout for which paths those are; don't assume `libs/**`. **When the repo's own instructions say to always follow the template, keep every section instead and write one line saying why it's empty** — a missing heading reads as not having followed the template, and that's what gets asked about in review. A section whose own text is conditional ("if X was created, paste it here") is satisfied by **omitting** it when X doesn't exist — don't keep the heading to write "n/a", and never fill it with a substitute because the slot is there.
   - Don't cite Figma nodes, design-source names, or sibling implementations ("mirrors X.tsx"); describe behavior so each line stands alone.
   - **Describe the change as it stands in the final diff — what it does and why — not how it got there.** Out: file-by-file maps, function lists, code-level references, "changed from X to Y" for decisions internal to *this* PR, alternatives you weighed, and corrections to the ticket's premise. **The test that catches the rest: a sentence you wrote to convince *yourself* is the one to cut.** Every drift of this kind starts as real reasoning — the fixture you built to see the bug, the proof you needed before trusting the code, the framing of a decision you changed mid-task — and it reads as necessary context while you write it, as noise to someone meeting the diff once. Audit **every** section this way, not just the one inviting caveats. Explain a decision only when a reader can't get it from the code and its comments; when the repo asks you to name a rejected alternative, that's one clause. Describing the prior behavior of already-shipped code this PR *fixes* is fine.
-  - **Reference other PRs as full URLs, never bare `#123`** (stacked base, follow-up, etc.). For a stacked unit, fold the stack into whichever template section already carries context or the ticket reference — never a section of its own, and never above the summary: an ordered list in merge order, one line per PR as `<short title> — <full URL>`, the current one bolded and marked `**← this PR**`.
+  - **Reference other PRs as full URLs, never bare `#123`** (stacked base, follow-up, etc.). For a stacked unit on GitHub that Step 6 can link into a native stack (the `github/gh-stack` extension is installed), skip the stack list: GitHub shows the chain above the PR, so a hand-written one only repeats it. Otherwise (GitLab, or no extension) fold the stack into whichever template section already carries context or the ticket reference — never a section of its own, and never above the summary: an ordered list in merge order, one line per PR as `<short title> — <full URL>`, the current one bolded and marked `**← this PR**`.
 - No template → write a short reviewer-facing description (what + why, a few lines). Same rules.
 
 ## Step 4: UI screenshots (when snapshottable UI changed)
@@ -137,6 +139,7 @@ Any capture step fails → don't block; create without screenshots and note it i
 - **GitHub**: `gh pr create --base <target> --head <branch> --title "<title>" --body "<desc>" [--draft]`
 - `--draft` only when Step 5 says draft.
 - Announce: `✅ Opened <web_url> (<draft|ready>, → <target>).`
+- **Link a stacked GitHub PR into a native stack.** When Step 5 made it a draft because its base is another open PR's branch, run `gh stack link <base PR number> <new PR number>` (bottom to top) right after creating it. It adds the PR to the base PR's stack, or creates one when the base isn't in a stack, and never removes a PR. Don't pass `--open`, which marks every PR in the stack ready. It needs GitHub's `gh-stack` extension (`gh extension list` shows `github/gh-stack`); don't install it yourself. Without it, or when the link fails, add Step 3's stack list with `gh pr edit` and say so in the report.
 - If `--task-slug` was passed, update that unit's `pr_number`/`status:"open"` in the task ledger (`~/.claude/cache/deliver/task-<repo-dashes>-<slug>.json`).
 - **Automated-approval opt-in.** When the repo configures one (local config `auto_approval`) and the diff meets its `opt_in_criterion`, add the label once the MR/PR exists and say so in the report. Applying it only *requests* a review, so it needs no gate: the bot triages risk itself and declines what it doesn't like.
 
