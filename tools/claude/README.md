@@ -41,12 +41,15 @@ Plugins aren't linked — Claude Code owns its own cache, so install those separ
 ./tools/claude/install.sh              # link into ~/.claude
 ./tools/claude/install.sh --dry-run    # show what would change, touch nothing
 ./tools/claude/install.sh --uninstall  # drop the symlinks, restore the last backup
+./tools/claude/install.sh --uninstall --dry-run  # preview the rollback, touch nothing
 ```
 
 Install symlinks each skill and `CLAUDE.md` into `~/.claude`, so edits made from any machine land
 back in this repo ready to commit. Anything real it would replace is moved to
-`~/.claude/.dotfiles-backup/<timestamp>/` first, and `--uninstall` puts it back. Restart Claude Code
-after any of these to pick up the change.
+`~/.claude/.dotfiles-backup/<timestamp>/` first, and `--uninstall` puts it back. Uninstall judges
+what's its own by where a link points (this repo, the private companion, `~/.agents/local/skills`),
+never by what an entry looks like, so a skill another tool installed as symlinks stays. Restart
+Claude Code after any of these to pick up the change.
 
 ### The private overlay
 

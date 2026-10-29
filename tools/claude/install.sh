@@ -8,8 +8,8 @@
 # which this script only ever seeds, never overwrites.
 #
 # Usage:
-#   ./claude/install.sh [--dry-run]     link the repo into ~/.claude
-#   ./claude/install.sh --uninstall     drop the symlinks and restore the last backup
+#   ./tools/claude/install.sh [--dry-run]               link the repo into ~/.claude
+#   ./tools/claude/install.sh --uninstall [--dry-run]   drop the symlinks and restore the last backup
 
 set -euo pipefail
 
@@ -34,12 +34,15 @@ BACKUP_DIR="${CLAUDE_DIR}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 DRY_RUN=0
 UNINSTALL=0
 TILDE='~'
-case "${1:-}" in
-  --dry-run)   DRY_RUN=1 ;;
-  --uninstall) UNINSTALL=1 ;;
-  "")          ;;
-  *) echo "unknown option: $1" >&2; exit 2 ;;
-esac
+# Every argument is read, in any order: reading only the first once turned
+# `--uninstall --dry-run` into a real uninstall.
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run)   DRY_RUN=1 ;;
+    --uninstall) UNINSTALL=1 ;;
+    *) echo "unknown option: $arg" >&2; exit 2 ;;
+  esac
+done
 
 log()  { printf '  %s\n' "$*"; }
 run()  { if (( DRY_RUN )); then printf '  would: %s\n' "$*"; else "$@"; fi; }
@@ -63,20 +66,47 @@ link() {
   log "linked    ${dest/#$HOME/$TILDE}"
 }
 
-# Remove any symlink under ~/.claude that points into this repo or into
-# ~/.agents/local/skills, then put the most recent backup back. Leaves
+# Remove what this installer put under ~/.claude, then put the most recent backup back. Leaves
 # ~/.agents/local/* itself alone — that is machine state, not repo content.
+#
+# Ownership is read from where a link points, never from what an entry looks like: a skill
+# another tool installed as a symlink, or as a folder of symlinks, is shaped like ours and
+# isn't ours to delete.
+owned() {
+  case "$1" in
+    "${REPO_ROOT}"/*|"${PRIVATE_ROOT}"/*|"${LOCAL_DIR}/skills"/*) return 0 ;;
+  esac
+  return 1
+}
+# An overlaid skill: a real directory holding no real files, and only symlinks into the two repos.
+owned_overlay() {
+  local dir="$1" entry any=0
+  [[ -z "$(find "$dir" -type f -print -quit 2>/dev/null)" ]] || return 1
+  while IFS= read -r entry; do
+    any=1
+    owned "$(readlink "$entry")" || return 1
+  done < <(find "$dir" -type l)
+  (( any ))
+}
+# A dry run removes nothing, so the restore below asks this instead of the filesystem whether a
+# path is free; otherwise the preview would skip every restore the real run makes.
+REMOVED=$'\n'
+unlink_owned() {
+  run rm -rf "$1"
+  REMOVED+="$1"$'\n'
+  log "unlinked  ${1/#$HOME/$TILDE}${2:+ $2}"
+}
+free() { [[ "$REMOVED" == *$'\n'"$1"$'\n'* ]] || [[ ! -e "$1" && ! -L "$1" ]]; }
+
 if (( UNINSTALL )); then
+  (( DRY_RUN )) && echo "DRY RUN — nothing will be changed"
   echo "Unlinking Claude config from ${REPO_ROOT}"
   echo
   for target in "${CLAUDE_DIR}/skills/"* "${CLAUDE_DIR}/CLAUDE.md"; do
     if [[ -L "$target" ]]; then
-      case "$(readlink "$target")" in
-        "${REPO_ROOT}"/*|"${PRIVATE_ROOT}"/*|"${LOCAL_DIR}/skills"/*|*/AGENTS.md) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
-      esac
-    elif [[ -d "$target" && -z "$(find "$target" -type f -not -type l -print -quit 2>/dev/null)" ]]; then
-      # An overlaid skill: a real directory holding nothing but symlinks.
-      rm -rf "$target"; log "unlinked  ${target/#$HOME/$TILDE} (overlay)"
+      owned "$(readlink "$target")" && unlink_owned "$target"
+    elif [[ -d "$target" ]] && owned_overlay "$target"; then
+      unlink_owned "$target" "(overlay)"
     fi
   done
 
@@ -85,17 +115,19 @@ if (( UNINSTALL )); then
     echo
     echo "Restoring ${LATEST/#$HOME/$TILDE}"
     if [[ -d "${LATEST}skills" ]]; then
-      mkdir -p "${CLAUDE_DIR}/skills"
+      run mkdir -p "${CLAUDE_DIR}/skills"
       for backup in "${LATEST}skills/"*; do
         [[ -e "$backup" ]] || continue
         dest="${CLAUDE_DIR}/skills/$(basename "$backup")"
-        [[ -e "$dest" ]] && continue
-        cp -R "$backup" "$dest" && log "restored  ${dest/#$HOME/$TILDE}"
+        free "$dest" || continue
+        run cp -R "$backup" "$dest"
+        log "restored  ${dest/#$HOME/$TILDE}"
       done
     fi
     for file in CLAUDE.md; do
-      [[ -e "${LATEST}${file}" && ! -e "${CLAUDE_DIR}/${file}" ]] || continue
-      cp -R "${LATEST}${file}" "${CLAUDE_DIR}/${file}" && log "restored  ~/.claude/${file}"
+      [[ -e "${LATEST}${file}" ]] && free "${CLAUDE_DIR}/${file}" || continue
+      run cp -R "${LATEST}${file}" "${CLAUDE_DIR}/${file}"
+      log "restored  ~/.claude/${file}"
     done
   else
     echo
@@ -304,9 +336,20 @@ fi
 # The private repo holds the voice corpus — precisely what the person check exists
 # for — so it needs the same guard. Rather than maintain two copies, the public
 # repo's hooks are authoritative and copied in on every install, so they can't drift.
-if [[ -d "${PRIVATE_ROOT}/.git" ]]; then
+#
+# A repo of its own is asked of git, not read off a .git directory: in a worktree or a submodule
+# .git is a file, and that test skipped this whole block without a word, guard and identity both.
+# The toplevel check keeps a plain directory that happens to sit inside another repo out.
+private_repo() {
+  local top
+  top="$(git -C "$PRIVATE_ROOT" rev-parse --show-toplevel 2>/dev/null)" || return 1
+  [[ "$top" == "$(cd "$PRIVATE_ROOT" && pwd -P)" ]]
+}
+if [[ -d "$PRIVATE_ROOT" ]]; then
   echo
   echo "Private repo:"
+fi
+if [[ -d "$PRIVATE_ROOT" ]] && private_repo; then
   run mkdir -p "${PRIVATE_ROOT}/.githooks"
   run cp "${REPO_ROOT}/.githooks/"* "${PRIVATE_ROOT}/.githooks/"
   run git -C "$PRIVATE_ROOT" config core.hooksPath .githooks
@@ -320,6 +363,8 @@ if [[ -d "${PRIVATE_ROOT}/.git" ]]; then
   else
     log "ok        repo-local identity already set"
   fi
+elif [[ -d "$PRIVATE_ROOT" ]]; then
+  log "SKIPPED   ${PRIVATE_ROOT/#$HOME/$TILDE} isn't a git checkout of its own — no leak guard set up"
 fi
 
 echo
