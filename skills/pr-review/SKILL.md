@@ -129,7 +129,11 @@ Organize by theme (e.g. "hooks", "naming", "misc nits") rather than one flat lis
 with conviction (recommend / borderline / nit) and whether it's blocking (usually nothing is).
 Give a recommendation, not a survey of options. Cut a finding that asks one path to behave
 differently from what the surface already does on every other path (one entry point skipping a save
-the rest make): the special case costs more than the drift. A test comment earns its place when it
+the rest make): the special case costs more than the drift. A value copied into code from config
+the code doesn't read (an infra setting, another service's limit) is a recommend, not a nit, when
+someone acts on it: it goes stale silently the day the source changes. A rare edge case with a cheap,
+correct fix still earns a comment: say it's rare and keep it to one ask, so it doesn't become a
+debate with another reviewer. A test comment earns its place when it
 closes a gap that would let the bug back in — not when it polishes an existing assertion's style or
 a test's name. Those get cut.
 
