@@ -38,7 +38,15 @@ NAME="$(python3 -c "import json;print(json.load(open('.devin-plugin/plugin.json'
 # A plugin installed from a local path is already linked, so refreshing it is
 # pointless — and `update` re-fetches from the source, which for a local install
 # is this very directory. Only the git-sourced install has a cache to go stale.
-if ! devin plugins list 2>/dev/null | grep -q "$NAME"; then
+# A failed listing is not "not installed": reporting it as one skips the refresh while
+# looking like a clean run, and the local plugin stays stale until the next push.
+if ! installed="$(devin plugins list 2>&1)"; then
+  echo "  couldn't list Devin plugins, so the local cache was NOT refreshed:" >&2
+  printf '%s\n' "$installed" | sed 's/^/    /' >&2
+  echo "  Re-run with --no-push once devin responds." >&2
+  exit 1
+fi
+if ! printf '%s\n' "$installed" | grep -q "$NAME"; then
   echo "  '$NAME' isn't installed — nothing to refresh."
   exit 0
 fi
