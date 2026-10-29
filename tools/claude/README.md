@@ -57,6 +57,13 @@ A skill present in **both** trees is assembled in `~/.claude/skills/<name>/` as 
 symlinks, one per file, drawn from each. A skill in this repo alone stays a single directory
 symlink, as before. Editing through `~/.claude` still writes back to whichever repo owns the file.
 
+**A file at the same path in both trees comes from the private one.** That's how someone replaces
+the personal layer (the root README's *Make it yours*) without forking: their voice principles,
+review style or conventions go at the public file's path in their companion. Two files outside
+`skills/` work the same way: the companion's `AGENTS.md`, when it has one, is linked as
+`~/.claude/CLAUDE.md` in place of this repo's, and its `tools/claude/settings.stable.json` and
+`global.stable.json` are merged on top of this repo's, key by key.
+
 The merge happens at install time and **never in a checkout**. Symlinking private files into this
 tree and relying on `.gitignore` would be simpler and wrong: one missed entry publishes them, and
 no leak check would catch it, because that content is anonymized by design and passes every rule.

@@ -96,6 +96,49 @@ Three of those placements aren't preferences. A Devin plugin's always-on rule mu
 path can't traverse `..` — so the root-level layout is forced, and it happens to be the neutral
 standard anyway.
 
+## Make it yours
+
+This setup is opinionated on purpose, and built to be shared. The skills, the review passes and
+the guidelines in them are the **shared machinery**: they hold up for anyone, opinions included. A
+small set of files hold one person's taste instead, the **personal layer**, and the machinery reads
+them. The ones in this repo are Luis's, kept here as working defaults. Making the setup yours means
+replacing those files; nothing else needs editing.
+
+| Personal-layer file | What it holds |
+|---|---|
+| `AGENTS.md` | The rules every session loads: workflow, git and PR conventions, code style, how much the agent does without asking. The skills cite rules 5, 8, 10, 12 and 13 by number, so keep those, reworded as you like |
+| `skills/voice/refs/principles.md` | How you write. `voice` drafts PR descriptions, review comments and messages in it |
+| `skills/voice/refs/examples-*.md` | Real messages of yours, the voice's ground truth. Private by nature, so they only ever live in the private companion |
+| `skills/pr-review/refs/style.md` | How you review: what's worth a comment, where comments go, how they read, how drafts are shown to you |
+| `skills/self-review/passes/personal-conventions.md` | Your code conventions beyond what the rules and each repo's `CLAUDE.md` say |
+| `tools/claude/settings.stable.json`, `tools/claude/global.stable.json` | Your Claude Code preferences |
+
+`zsh/` and `cmux/` document one person's shell and terminal; nothing reads them, so take or leave
+them.
+
+**Two ways to replace them:**
+
+- **A private companion repo**, the way this one is meant to be used. Clone this repo as it is, and
+  keep your versions of the files above at the same paths in a private repo beside it
+  (`../dotfiles-private`, or wherever `DOTFILES_PRIVATE` points). `install.sh` links yours in place
+  of these: a skill file or `AGENTS.md` of yours replaces this repo's, and your two preference files
+  are merged on top of these key by key, so they only need the keys you want different. This repo's
+  improvements then arrive with a plain `git pull`, with nothing to merge, and `install.sh` installs
+  the leak guard into your private repo too.
+- **A fork.** Edit the files in place. Pulling from upstream then conflicts only in the files you
+  made yours.
+
+**Then it learns your way.** Every skill's self-educate step routes what it learns: a preference
+that's your own taste goes into the personal-layer file it belongs to, and a lesson anyone using
+the skill would want goes into the shared skill, which is worth sending upstream as a PR. A nearly
+empty voice principles file is a fine start, since `voice` adds a principle each time you correct a
+draft.
+
+Two limits. Devin reads this repo through its plugin, so it sees these defaults, not a private
+companion's files. And machine-specific values (repo ids, hosts, the leak guard's denylist, review
+settings) are a third layer, in `~/.agents/local/`, which `install.sh` seeds: see
+[`tools/claude/README.md`](./tools/claude/README.md).
+
 ## Usage
 
 ### ZSH

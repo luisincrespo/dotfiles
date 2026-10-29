@@ -133,6 +133,7 @@ What actually recurs here:
 Route by **portability**, which decides the file:
 - **Repo- or employer-specific mechanics** (the actual command, a nested pipeline, a host) → `verification_addenda` or another key in `~/.agents/local/config.json`. This skill travels between jobs; a build command naming a private package doesn't belong in it.
 - **A procedure that recurs on one project** → a project skill (global rule 13).
+- **A convention that's the user's own taste** (they corrected something the review let through, or waved off something it flagged as theirs) → `passes/personal-conventions.md`, the personal layer, rather than the shared passes.
 - **A lesson that would hold at any job** → the relevant section of this skill, or, when it's about a check itself, its file in `passes/`. `pr-review` reads those too, so word the lesson for both: what the check looks for, not what happens to the finding here.
 - **A durable one-off fact** → a memory, not a rule.
 

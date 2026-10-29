@@ -1,23 +1,29 @@
 ---
 name: voice
 description: >-
-  Draft outward-facing content in Luis's voice: Slack messages, PR/MR review comments and replies,
-  and PR/MR titles and descriptions. Use whenever composing ANY outward-facing message on his
-  behalf. Loads real past examples and learned tone principles so the first draft already sounds
-  like him, always shows the draft for approval before anything is sent, and folds each round of
-  his edits back in so it keeps improving.
+  Draft outward-facing content in the user's own voice: Slack messages, PR/MR review comments and
+  replies, and PR/MR titles and descriptions. Use whenever composing ANY outward-facing message on
+  their behalf. Loads real past examples and learned tone principles so the first draft already
+  sounds like them, always shows the draft for approval before anything is sent, and folds each
+  round of their edits back in so it keeps improving.
 ---
 
-# voice — write the way Luis writes
+# voice — write the way the user writes
 
-Luis has a specific, consistent communication style, and he reworks drafts that don't match it.
-This skill exists so messages sound like him on the first pass, and so every correction makes the
+The user has a specific, consistent communication style, and reworks drafts that don't match it.
+This skill exists so messages sound like them on the first pass, and so every correction makes the
 next one better. It applies to:
 
 - **Slack** — messages to teammates or channels (review requests, heads-ups, questions).
 - **PR/MR** — review comments, replies to reviewers, and PR/MR titles/descriptions.
 
 The skill's own folder is the base dir for the relative paths below.
+
+**This skill is shared machinery; the voice itself is the personal layer.** `refs/principles.md`
+and the `refs/examples-*.md` files describe one person's writing. Someone else using this setup
+replaces them with their own: an empty or near-empty principles file is a fine start, since Step 4
+builds it up from their corrections. Their own files go at the same paths in their private
+companion repo, which `install.sh` links in place of these.
 
 > **Standing rule — this skill's files are public-shaped.** `SKILL.md` and everything in `refs/`
 > live in a portable dotfiles repo that travels between machines and employers. **Nothing
@@ -43,9 +49,9 @@ they can simply be absent — a public-only or cloud install has `principles.md`
 Work from the principles when that happens, and say once that you're drafting without the corpus so
 the weaker draft isn't a surprise. Never invent an example to fill the gap.
 
-## Step 2 — Draft in his voice
+## Step 2 — Draft in their voice
 
-Write the message following the principles and the closest example(s). Match his tone, length, and
+Write the message following the principles and the closest example(s). Match their tone, length, and
 shape — keep it as short as it can be while still clear; don't pad.
 
 ## Step 3 — Approve before sending (never skip)
@@ -54,7 +60,7 @@ Show the draft and get **explicit approval** before posting or sending. Post onl
 
 The approval gate is for **a message to a person** (Slack, a reply to a human reviewer). Content drafted in this voice that *isn't* a message to a person — a PR/MR **title or description**, a bounded **ack to a bot reviewer** — is an editable draft the caller posts without a separate approval step. (Draw title/description drafts from `examples-pr-descriptions.md`, comments/replies from `examples-pr-comments.md` — different genres.)
 
-If the caller asks to **generate but not send** — e.g. a review-request ping Luis will send himself — draft it and hand it over; don't send. Send only when he explicitly says to.
+If the caller asks to **generate but not send** — e.g. a review-request ping the user will send themselves — draft it and hand it over; don't send. Send only when they explicitly say to.
 
 - **Slack:** never send unapproved. After approval, send via the native Slack sender/scheduler.
 - **PR/MR:** post via `gh api` (GitHub) / `glab api` (GitLab). If the message is a reply addressing a
@@ -62,15 +68,15 @@ If the caller asks to **generate but not send** — e.g. a review-request ping L
 
 ## Step 4 — Learn from every iteration (this is the point of the skill)
 
-Whenever Luis edits, rewrites, or rejects a draft — or gives tone feedback ("too formal", "less
+Whenever the user edits, rewrites, or rejects a draft — or gives tone feedback ("too formal", "less
 robotic", "you don't say it like that") — capture it **before moving on**:
 
-1. Append a new entry to the **genre-matching** `refs/examples-*.md` (`examples-slack.md`, `examples-pr-comments.md`, or `examples-pr-descriptions.md`) with:
+1. Append a new entry to the **genre-matching** `refs/examples-*.md` (`examples-slack.md`, `examples-pr-comments.md`, or `examples-pr-descriptions.md`) **in the private companion repo**, never in this public one: they're real messages. Write to the companion's own copy (`../dotfiles-private/skills/voice/refs/`, or under `DOTFILES_PRIVATE`), creating it when it's missing and re-running `tools/claude/install.sh` so it's linked in. With no companion repo at all, skip the example and keep only the principle (step 2), and say once that examples need one. Each entry has:
    - **Context** — one line on what the message was about.
    - **❌ draft** — the version that missed (verbatim), if there was one.
-   - **✅ final** — his approved/edited wording (verbatim — this is the most valuable signal).
+   - **✅ final** — their approved/edited wording (verbatim — this is the most valuable signal).
    - **What changed** — one line on the tone shift, so the lesson is explicit.
-2. If it reveals a new or sharper rule, **apply the `refs/principles.md` edit and say what you changed** (the line, new or changed), unless it's consequential (global rule 13); prefer refining an existing line over adding one. The step-1 ✅ example append needs no approval — it's his own approved words.
+2. If it reveals a new or sharper rule, **apply the `refs/principles.md` edit and say what you changed** (the line, new or changed), unless it's consequential (global rule 13); prefer refining an existing line over adding one. The step-1 ✅ example append needs no approval — it's their own approved words.
 
 3. **Anonymize as you write it — before it lands on disk.** These files live in a portable dotfiles
    repo that travels between machines and employers, so an entry must never carry confidential
@@ -88,17 +94,17 @@ robotic", "you don't say it like that") — capture it **before moving on**:
    quoting the message.
 
 Keep the ✅ wording verbatim apart from that anonymization pass. Prune only true duplicates. Do this proactively, mid-session — the
-moment he corrects a message is exactly when the lesson is clearest.
+moment they correct a message is exactly when the lesson is clearest.
 
-**End-of-run reflection (even when he approves with no edits).** At send/approval, pause once: did
+**End-of-run reflection (even when they approve with no edits).** At send/approval, pause once: did
 this exchange teach anything durable? A no-edit approval that nailed a *hard* tone is worth a ✅
 example; a sharper rule earns a `principles.md` line. But if the message just reused a pattern the
-corpus already covers well, add nothing — don't pad it. His edits stay the richest signal (above);
-this is the safety net for the runs where he approves as-is and there'd otherwise be no reflection.
+corpus already covers well, add nothing — don't pad it. Their edits stay the richest signal (above);
+this is the safety net for the runs where they approve as-is and there'd otherwise be no reflection.
 
 ## Notes
 
 - Complements `pr-review` (owns the review workflow) and the `deliver` pipeline (MR/PR lifecycle): use `voice`
   for the *wording* of any message those produce.
-- This skill is the source of truth for his written voice; the `feedback_slack_message_style` memory
+- This skill is the source of truth for the user's written voice; the `feedback_slack_message_style` memory
   is a lightweight pointer to it.

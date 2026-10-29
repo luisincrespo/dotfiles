@@ -1,5 +1,10 @@
 # Voice principles
 
+> **Personal layer.** This is Luis's written voice, which the shared `voice` skill writes in. To
+> write in yours, put your own version at this same path in your private companion repo
+> (`install.sh` links it in place of this one), or edit it in your fork. Starting nearly empty is
+> fine: `voice` adds a principle each time you correct a draft.
+
 Luis's written voice, distilled. When one of these conflicts with a real example in
 `examples-*.md`, follow the example.
 

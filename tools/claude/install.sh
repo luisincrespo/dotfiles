@@ -27,6 +27,9 @@ LOCAL_DIR="${HOME}/.agents/local"
 # published. Sibling by convention; override with DOTFILES_PRIVATE. Absent is fine —
 # everything still installs, just without the private half.
 PRIVATE_ROOT="${DOTFILES_PRIVATE:-$(cd "${REPO_ROOT}/.." && pwd)/dotfiles-private}"
+# Links are made from ~/.claude, so a relative DOTFILES_PRIVATE would resolve from there, not from
+# where install.sh ran: make it absolute when it exists.
+[[ -d "$PRIVATE_ROOT" ]] && PRIVATE_ROOT="$(cd "$PRIVATE_ROOT" && pwd)"
 BACKUP_DIR="${CLAUDE_DIR}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 DRY_RUN=0
 UNINSTALL=0
@@ -69,7 +72,7 @@ if (( UNINSTALL )); then
   for target in "${CLAUDE_DIR}/skills/"* "${CLAUDE_DIR}/CLAUDE.md"; do
     if [[ -L "$target" ]]; then
       case "$(readlink "$target")" in
-        "${REPO_ROOT}"/*|"${LOCAL_DIR}/skills"/*) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
+        "${REPO_ROOT}"/*|"${PRIVATE_ROOT}"/*|"${LOCAL_DIR}/skills"/*|*/AGENTS.md) rm "$target"; log "unlinked  ${target/#$HOME/$TILDE}" ;;
       esac
     elif [[ -d "$target" && -z "$(find "$target" -type f -not -type l -print -quit 2>/dev/null)" ]]; then
       # An overlaid skill: a real directory holding nothing but symlinks.
@@ -139,6 +142,8 @@ if [[ -d "$PRIVATE_ROOT" ]]; then
   log "private   ${PRIVATE_ROOT/#$HOME/$TILDE}"
 else
   log "private   none found — public content only"
+  log "          to make it yours: a repo at ${PRIVATE_ROOT/#$HOME/$TILDE} (or DOTFILES_PRIVATE)"
+  log "          holding your own personal-layer files, at the paths README.md's \"Make it yours\" lists"
 fi
 
 # Two skill roots, installed side by side. skills/ is portable: every harness reads it,
@@ -178,7 +183,12 @@ done
 
 echo
 echo "Config:"
-link "${REPO_ROOT}/AGENTS.md" "${CLAUDE_DIR}/CLAUDE.md"
+# The rules are the broadest personal-layer file: a private companion's own AGENTS.md, when it
+# has one, is linked in place of this repo's. It should keep the rules the skills cite by number
+# (5, 8, 10, 12, 13), or those references point at nothing.
+rules="${REPO_ROOT}/AGENTS.md"
+[[ -f "${PRIVATE_ROOT}/AGENTS.md" ]] && rules="${PRIVATE_ROOT}/AGENTS.md"
+link "$rules" "${CLAUDE_DIR}/CLAUDE.md"
 
 # settings.json is NOT linked — Claude Code rewrites it at runtime, so the machine
 # owns the file. The repo's durable preferences are merged into it key-by-key;
@@ -192,23 +202,39 @@ if [[ -L "${CLAUDE_DIR}/settings.json" ]]; then
   log "unlinked  ~/.claude/settings.json — now machine-owned, content preserved"
 fi
 
+# Each preference file is merged in layers: this repo's, then a private companion's on top, key
+# by key, so the companion only names the keys it wants different. A dry run previews each layer
+# against the result of the ones before it, as the real run applies them.
+merge_layers() {
+  local file="$1" target="$2" layer tmp
+  local layers=("${TOOL_DIR}/${file}")
+  [[ -f "${PRIVATE_ROOT}/tools/claude/${file}" ]] && layers+=("${PRIVATE_ROOT}/tools/claude/${file}")
+  if (( DRY_RUN )); then
+    tmp="$(mktemp)"
+    cp "$target" "$tmp" 2>/dev/null || printf '{}\n' > "$tmp"
+    for layer in "${layers[@]}"; do
+      python3 "${TOOL_DIR}/merge-settings.py" "$layer" "$tmp" --dry-run
+      python3 "${TOOL_DIR}/merge-settings.py" "$layer" "$tmp" >/dev/null
+    done
+    rm -f "$tmp"
+  else
+    for layer in "${layers[@]}"; do
+      python3 "${TOOL_DIR}/merge-settings.py" "$layer" "$target"
+    done
+  fi
+  (( ${#layers[@]} > 1 )) && log "          with the private companion's ${file} on top"
+  return 0
+}
+
 if command -v python3 >/dev/null 2>&1; then
   log "merging   durable preferences into ~/.claude/settings.json"
-  if (( DRY_RUN )); then
-    python3 "${TOOL_DIR}/merge-settings.py" "${TOOL_DIR}/settings.stable.json" "${CLAUDE_DIR}/settings.json" --dry-run
-  else
-    python3 "${TOOL_DIR}/merge-settings.py" "${TOOL_DIR}/settings.stable.json" "${CLAUDE_DIR}/settings.json"
-  fi
+  merge_layers settings.stable.json "${CLAUDE_DIR}/settings.json"
 
   # Global config is Claude Code's own state file, so it's merged only once Claude Code has
   # created it: seeding it here with a lone key would come before onboarding ever ran.
   if [[ -f "${HOME}/.claude.json" ]]; then
     log "merging   durable global preferences into ~/.claude.json"
-    if (( DRY_RUN )); then
-      python3 "${TOOL_DIR}/merge-settings.py" "${TOOL_DIR}/global.stable.json" "${HOME}/.claude.json" --dry-run
-    else
-      python3 "${TOOL_DIR}/merge-settings.py" "${TOOL_DIR}/global.stable.json" "${HOME}/.claude.json"
-    fi
+    merge_layers global.stable.json "${HOME}/.claude.json"
   else
     log "SKIPPED   global merge — no ~/.claude.json until Claude Code's first run; re-run after it"
   fi
