@@ -34,6 +34,12 @@ allowed-tools:
   - Bash(git fetch origin:*)
   - Bash(git merge-base:*)
   - Bash(git merge origin/:*)
+  - Bash(git merge --ff-only origin/:*)
+  - Bash(git merge-tree --write-tree:*)
+  - Bash(git commit-tree:*)
+  - Bash(mkdir ~/.claude/cache/deliver/locks/:*)
+  - Bash(rmdir ~/.claude/cache/deliver/locks/:*)
+  - Bash(rm -f ~/.claude/cache/deliver/locks/:*)
   - Bash(git merge --abort)
   - Bash(git merge --no-edit:*)
   - Bash(git rebase origin/:*)
@@ -83,6 +89,7 @@ Polls an open MR/PR and drives it toward merge. This is the babysit stage of the
 
 - `<mr-ref>`: URL, `!123`/`#123`, or branch name. Default: current branch.
 - `--task-slug <slug>`: the `deliver` task this unit belongs to (passed through to `pr-merge`). Omit when standalone.
+- `--lock-token <token>`: the checkout lock the caller holds (`../deliver/refs/shared-checkout.md`); a lock naming it counts as yours. Set by `deliver` when it runs queued work.
 - `--once`: run one cycle, no auto-loop.
 - `--interval <time>`: fixed polling interval (e.g. `5m`). Default: dynamic pacing (~270s while CI runs, ~1200s idle).
 - `--_looped`: internal flag — never pass manually.
@@ -106,6 +113,16 @@ Polls an open MR/PR and drives it toward merge. This is the babysit stage of the
 - `BOT_ACTIONABLE_BODY_MARKERS`: `["DangerID: danger-id-Danger", "dangerJS"]` — match, then `/(\d+)\s+failure:/`: 0 → noise, >0 → actionable
 - `REBASE_SYNC_REPOS`: `[]` + `rebase_sync_repos` — repos whose `CLAUDE.md` mandates rebase-before-push. For these, sync/conflict steps **rebase onto the target and force-push with `--force-with-lease`** instead of merging forward. Derive `SYNC_STRATEGY = "rebase"` if `repo_id` matches, else `"merge"`.
 - **State file**: `~/.claude/cache/deliver/pr-<platform>-<repo-with-slashes-as-dashes>-<number>.json` (the `deliver`-family namespace).
+
+## Shared checkout
+
+**This skill never switches branches.** A `deliver` task keeps every unit's branch in one worktree,
+and the `deliver` session's agents check out whichever one they're changing, so this PR's branch is
+often not the one checked out. Read `../deliver/refs/shared-checkout.md` (from this skill's folder)
+once per session. Phase 0.4b derives `checked_out`; every phase that changes files runs only when
+it holds, and otherwise queues the work in `state.needs_checkout` for whoever has the checkout.
+Everything that needs no checkout (CI, comments, replies, the title and description, keeping the
+branch current) runs regardless.
 
 ## Phase -1: Auto-wrap in /loop
 
@@ -132,6 +149,8 @@ have called `ScheduleWakeup`, so a conversation silently ends the watch — and 
 conversation, the likelier it is off. While a babysit is active, end *any* turn that touched this
 PR by re-arming, and say when the next check is. If you cannot tell whether a wakeup is pending,
 re-arm: a duplicate is replaced, a missing one is not noticed until the user asks.
+
+**Under a `deliver` task with several PRs in flight, `deliver` runs the loop.** A session holds one self-paced wakeup, so a second PR's loop would replace the first's: `deliver` runs one loop for the task and calls this skill with `--once` per PR (its B4). Never wrap in `/loop` when `--once` is set.
 
 **One loop per PR, one task per loop.** Don't append another task's chores (a staging check, another
 PR's watch) to this loop's prompt. Every firing re-reads that prompt, so piggybacked work runs under
@@ -164,23 +183,30 @@ Abort if `source_branch` matches `PROTECTED_BRANCHES`.
 
 ### 0.3 Terminal state
 A merged/closed MR/PR won't be revisited — **delete its state file and stop** (`pr-merge`/`post-merge-cleanup` handle in-skill merges; this catches merges/closes done elsewhere):
+- **Under `deliver` (`--task-slug`)**: don't stop any loop or tell the user to; the task's loop serves its other PRs too. Return `merged` or `closed`: `deliver` runs `post-merge-cleanup` for a merge done elsewhere (it advances dependents and updates the ledger), marks a closed unit `closed`, and drops that PR's Monitor.
 - `state == "merged"`: `rm -f` the state file, announce `🎉 !<number> merged. Stopping.`, tell the user to `/loop stop`, return.
 - `state == "closed"`: `rm -f` the state file, announce `!<number> closed (not merged). Stopping.`, same, return.
 
 ### 0.4 State file
 Path above. Initialize if missing:
 ```json
-{"addressed_thread_ids":[],"seen_human_note_ids":[],"shown_but_unaddressed_thread_ids":[],"last_pipeline_id":null,"failed_fix_counts":{},"e2e_retry_counts":{},"metadata_synced_head_sha":null,"managed_title":null,"managed_body_hash":null,"screenshot_nudged":false}
+{"addressed_thread_ids":[],"seen_human_note_ids":[],"shown_but_unaddressed_thread_ids":[],"last_pipeline_id":null,"failed_fix_counts":{},"e2e_retry_counts":{},"metadata_synced_head_sha":null,"managed_title":null,"managed_body_hash":null,"screenshot_nudged":false,"needs_checkout":[]}
 ```
+
+### 0.4b Checkout
+Take the checkout lock, then derive `checked_out` while holding it, as `shared-checkout.md` defines it: `source_branch` checked out here, a clean tree (untracked files included), no merge in progress. Checked out → bring it to the PR's head as that file says, and re-run 0.1 if that moved the checkout past the head 0.1 read. Not checked out, or the lock held by another owner → release it if you took it; every phase below then works without the files. Release the lock on every path out of the cycle.
 
 ### 0.5 Announce + derive flags
 Announce: `Babysitting <platform>:<repo_id>!<number> (<source_branch> → <target_branch>): <title>`.
-Derive `is_behind`: GitHub `mergeStateStatus == "BEHIND"`; GitLab `git fetch origin <target_branch>` then `git merge-base --is-ancestor origin/<target_branch> HEAD` — exit 1 ⇒ behind.
+Derive `is_behind`: GitHub `mergeStateStatus == "BEHIND"`; GitLab `git fetch origin <target_branch> <source_branch>` then `git merge-base --is-ancestor origin/<target_branch> origin/<source_branch>` — exit 1 ⇒ behind. Compare the remote refs, never `HEAD`, which may be another unit's branch.
+
+### 0.7 Queued work (when `checked_out` and `state.needs_checkout` isn't empty)
+Run the queued items before any other phase, since their usual phases' skip gates (a synced head, a pipeline already seen) would pass them over: `fix <job>` (only if it still fails on this head), `address <thread url>` (only if the thread is still open), `resolve conflicts with …` (Phase 0.5a), `capture screenshots` (2.5.2 and 2.6b). Leave `merge (ready)` to Phase 4's normal path, which runs only after this cycle's fresh CI read and comment sweep: a "hold off merging" comment posted since it was queued has to be seen first. Remove each item from `needs_checkout`, and write the state file, as it's done or found obsolete.
 
 ## Phase 0.5: Upstream-conflict / out-of-date early exit
 
 Conflicts or a stale base must be fixed first. After resolving, skip Phases 1-2 this cycle and go to Phase 3.
-**Common preconditions**: working tree clean and current branch == `source_branch`; else announce and skip to Phase 1.
+**Common preconditions** for 0.5a/0.5b: `checked_out` (0.4b). Not checked out → 0.5c instead.
 
 ### 0.5a — `has_conflicts == true`
 1. Announce: `MR reports conflicts with origin/<target_branch>. Resolving before touching CI/comments.`
@@ -191,6 +217,9 @@ Conflicts or a stale base must be fixed first. After resolving, skip Phases 1-2 
 2. `git rev-list --count HEAD..origin/<target_branch>` > 50 → abort, batch `N commits behind — too stale for automatic sync`, skip to Phase 3.
 3. **`SYNC_STRATEGY == "merge"`**: announce, `git merge origin/<target_branch> --no-edit`, unexpected conflict → `git merge --abort` + skip to Phase 1 (0.5a catches it next cycle); else `git push`, announce `✅ Merged origin/<target_branch> forward as <sha>`, skip to Phase 3.
 4. **`SYNC_STRATEGY == "rebase"`**: `PRE=$(git rev-parse HEAD)`; `git rebase origin/<target_branch>` (conflict → `git rebase --abort` + skip to Phase 1); `git push --force-with-lease origin <source_branch>`. Lease rejected → `git reset --hard $PRE`, batch `Branch advanced on the remote — skipped rebase+force-push to avoid clobbering; needs a look`, skip to Phase 3. Else announce `✅ Rebased and force-pushed with lease as <sha>. Approval may reset (expected).`, skip to Phase 3.
+
+### 0.5c — not checked out, and `has_conflicts` or `is_behind`
+`has_conflicts` → queue `resolve conflicts with <target_branch>` in `needs_checkout`, then Phase 1. `is_behind` → keep the branch current without a checkout, as `shared-checkout.md` shows: pinned SHAs, `git merge-tree` and `git commit-tree`, a plain push. A conflict there, a stale branch (over 50 commits behind), or a `REBASE_SYNC_REPOS` repo → queue it. A successful push announces `✅ Merged origin/<target_branch> forward as <sha> (no checkout)` and skips to Phase 3, as 0.5a/0.5b do: the snapshot from 0.1 is stale now. Neither flag → Phase 1.
 
 **Order:** both true → 0.5a. Both false → Phase 1.
 
@@ -225,6 +254,8 @@ Conflicts or a stale base must be fixed first. After resolving, skip Phases 1-2 
 **Categorize by name (contains, case-insensitive):** `eslint`/`lint`/`format`/`prettier` → **lint**; `typecheck`/`tsc` → **typecheck**; `build` → **build**; `test`/`vitest`/`jest`/`unit-test` → **unit-test**; `e2e`/`playwright`/`integration`/`export` → **flaky-retry**; `security`/`codeowners`/`changeset`/`danger`/`scenario`/else → **skip** (batch `CI failure needs eyes: <job> — <reason>`).
 
 The name is a heuristic, not the classification: read the failure before auto-fixing one that landed in **unit-test**. A suite whose name merely contains `test` can be a Docker-backed integration run against a third party, where the failure is that service's error page rather than anything in the diff. Editing source to satisfy it is the wrong move — retry once, then batch.
+
+**Not `checked_out` (0.4b)?** A fix needs the files: queue `fix <job>` in `needs_checkout` instead. Retrying a flaky job needs no checkout.
 
 **Auto-fix (lint/typecheck/build/unit-test):** if `state.failed_fix_counts[<job>] >= 2` → batch `Repeatedly failing — stopping auto-fix: <job>`. Else read log tail (~200 lines), identify package, `pnpm install` if in a worktree, then: **lint/format** `npx nx eslint:lint <pkg> --fix` then `npx nx format:write --all --no-sort-root-tsconfig-paths`; **typecheck/build** read errors, edit source (IDE diagnostics first, fall back to scoped `npx tsc --noEmit`); **unit-test** fix source (preferred) or test. Verify with the same nx target. Pass → `git add -A`, commit (ticket-prefixed if branch has one), `git push`. Fail → increment counter, `git checkout -- .`, batch `Auto-fix attempt failed: <job> — <reason>`.
 
@@ -267,13 +298,13 @@ Unified per thread: `{ thread_id, resolvable, resolved, notes:[{note_id, author,
 
 ### 2.1 Iterate threads
 Skip if `thread_id` ∈ `state.addressed_thread_ids`, OR all notes `system`, OR (`resolvable && resolved`). Take the first non-system note → `author`, `body`, `note_id`. Normalize `author_base` (GitHub: strip trailing `[bot]`).
-**Bot pre-filter:** GitLab `author` matches `BOT_USERNAME_PATTERN`, or GitHub `author` ends `[bot]` → classify body (`BOT_NOISE_BODY_MARKERS` → skip; `BOT_ACTIONABLE_BODY_MARKERS` → DangerJS rule; else fail-open to 2b). **DangerJS:** match `/(\d+)\s+failure:/` — 0 → skip; >0: **coverage-threshold** failure → add unit tests for the listed files/lines, verify, commit (`<TICKET> Add unit tests to address coverage gap`), push (only batch if genuinely untestable; never use `ALLOW_COVERAGE_DECREASE` without approval); other DangerJS failures → 2b.
+**Bot pre-filter:** GitLab `author` matches `BOT_USERNAME_PATTERN`, or GitHub `author` ends `[bot]` → classify body (`BOT_NOISE_BODY_MARKERS` → skip; `BOT_ACTIONABLE_BODY_MARKERS` → DangerJS rule; else fail-open to 2b). **DangerJS:** match `/(\d+)\s+failure:/` — 0 → skip; >0: **coverage-threshold** failure → (needs `checked_out`, else queue it) add unit tests for the listed files/lines, verify, commit (`<TICKET> Add unit tests to address coverage gap`), push (only batch if genuinely untestable; never use `ALLOW_COVERAGE_DECREASE` without approval); other DangerJS failures → 2b.
 Then: `author_base` ∈ `AI_REVIEWER_USERNAMES` → 2a; else → 2b.
 
 ### 2a. AI-reviewer comment
-Classify `body`: **auto-fix** (clear, bounded, scoped to diff lines, no opinion); **ask-user** (ambiguous/opinion/cross-cutting/unverifiable); **ignore-as-noise** (trivially wrong / already done / misread — verify by reading the file first).
+Classify `body`: **auto-fix** (clear, bounded, scoped to diff lines, no opinion); **ask-user** (ambiguous/opinion/cross-cutting/unverifiable); **ignore-as-noise** (trivially wrong / already done / misread — verify by reading the file at the PR's head first, `git show <head_sha>:<path>` after a fetch, never the checkout, which may hold another unit's version; a check that needs running the code needs `checked_out`, else queue it).
 Reply/resolve: GitLab reply `glab api --method POST ".../discussions/<thread_id>/notes" -f body="<text>"`, resolve `glab api --method PUT ".../discussions/<thread_id>?resolved=true"`; GitHub review-thread reply `gh api graphql -f query='mutation($t:ID!,$b:String!){addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$t,body:$b}){comment{id}}}' -F t=<thread_id> -F b="<text>"`, resolve `gh api graphql -f query='mutation($t:ID!){resolveReviewThread(input:{threadId:$t}){thread{id isResolved}}}' -F t=<thread_id>`; GitHub issue-comment pseudo-thread reply `gh pr comment <number> --body "<text>"` where `<text>` **opens with a blockquote of the finding** — one or two trimmed lines plus a link to it — because a PR-level comment lands with no visual tie to what it answers (mark addressed in state; UI keeps showing it open).
-- **auto-fix**: edit → verify (IDE diagnostics / scoped `npx tsc --noEmit`) → commit `Address review: <summary>` (ticket-prefixed) → push → reply `Addressed in <sha>.` → resolve → append to `addressed_thread_ids`.
+- **auto-fix**: not `checked_out` → queue `address <thread url>` in `needs_checkout` and leave the thread open. Else edit → verify (IDE diagnostics / scoped `npx tsc --noEmit`) → commit `Address review: <summary>` (ticket-prefixed) → push → reply `Addressed in <sha>.` → resolve → append to `addressed_thread_ids`.
 - **ask-user**: skip if in `shown_but_unaddressed_thread_ids`. Else batch `AI reviewer (unclear): <url> — <summary> — why unsure: <reason>`, append to `shown_but_unaddressed_thread_ids`.
 - **ignore-as-noise**: reply (one polite sentence) → resolve → append to `addressed_thread_ids`.
 
@@ -286,8 +317,8 @@ Filter notes with `note_id` not in `state.seen_human_note_ids` and not system. B
 
 Reconcile metadata with the diff as commits land — **without clobbering human edits.**
 - **2.5.0** First sight (`metadata_synced_head_sha == null`): baseline it (`metadata_synced_head_sha = head_sha`, `managed_title = current title`, `managed_body_hash = hash(current desc, screenshots block stripped)`), skip the rest. `head_sha == metadata_synced_head_sha` → skip. Else proceed.
-- **2.5.1** Re-derive intended title/description against `origin/<target>..HEAD` exactly as `pr-open` Steps 2-3 would; determine whether snapshottable UI changed (Step 4 gate).
-- **2.5.2 Screenshots**: GitLab — the `SCREENSHOT_MARKER` block is skill-owned; re-capture/re-embed if in-scope stories changed, remove if UI no longer in scope, else leave. GitHub — if the in-scope set changed, re-capture and upload through the description editor in Chrome as `pr-open` Step 4 does, replacing the stale images in place; with no Chrome automation, copy the captures to `~/Desktop/pr-screenshots-<branch>/` and batch `UI changed — refreshed screenshots; re-attach on GitHub and ask me to organize them.` Don't touch a block the user arranged.
+- **2.5.1** `git fetch origin <target> <source_branch>`, then re-derive intended title/description against `origin/<target>...origin/<source_branch>`, never `HEAD`, which may be another unit's branch, exactly as `pr-open` Steps 2-3 would; determine whether snapshottable UI changed (Step 4 gate).
+- **2.5.2 Screenshots** (capturing needs `checked_out`, since it runs Storybook from the files; else queue it): GitLab — the `SCREENSHOT_MARKER` block is skill-owned; re-capture/re-embed if in-scope stories changed, remove if UI no longer in scope, else leave. GitHub — if the in-scope set changed, re-capture and upload through the description editor in Chrome as `pr-open` Step 4 does, replacing the stale images in place; with no Chrome automation, copy the captures to `~/Desktop/pr-screenshots-<branch>/` and batch `UI changed — refreshed screenshots; re-attach on GitHub and ask me to organize them.` Don't touch a block the user arranged.
 - **2.5.3 Title**: current == `managed_title` and re-derived differs materially → update (GitLab `glab mr update <number> --title`; GitHub `gh pr edit <number> --title`), set `managed_title`. Human renamed → don't touch (batch one line if clearly stale).
 - **2.5.4 Description**: `current_body_hash == managed_body_hash` → regenerate body + re-attach screenshots block, update, recompute `managed_body_hash`. Human edited prose → leave prose; still swap only the marker-delimited screenshots block if 2.5.2 changed it (batch one line if prose clearly stale).
 - **2.5.5** Set `metadata_synced_head_sha = head_sha` + updated managed fields. Announce `📝 Updated <title|description|screenshots> to match new commits.`
@@ -296,12 +327,12 @@ Reconcile metadata with the diff as commits land — **without clobbering human 
 
 Runs every cycle. Read `refs/storybook-screenshots.md` (Step 7) for the sizing algorithm.
 - **2.6a Auto-size (GitHub)**: find image refs outside any `SCREENSHOT_MARKER` block that are unsized (bare markdown, `<img>` no width, or width ≥ 900). None/all reasonable → do nothing. Else run Step 7: preserve URLs byte-for-byte, set each `<img width>` to `SCREENSHOT_WIDTH_PX`, label from alt/filename, pair natural side-by-sides in a 2-col table, wrap in `SCREENSHOT_MARKER`. `gh pr edit <number> --body …`, announce `🖼️ Sized N attached screenshot(s).` Idempotent (marker-wrapped blocks are left alone). (GitLab embeds are sized at capture time.)
-- **2.6b Nudge once (`screenshot_nudged`)**: if snapshottable UI changed (Step 4 gate on `origin/<target>..HEAD`) and the body has no screenshots at all (no marker, no `## Screenshots`, no image/`<img>`/attachment link) → capture the in-scope stories (GitHub → `~/Desktop/pr-screenshots-<branch>/`; GitLab → embed) and batch one nudge, then set `screenshot_nudged = true`. If already covered → set the flag and skip. Capture fails → still nudge without images.
+- **2.6b Nudge once (`screenshot_nudged`)**: if snapshottable UI changed (Step 4 gate on `origin/<target>...origin/<source_branch>`) and the body has no screenshots at all (no marker, no `## Screenshots`, no image/`<img>`/attachment link) → capture the in-scope stories (GitHub → `~/Desktop/pr-screenshots-<branch>/`; GitLab → embed) and batch one nudge, then set `screenshot_nudged = true`. Not `checked_out` → queue `capture screenshots` instead and leave `screenshot_nudged` false, so the nudge goes out with the capture. If already covered → set the flag and skip. Capture fails → still nudge without images.
 
 ## Phase 3: Write state + report
 
 1. Persist state.
-2. Header: `Cycle: pipeline <status> [(fixed N jobs)], <N> new batch items.`
+2. Header: `Cycle: pipeline <status> [(fixed N jobs)], <N> new batch items.` New `needs_checkout` items → one line: `Waiting for a checkout of <source_branch>: <items>`, said once per item.
 3. Batch non-empty → list items with indices, ask **"Go through these now, or keep watching?"** ("Go through" → walk one-by-one, proposing fixes, awaiting approval; "Keep watching" → return, /loop schedules next). **Skip Phase 4.**
 4. Batch empty → continue to Phase 4.
 
@@ -310,7 +341,8 @@ Runs every cycle. Read `refs/storybook-screenshots.md` (Step 7) for the sizing a
 `pr-merge` owns the full merge gate (approval, threads resolved, CI green, mergeable, pre-merge local verification) and the merge itself. So this stage only decides whether it's worth *asking*:
 
 - Skip (keep looping) if any of: `is_draft == true`, `state != opened`, batch non-empty this cycle (Phase 3 already gated), `state.last_pipeline_id` status is not `success`, a question to the user about this PR (reviewers, scope) is still unanswered, or **no approval has landed yet** — GitHub `reviewDecision` ∈ {`REVIEW_REQUIRED`, `CHANGES_REQUESTED`} (already in the 0.1 payload, so this costs nothing), GitLab an empty `approved_by`. Approval is `pr-merge`'s first gate, so without one the handoff can only load the skill, re-run local pre-merge verification and come back "not ready" — every cycle, for as long as the review sits unclaimed. **Fail open**: no cheap approval signal ⇒ hand off anyway.
-- Otherwise invoke `Skill(pr-merge)` with `<mr-ref>` (this MR/PR) and `--task-slug <slug>` if set. It re-verifies every condition and either merges (→ `post-merge-cleanup`) or returns "not ready — keep watching." Either way this cycle ends; `/loop` re-checks next cycle (a successful merge is caught by Phase 0.3's terminal check and stops the loop).
+- **Not `checked_out`?** `pr-merge` verifies against the merged state in the files, so it can't run: queue `merge (ready)` in `needs_checkout` and keep looping.
+- Otherwise invoke `Skill(pr-merge)` with `<mr-ref>`, `--lock-token <token>` (the checkout lock you hold), and remove any `merge (ready)` item from `needs_checkout`. `pr-merge` (this MR/PR) and `--task-slug <slug>` if set. It re-verifies every condition and either merges (→ `post-merge-cleanup`) or returns "not ready — keep watching." Either way this cycle ends; `/loop` re-checks next cycle (a successful merge is caught by Phase 0.3's terminal check and stops the loop).
 
 ## Phase 5: Capture learnings (self-educate)
 Once the PR hands off or you stop polling, ask whether anything about how this ran warrants a durable edit. Never invent one — "nothing to capture" is the usual answer and deserves a line, not a paragraph.
@@ -324,6 +356,7 @@ Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a 
 - Never push to `PROTECTED_BRANCHES`. **Never rebase or force-push by default** — the sole exception is a `REBASE_SYNC_REPOS` repo via the 0.5b / `conflict-resolution.md` rebase path: `--force-with-lease` only, discard-and-batch on a rejected lease. Every other repo is merge-only.
 - Never approve, close, or comment on human threads. Allowed actions: commit, push (and, only in `REBASE_SYNC_REPOS`, `git push --force-with-lease` after a rebase), reply to AI-reviewer threads, resolve threads. Merging and cleanup are delegated to `pr-merge`/`post-merge-cleanup`.
 - Never mark a thread resolved unless the commit actually pushed.
+- Never switch branches (`git checkout <branch>`, `git switch`): only the `deliver` session moves the task worktree's checkout. Change files only when `checked_out`, holding the checkout lock.
 - Never bypass pre-commit hooks except the sanctioned large cross-toolchain sync case (0.5b / `conflict-resolution.md`) where the hook fails only on CI-green files from the target.
 - Never send Slack messages (always needs user approval).
 - Maintain JSDoc coverage on edited files that already have it. Follow the repo `CLAUDE.md` + the user's feedback memories rather than re-deriving conventions.

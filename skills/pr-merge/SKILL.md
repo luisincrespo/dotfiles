@@ -21,6 +21,9 @@ allowed-tools:
   - Bash(git fetch origin:*)
   - Bash(git merge-base:*)
   - Bash(git merge-tree:*)
+  - Bash(mkdir ~/.claude/cache/deliver/locks/:*)
+  - Bash(rmdir ~/.claude/cache/deliver/locks/:*)
+  - Bash(rm -f ~/.claude/cache/deliver/locks/:*)
   - Bash(git merge --no-ff:*)
   - Bash(git merge --abort)
   - Bash(git rebase origin/:*)
@@ -58,6 +61,7 @@ Merges one open MR/PR **only when every condition holds**, after a local verific
 ## Args (all optional)
 
 - `<mr-ref>`: URL, `!123`/`#123`, or branch name. Default: current branch.
+- `--lock-token <token>`: the checkout lock the caller holds (`../deliver/refs/shared-checkout.md`); a lock naming it counts as yours, so don't take it again. Pass it on to `post-merge-cleanup`.
 - `--task-slug <slug>`: passed through to `post-merge-cleanup` so it can raise the task's deferred follow-ups once the whole task is merged.
 
 ## Config
@@ -98,7 +102,7 @@ CI passed on the source alone; a semantic conflict with the current target can s
 
 1. Announce: `✅ !<number> looks mergeable. Running pre-merge local verification...`
 2. **Pre-merge local verification**:
-   - Preconditions: clean working tree, current branch == `source_branch`. Else announce and return (don't merge).
+   - Preconditions: the PR is `checked_out` as `../deliver/refs/shared-checkout.md` defines it (its branch checked out here, a clean tree, no merge in progress, nobody else holding the checkout lock). This skill never switches branches: in a `deliver` task another unit's branch may be checked out. Not checked out → queue `merge (ready)` in the PR's state file `needs_checkout`, announce it, and return without merging; the `deliver` session runs it once it has the branch checked out. Otherwise take the checkout lock for the verification below, unless `--lock-token` names the one already held, and release a lock you took on every path out.
    - **Scope the risk first: intersect the two changed-file sets.** `merge-tree` only finds *textual*
      conflicts, and the dangerous ones are semantic — `CLEAN` + approved + green and still wrong.
      ```bash

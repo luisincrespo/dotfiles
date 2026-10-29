@@ -19,14 +19,15 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 
 **A task is not necessarily one PR.** `deliver` runs at two levels:
 - **Task level (once):** understand + plan — where planning decides the **PR breakdown** (`units[]`: 1..N PR-sized pieces, `independent` or `stacked`).
-- **Per-unit loop:** execute → verify → open → babysit, run once per unit. N=1 is the simple single-PR path with no stack bookkeeping.
+- **Per-unit loop:** execute → verify → open → babysit, run once per unit. N=1 is the simple single-PR path with no stack bookkeeping. With several units, more than one is usually in flight at once (a stack, or small independent PRs merged early), all from the task's one worktree.
 
 ## Args (all optional)
 
 - `<task-ref>`: a ticket id/URL, a Slack link, or free-text describing the task. Default: the task stated in the conversation.
 - `--resume`: continue an existing task from its ledger instead of starting fresh.
 - `--stage <understand|plan|execute|verify|open|babysit|verify-staging>` (alias `--from`): force the entry stage for a task with no ledger — e.g. `--stage babysit` on a branch whose PR is already open. Overrides A0's auto-detection.
-- `--interval <time>`: passed through to `pr-babysit`'s loop.
+- `--interval <time>`: passed through to `pr-babysit`'s loop, or used for the task's own babysit loop (B4).
+- `--_babysit`: internal — set by the task's babysit loop (B4) so a firing runs one babysit cycle for the task instead of re-entering A0.
 - `--no-ticket-sync`: don't touch the associated tracker ticket's status (see `## Ticket status sync`). Default: sync when a ticket + a connected tracker exist.
 - `--project-ref <url>`: the task's project background page, passed to `understand-task`. On a resumed or running task it adds the page late (see `## Project page`).
 - `--no-review-ping`: passed through to `pr-open` — skip the review request (the reviewer proposal, or the Slack draft where that's the mechanism).
@@ -40,7 +41,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 - `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.
 - **Task ledger**: `~/.claude/cache/deliver/task-<repo-with-slashes-as-dashes>-<task-slug>.json`
   ```json
-  {"task_ref":null,"project_ref":null,"requirements":null,"acceptance":null,"plan_summary":null,"phase":"understand",
+  {"task_ref":null,"project_ref":null,"requirements":null,"acceptance":null,"plan_summary":null,"phase":"understand","worktree":null,"paused":null,
    "deferred_items":[],"carried_over":[],
    "ticket_sync":{"enabled":false,"in_progress":false,"in_review":false,"done":false},
    "units":[{"id":1,"title":null,"branch":null,"base":null,"kind":"independent","depends_on":null,"pr_number":null,"status":"pending","needs_staging_verification":false,"staging_verified":null,"prod_checks":[]}]}
@@ -54,6 +55,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 ### A0. Entry point — resume, adopt, or start fresh
 `deliver` is a front door from **any** starting point, not just the top. Resolve where to begin. Compute `task_slug` (ticket id lowercased, else a kebab slug of the task/branch) and the ledger path.
 
+0. **A babysit firing** — `--_babysit` → load the ledger and, unless `paused` is set, run one B4 cycle for its in-flight units, nothing else. Done.
 1. **Resume** — `--resume`, or a ledger already exists for this task → load it and jump to the first unfinished phase/unit. Done.
 2. **No ledger** — resolve the **entry stage** from the strongest signal available (in precedence), then seed a ledger from current reality so the rest of the spine runs unchanged:
    - **Explicit** — `--stage` always wins.
@@ -88,7 +90,9 @@ When the resolved entry stage is past understand/plan (adoption, `--stage`, or w
 
 ## Phase B — Per-unit loop
 
-Set up **one integration worktree per task** if not already working in one, per global rule 12 (the repo's own worktree tooling first, since it encodes setup like certs, secrets and direnv; else `<repo_root>/.claude/worktrees/<task-slug>`), and create a branch per unit inside it.
+Set up **one integration worktree per task** if not already working in one, per global rule 12 (the repo's own worktree tooling first, since it encodes setup like certs, secrets and direnv; else `<repo_root>/.claude/worktrees/<task-slug>`), record its path as the ledger's `worktree`, and create a branch per unit inside it.
+
+**This session owns the worktree's checkout.** Several units' PRs are often in flight at once while only one branch is checked out, so `pr-babysit`, `pr-merge` and `post-merge-cleanup` never switch branches: work that needs a PR's files waits in its state file until that branch is checked out here. The rules, and how this session runs that queued work, are in `refs/shared-checkout.md`; read it before the first switch. Take the checkout lock before switching branches or changing files, and release it once the change is committed.
 
 **Follow the repo's location convention even when you skip its setup steps.** "I won't need a running stack" is a prediction about work you haven't done, and the location is not where it pays off: a worktree nested inside the main checkout silently inherits that checkout's `.envrc` and breaks every sibling-relative path the repo resolves (a template or asset checkout beside the repo root). And if you do skip the setup, still verify **in that worktree** — verifying from a checkout that is already installed and built hides exactly the missing-prerequisite failures a collaborator will hit first.
 
@@ -98,15 +102,15 @@ Set up **one integration worktree per task** if not already working in one, per 
 
 Then, driven by the breakdown:
 
-- **Adopted units** (from A0 adoption or `--stage`): enter the loop at the resolved entry stage and **skip the earlier steps** — an already-open PR runs **B4 only**; a committed-but-unopened branch runs **B2→B4**. Only run B1 (execute) for units still `pending`. Don't create a new worktree/branch for a PR you're adopting — you're already on it.
-- **Independent / sequential units:** run the full sub-cycle (B1→B4) for a unit and let it merge + clean up **before** starting the next (each later unit branches off the freshly-updated default branch).
-- **Stacked units:** run **B1→B3 for every unit first** (build + verify + open each, stacking bases: unit 1 off the default branch and **ready**, units 2..N off the previous unit's branch and **draft**), then babysit **bottom-up** (B4 on the front unit; its `post-merge-cleanup` retargets + promotes the next; repeat up the stack).
+- **Adopted units** (from A0 adoption or `--stage`): enter the loop at the resolved entry stage and **skip the earlier steps** — an already-open PR runs **B4 only**; a committed-but-unopened branch runs **B2→B4**. Only run B1 (execute) for units still `pending`. Don't create a new worktree/branch for a PR you're adopting — you're already on it; record the worktree it's in as the ledger's `worktree`.
+- **Independent / sequential units:** by default run the full sub-cycle (B1→B4) for a unit and let it merge + clean up **before** starting the next (each later unit branches off the freshly-updated default branch). When the user wants pieces merged early, or a later unit doesn't need an earlier one merged first, build and open the next while earlier ones are in review, branching off the current default branch, and babysit the open ones together (B4).
+- **Stacked units:** run **B1→B3 for every unit first** (build + verify + open each, stacking bases: unit 1 off the default branch and **ready**, units 2..N off the previous unit's branch and **draft**), then babysit them together (B4). Merges still go **bottom-up**: units 2..N stay draft, which `pr-babysit` never hands to `pr-merge`, until the front unit's `post-merge-cleanup` retargets and promotes the next.
 
 For each unit:
 
 ### B1. Execute
 - **Risk gate** before starting: stop and check with the user before public-API changes, auth/security-sensitive or PII paths, destructive/irreversible actions, anything on a protected branch, or clearly cross-team/higher-risk work (the user's habit: do the low-lift part now, hand off the rest → log the hand-off to `deferred_items`). **A change that grants its own author access or privileges always stops here**, even when the user asked for it and it looks routine — confirm the access is actually needed before opening, not after. **Removing or weakening a test is a coverage decision, never a silent fallback** — even when an approved plan listed it as one: stop and confirm it with evidence nothing is lost before opening.
-- Create the unit's branch off its `base` in the task worktree. Implement the smallest change that satisfies this unit, following the repo's own `CLAUDE.md` plus the user's global rules and memories (doc comments, strict equality, no non-null assertions, AAA tests, …). Anything you consciously punt → append to `deferred_items`. Commit (ticket-prefixed if the task has an id). Update the unit `status:"executing"`.
+- Create the unit's branch off its `base` in the task worktree, holding the checkout lock (`refs/shared-checkout.md`) until the unit's change is committed. Implement the smallest change that satisfies this unit, following the repo's own `CLAUDE.md` plus the user's global rules and memories (doc comments, strict equality, no non-null assertions, AAA tests, …). Anything you consciously punt → append to `deferred_items`. Commit (ticket-prefixed if the task has an id). Update the unit `status:"executing"`.
 
 ### B2. Verify
 - Invoke `Skill(self-review)` with `--base <unit base>` and `--task-slug <slug>`. Address its fix-now items; relay its batch. **Loop B1↔B2** until the gates are green and no clear findings remain.
@@ -116,8 +120,10 @@ For each unit:
 - **Ticket → In Review** (once per task): when the task's **last** unit has an open PR — right after this `pr-open` returns for a single-unit task; for a breakdown, only once every unit is open, since In Review while units are still being built tells teammates the work is done. On adoption, when A0 found every unit's PR open. Move the ticket forward per `## Ticket status sync`.
 
 ### B4. Babysit → merge → cleanup
-- Invoke `Skill(pr-babysit)` with the unit's PR ref, `--task-slug <slug>` (and `--interval` if set). It loops on CI/comments/keep-current and, when merge-ready, chains `Skill(pr-merge)` → `Skill(post-merge-cleanup)`.
-- **`pr-merge` does not confirm before merging.** If the user adds a merge precondition the platform can't see (an RC cut, a freeze) and then steps away, stop the loop rather than let the condition lift unattended; resume with `--resume`.
+- **One unit in flight:** invoke `Skill(pr-babysit)` with the unit's PR ref, `--task-slug <slug>` (and `--interval` if set). It loops on CI/comments/keep-current and, when merge-ready, chains `Skill(pr-merge)` → `Skill(post-merge-cleanup)`.
+- **Several in flight:** Monitors carry this, one per PR, and a session can hold many. What it holds only one of is the self-paced fallback wakeup: each `pr-babysit` loop started replaces the previous PR's, and stopping one PR's loop when it merges ends the wakeup for all of them. So run one loop for the task: `Skill(loop)` with `/deliver <task_slug> --resume --_babysit`, and one Monitor per in-flight PR, built from `pr-babysit`'s Phase -1 signature. A Monitor event runs `Skill(pr-babysit) <pr> --once --task-slug <slug>` for that PR; the fallback wakeup runs it for every in-flight PR; either then runs the queued checkout work (`refs/shared-checkout.md`). Once this loop runs, keep it until every unit is `merged` or `closed`, even with one PR left: handing the last PR back to its own `pr-babysit` loop would leave the task's queued checkout work with no one to run it. While any PR is in flight, end **every** turn of this task by re-arming it, including turns spent building another unit, since an interactive turn replaces the one that would have re-armed it. Add and drop Monitors as units open and merge.
+- **A PR that merged or closed elsewhere:** `pr-babysit --once` returns `merged` or `closed`. For a merge, run `Skill(post-merge-cleanup)` for it as `pr-merge` would have (dependents, ledger, branch); for a close, mark the unit `closed` and ask the user what becomes of its work. Either way, drop its Monitor only.
+- **`pr-merge` does not confirm before merging.** If the user adds a merge precondition the platform can't see (an RC cut, a freeze) and then steps away, pause the task rather than let the condition lift unattended: set the ledger's `paused` to the reason, stop the loop **and** every Monitor of the task (a Monitor event would otherwise still run a cycle), and resume with `--resume`, which clears it. A firing that finds `paused` set does nothing.
 - `post-merge-cleanup` marks the unit `merged`, advances any stacked dependents, and — on the **last** unit — proposes the task's `deferred_items` as follow-ups (approval-gated).
 - Advance to the next unit until all are `merged`.
 
@@ -143,7 +149,7 @@ Everything else runs autonomously — including auto-fixing CI, addressing clear
 
 ## Handoff / resume
 
-The ledger is the single source of truth for the task's state. On any pause (a gate, `/loop` between babysit cycles, end of session), it already holds `phase`, per-unit `status`, `deferred_items`, and PR numbers — so a later `deliver --resume` (or a fresh session) picks up exactly where this left off. Keep a one-line status when you pause: `deliver: task <slug> — unit <i>/<N> in <phase>; <what's next>.`
+The ledger is the single source of truth for the task's state. On any pause (a gate, `/loop` between babysit cycles, end of session), it already holds `phase`, per-unit `status`, `deferred_items`, and PR numbers — so a later `deliver --resume` (or a fresh session) picks up exactly where this left off. Keep a one-line status when you pause: `deliver: task <slug> — unit <i>/<N> in <phase>; <what's next>.` With several in flight, name each: `units 1 (babysit), 2 (babysit, waiting for a checkout), 3 (execute)`.
 
 **One ledger per task; hand items across explicitly.** When one session runs two tasks, keep each task's work in its own ledger and its own loop. When a finished task's ledger should close but an item is still pending (a post-deploy check, a reminder), move it into the active task's ledger under `carried_over` as `{from, item, owner}`, then close and archive the old one. On resume, handle `carried_over` items before the task's own next step, and drop each once done.
 
@@ -188,5 +194,6 @@ Fold each real lesson into the **right** place: spine/gate/breakdown lessons her
 
 - Carry no conventions of your own — defer to repo `CLAUDE.md`, the nearest module `CLAUDE.md`/`AGENTS.md`, and the user's memories at every step. Don't duplicate them here.
 - Never start execution on a `PROTECTED_BRANCHES` branch. Never merge outside `pr-merge`; never delete a branch/worktree outside `post-merge-cleanup`.
+- Only this session switches branches in the task worktree, with a clean tree and the checkout lock free (`refs/shared-checkout.md`).
 - Respect every sub-skill's own hard constraints (rebase/force-push rules, `--no-verify` limits, never touching human threads, no Slack without approval, no follow-up filed without approval).
 - Outward-facing written content — PR titles/descriptions (`pr-open`) and review-thread replies (`pr-babysit`) — is written in Luis's voice via the `voice` skill (see their **Voice** notes); a reply to a human still needs his approval.

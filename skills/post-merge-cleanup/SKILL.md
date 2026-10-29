@@ -28,6 +28,10 @@ allowed-tools:
   - Bash(git status:*)
   - Bash(git rev-parse:*)
   - Bash(git merge origin/:*)
+  - Bash(git fetch origin:*)
+  - Bash(git merge-tree --write-tree:*)
+  - Bash(git commit-tree:*)
+  - Bash(git push origin:*)
   - Bash(git merge --no-edit:*)
   - Bash(git commit --no-edit)
   - Bash(git push)
@@ -56,6 +60,7 @@ Runs after a **confirmed merge**. This is the last stage of the `deliver` pipeli
 - `<target_branch>`: the branch it merged into (the new base for any dependents; usually the default branch).
 - `<number>`: the merged MR/PR number (for the state-file name).
 - `--task-slug <slug>`: the `deliver` task, so its deferred-items ledger can be turned into follow-ups.
+- `--lock-token <token>`: the checkout lock the caller holds (`../deliver/refs/shared-checkout.md`).
 
 ## Config
 
@@ -76,7 +81,7 @@ First entry of `git worktree list` → `<main_root>`. Run every git command belo
 ## Step 1: Stacked-PR guard — retarget, merge forward, promote
 When a PR in a stack merges, the rest of the stack must be advanced **before** deleting `<source_branch>` (deleting a base branch **closes** dependents on GitHub with no auto-retarget, and you can't reopen while the base is gone):
 - **Retarget dependents.** GitHub: `gh pr list --base <source_branch> --state open --json number` → each `gh pr edit <number> --base <target_branch>`. GitLab: `glab mr list --target-branch <source_branch> --state opened` → `glab mr update <iid> --target-branch <target_branch>`.
-- **Merge the target forward into each dependent's head** so its diff is clean against the new base. If the pre-commit hook fails only on files dragged in from the target that belong to a separate toolchain (e.g. `apps/extension`'s own lint) and are already CI-green, commit the forward-merge with `--no-verify` (the **only** sanctioned `--no-verify`; CI re-runs on push).
+- **Merge the target forward into each dependent's head** so its diff is clean against the new base, **without switching branches**: in a `deliver` task the dependents' branches live in the same worktree as this one, and the session's checkout isn't this skill's to move. Use the no-checkout merge in `../deliver/refs/shared-checkout.md` (`merge-tree`, `commit-tree`, a plain push). A conflict → queue `resolve conflicts with <target_branch>` in that dependent's state file `needs_checkout` (`pr-<platform>-<repo-dashes>-<number>.json`), and the `deliver` session resolves it with the branch checked out, using the notes below. Only when the dependent is itself checked out and clean, merge in the checkout as before. A dependent that was never babysat has no state file yet: create it with `pr-babysit`'s initial state before queuing. If the pre-commit hook fails only on files dragged in from the target that belong to a separate toolchain (e.g. `apps/extension`'s own lint) and are already CI-green, commit the forward-merge with `--no-verify` (the **only** sanctioned `--no-verify`; CI re-runs on push).
 - **After a squash merge, expect conflicts in files both PRs touched.** The platform may retarget a dependent without rebasing it, and the dependent still carries the parent's original commits, which the squash replaced. When the target's copy of a conflicted file matches the parent's final head (`git diff --quiet origin/<target_branch> <parent_head> -- <file>`), take the dependent's side: it already holds the parent's version plus its own changes. Then check the dependent's diff against the target lists only its own files.
 - **Promote the new front-of-stack** out of draft: `gh pr ready <number>` / `glab mr update <iid> --ready`. It's now up for review → draft (don't send) its review-request ping via `Skill(voice)`, per `pr-open` Step 7.
 - **Deleted the base too early?** Recreate the branch at its last sha (`git push origin <sha>:refs/heads/<source_branch>`), reopen the closed PR, retarget, then delete.
@@ -85,7 +90,11 @@ When a PR in a stack merges, the rest of the stack must be advanced **before** d
 If it still exists (`git ls-remote --exit-code --heads origin <source_branch>`): `git push origin --delete <source_branch>`. Some repos auto-delete on merge — already gone → skip without error.
 
 ## Step 3: Remove the worktree
-`git worktree list --porcelain` → the worktree whose branch is `<source_branch>`. If a separate worktree `<wt_path>` exists (not `<main_root>`):
+**Which worktree:** with `--task-slug`, the ledger's `worktree`, whatever branch it has checked out, since a `deliver` task's one worktree holds every unit's branch. Without it, `git worktree list --porcelain` → the worktree whose branch is `<source_branch>`. If that's a separate worktree `<wt_path>` (not `<main_root>`), first check it's safe to remove:
+- **Another unit isn't `merged` (or `closed`) yet** → **keep the worktree** and skip to Step 4. It goes with the last unit's cleanup, which keeps it marked pending in the ledger until the removal succeeds.
+- **Uncommitted changes** (`git -C <wt_path> status --porcelain` prints anything, untracked files included) → keep it and say so: `--force` below would destroy them, and they belong to whoever is working there.
+
+When it's safe:
 - **Removing the session's own worktree (current cwd) is fine and expected** once its PRs are done. Run from `<main_root>`. The shell survives: the harness re-resolves the working directory after every command and falls back to the repo root once the worktree is gone (`Shell cwd was reset to <repo root>`), so you can keep running commands afterwards. Do not warn the user that removal will end the session.
 - **Chain this one.** The cwd reset happens *between* invocations, so `cd <main_root> && worktree remove && branch -D && worktree prune && <verification>` in a single call is what lets you confirm the result while the shell is still somewhere valid. This is the documented exception to the separate-commands rule below.
 - Locked (session/dev worktrees usually are) → `git -C <main_root> worktree unlock <wt_path>` first.
@@ -107,6 +116,8 @@ Killing a Bazel server loses nothing — the disk cache lives in `~/Library/Cach
 **Enough open file descriptors will make removal fail partway.** `git worktree remove` reports `Too many open files in system` and leaves the directory behind, deregistered but intact — and `rm -rf` then also fails. That is a *system-wide* limit, so the cause is usually not this repo: check `lsof | awk '{print $1}' | sort | uniq -c | sort -rn | head` before blaming the worktree. A wedged VM (Docker Desktop's `com.apple.Virtualization.VirtualMachine.xpc`) once held 237k of 262k descriptors. Fix the hog, then retry — do not force-delete around it.
 
 ## Step 4: Delete the local branch
+**Still checked out in a worktree you kept** (Step 3)? Leave it: `branch -D` refuses a checked-out branch, and moving that checkout isn't this skill's job. With `--task-slug`, mark the unit `branch_left: true` in the ledger and say so. The **last** unit's cleanup deletes every `branch_left` branch the same way, once the worktree is gone or they're no longer checked out: each is confirmed merged already.
+
 If it still exists (`git -C <main_root> show-ref --verify --quiet refs/heads/<source_branch>`): `git -C <main_root> branch -D <source_branch>` (the merge is confirmed on the server, so `-D` is correct even if `<main_root>` hasn't pulled the merge commit).
 
 **Also delete the `worktree-<name>` placeholder branch.** Creating a worktree leaves a second branch named after the *directory* (e.g. `worktree-abc-2357-init-starter-agents`) alongside the real `<source_branch>`. It holds none of the work and survives Step 4, so `git -C <main_root> branch --list "worktree-*"` and delete the one matching the worktree just removed. Leave the others — they belong to live worktrees.
@@ -160,6 +171,7 @@ Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a 
 ## Hard constraints
 
 - Branch/worktree deletion happens ONLY here, only after a confirmed merge, only for the merged `<source_branch>`, always from `<main_root>`. Never delete an unmerged branch. Retarget stacked dependents (Step 1) **before** deleting the base.
+- Never switch branches, and never remove a `deliver` task's worktree while another of its units is unmerged, or any worktree with uncommitted changes. The only branches deleted besides `<source_branch>` are the ledger's `branch_left` ones, each already confirmed merged.
 - Never `--force` a push. `--no-verify` only for the sanctioned Step-1 forward-merge case. Leave `rm -rf` out of any broad allowlist — `worktree remove --force` covers the normal case; the `rm -rf` fallback stays prompt-gated.
 - **Never file a follow-up ticket/issue without explicit user approval** (Step 6). Never send Slack messages.
 - The **Done** ticket transition (Step 5.5) is forward-only and gated on `ticket_sync.enabled` (a personal-backlog page is exempt) — never move a ticket backward or fight a manual status; skip silently if the tracker MCP is absent.
