@@ -202,8 +202,10 @@ that doesn't compile costs the author a CI round and the comment its credibility
 
 ### 5. Post — inline, via `gh api`
 - Get the **full 40-char head SHA** (a short SHA returns HTTP 422):
-  `gh pr view <N> --repo <repo> --json headRefOid --jq .headRefOid`. If it moved since you
-  drafted, re-check that each anchored line still says what the comment describes.
+  `gh pr view <N> --repo <repo> --json state,headRefOid`. If the head moved since you drafted,
+  re-check that each anchored line still says what the comment describes; a rebase is often the
+  last step before a merge, so check `state` is still `OPEN` too, and if it merged, carry the
+  comment to the PR where the fix will land instead.
 - Write each comment body to a temp file (preserves markdown/newlines). Post one at a time —
   **do not wrap the `gh api` calls in a bash helper function** (it loses `PATH` in this sandbox):
   ```bash
