@@ -49,7 +49,9 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   sentence, not the one you meant, so name the baseline. And watch for names that collide with
   their context, like "the main list" in a message that also discusses `main`. When a message
   points at something (a PR, a stack, a comment, a doc), link it inline; link a stack through
-  its first PR.
+  its first PR. An example from your own work (a test run, a sample you tried) is said as one,
+  with where it came from, after the general point it shows; a bare name reads as something the
+  reader should already know.
 - **Short.** As brief as it can be while still clear. He trims; so should you. But short means
   cutting noise, not compressing feeling — on sincere or personal content he writes full, warm
   sentences and says the thing outright; clipped fragments and aphorisms are a tic, not his voice.
