@@ -17,6 +17,7 @@ allowed-tools:
   - Bash(git ls-tree:*)
   - Bash(rm -f ~/.claude/cache/pr-review/:*)
   - Read
+  - Skill(code-review)
   - Edit
   - Write
   - Grep
@@ -147,6 +148,16 @@ Findings that assert **absence**, **equivalence**, **redundancy**, **detectabili
 **implementability**, that a type is free to tighten, or how an external engine behaves are where
 reviews go wrong: check each as `claims.md` says before drafting, not after the author pushes back.
 A caveat you notice in your own suggestion goes in your notes to the user even when it looks minor.
+
+**A correctness sweep alongside your own.** After your own pass and before drafting, run
+`Skill(code-review)` (bundled with Claude Code) at `high` on the PR's diff as a revision range over
+the Step 1 ref: `git fetch origin <base>`, then `high origin/<base>...refs/pr-review/<N>`, so it
+reviews this PR whichever repo or branch the checkout is on. Don't show it your findings, for the
+same reason as the second opinion. **Never pass `--comment` or `--fix`:** it would post or edit
+without the user's approval (Hard rule 1). What it finds are candidates, like the second opinion's:
+check each with `claims.md`, dedupe against your findings and the existing threads, and mark in the
+rounds which ones only it raised. `ultra <N>`, a deeper review in the cloud that costs usage credits
+after a few free runs, only when the user asks for it, and never with `--post`.
 
 ### 3.5 Second opinion, different model
 Follow `second-opinion.md`, after your own pass and before drafting. Here the payload is:
