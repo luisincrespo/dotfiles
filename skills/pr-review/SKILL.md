@@ -263,11 +263,12 @@ that doesn't compile costs the author a CI round and the comment its credibility
   `Skill(loop)` and let it arm a **Monitor** on the PR, as `pr-babysit` does, rather than waking on
   a timer. A shell loop polls `gh` every couple of minutes and wakes you only when the signature
   changes, so a push or reply lands within minutes instead of up to an hour later, and quiet
-  stretches cost nothing. Build the signature from `state`, `head_sha`, and the review,
-  review-comment and issue-comment counts **taken excluding the account this session posts as**,
-  since your own replies would otherwise wake you on your own previous cycle. Leave CI out (see
-  below). When an API call fails, skip that poll instead of emitting a placeholder, which would
-  fire twice. A Monitor expires after 30 minutes at most, so re-arm it on each expiry — waiting on
+  stretches cost nothing. Build the signature from `state`, `head_sha`, `reviewDecision`, the
+  requested reviewers, and the review, review-comment and issue-comment counts **taken excluding
+  the account this session posts as**, since your own replies would otherwise wake you on your own
+  previous cycle. A review request for the user changes no count, and it's the author asking them
+  to act, so surface it the moment it lands. Leave CI out (see below). When an API call fails,
+  skip that poll instead of emitting a placeholder, which would fire twice. A Monitor expires after 30 minutes at most, so re-arm it on each expiry — waiting on
   an answer included, rather than swapping it for a slow timer — and end any interactive turn
   about this PR by re-arming too: a conversation replaces the turn that would have done it. A
   Monitor also dies with the session. When resuming, seed the new one with the last signature you
