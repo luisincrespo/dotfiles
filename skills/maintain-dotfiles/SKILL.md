@@ -134,6 +134,11 @@ let the user choose. If they say publish, publish.
 Machine-specific values are a separate question with a settled answer: they go in
 `~/.agents/local/`, never in either repo. See the local-overrides section of the Claude README.
 
+So is the user's own taste (how they like it done, not how it must be done). It belongs in the
+personal-layer file the README's *Make it yours* section lists, not the shared skill, so that
+someone who replaces those files gets their way and none of the user's. A self-educate edit that
+puts one in a shared skill is a small fix: move it there before committing.
+
 ## Step 4 — Check the change is finished
 
 Twice now a skill has landed referencing something that did not exist. Before committing:
