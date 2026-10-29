@@ -3,10 +3,10 @@ name: self-review
 description: >-
   Review your OWN branch or uncommitted changes before pushing or opening a PR. Runs the repo's
   gates (lint, typecheck, build, tests), then correctness, simplification and security passes
-  over the diff, plus performance, AI-usage, React, API-shape and accessibility passes when the
-  change touches what they cover; fixes the clear findings and batches judgment calls for you,
-  looping until the diff is clean. Use for "self-review", "check my diff", or before pr-open. For someone ELSE's PR use
-  pr-review.
+  over the diff, plus design, UX, performance, AI-usage, React, API-shape and accessibility
+  passes when the change touches what they cover; fixes the clear findings and batches judgment
+  calls for you, looping until the diff is clean. Use for "self-review", "check my diff", or
+  before pr-open. For someone ELSE's PR use pr-review.
 allowed-tools:
   - Skill(code-review)
   - Skill(simplify)
@@ -62,7 +62,7 @@ The checks themselves live in `passes/` in this skill's folder, and `pr-review` 
 
 ## Step 1 — Scope the diff
 - Compute the changeset: `git diff --name-only <base>...HEAD` plus any uncommitted changes (`git status --porcelain`). List the affected packages. **Resolve `<base>` to its remote-tracking ref (`origin/<base>`) when one exists** — in a worktree the local branch ref is frozen at creation time, so a bare name can be far behind and silently widen the diff to include other people's commits.
-- Decide which **targeted passes** apply, by each file's own *When it applies*: `performance.md`, `ai-usage.md`, `react.md`, `api-shape.md` and `accessibility.md`, all in `passes/`. Note the ones that don't, so the report can say so.
+- Decide which **targeted passes** apply, by each file's own *When it applies*: `design.md`, `ux.md`, `performance.md`, `ai-usage.md`, `react.md`, `api-shape.md` and `accessibility.md`, all in `passes/`. Give the design and UX passes what they need to know first: the brief, ticket or project page for what's coming next, and the exercise pass's states when it ran. Note the ones that don't, so the report can say so.
 
 ## Step 2 — Automated gates (fix failures)
 Run the repo-appropriate checks scoped to the change (don't reformat the world):

@@ -115,9 +115,11 @@ the next review goes better.
 Ask the user what to focus on if they didn't say. Each pass file says when it applies; read it when
 it's in play and apply it to the diff.
 
-- **Whatever the focus, when they apply**: `performance.md`, `ai-usage.md` and `accessibility.md`,
-  plus `conventions.md` on every PR. Their findings join the rounds like any other. A performance
-  or AI-usage comment says what grows and what it costs. JSDoc-coverage and import-style nits are
+- **Whatever the focus, when they apply**: `design.md`, `ux.md`, `performance.md`, `ai-usage.md`
+  and `accessibility.md`, plus `conventions.md` on every PR. Their findings join the rounds like any
+  other. A performance or AI-usage comment says what grows and what it costs. A design or UX comment
+  is a suggestion that names its cost, or a question when it rests on taste, per the Voice rule on
+  product and UX concerns; a redesign the PR shouldn't carry goes to the ledger as a follow-up. JSDoc-coverage and import-style nits are
   low-priority: they tend to get cut, so keep them last and brief.
 - **Lenses to offer**: `react.md` (memoization that buys nothing, derivations in effects, hooks,
   component API) and `api-shape.md` (endpoints).
