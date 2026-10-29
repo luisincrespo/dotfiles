@@ -186,9 +186,11 @@ default, so trimming has to be a step, not a hope.
 
 **When.** On an idle round — the tree is clean, so there's nothing else to do — pick the one skill
 that has grown most since its last `Trim` commit, if that's over ~15%. One skill per round, so a
-trim never arrives as a wall of diffs. Leave out a skill under two weeks old: its growth is its
-design still arriving, not rules accreting (`respawn` grew 81% the day it was written, all of it
-features the user asked for, with under 30 words a trim could cut).
+trim never arrives as a wall of diffs. Leave out growth that is design still arriving, not rules
+accreting: a skill under two weeks old, or one whose growth is mostly a change the user asked for
+that landed in the last two weeks (`git log` since the last `Trim` shows it). `respawn` grew 81% the
+day it was written, all of it features the user asked for, with under 30 words a trim could cut;
+`pr-babysit` grew 27% in one reviewed change for several PRs sharing a worktree.
 
 **Cut what doesn't change behaviour:** a rule stated twice, in one skill or restated from
 `AGENTS.md` or a sibling; a rule a later one supersedes; a second or third illustration of one
