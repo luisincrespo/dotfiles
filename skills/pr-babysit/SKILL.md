@@ -4,8 +4,10 @@ description: >-
   Babysit an already-open MR/PR through to merge-ready. Each cycle brings the branch current with
   its base, resolves conflicts, auto-fixes safe CI failures (lint, format, typecheck, build, unit
   tests), sweeps every comment stream and addresses clear AI-reviewer notes while batching
-  anything human-authored, and keeps the title and description current. Hands off to pr-merge when
-  ready, and self-wraps in /loop. It does not create the PR; that is pr-open.
+  anything human-authored, and keeps the title and description current. Where local config opts
+  the repo in, hands the fixable CI failures to a remote fixer that keeps working while no local
+  session runs. Hands off to pr-merge when ready, and self-wraps in /loop. It does not create the
+  PR; that is pr-open.
 allowed-tools:
   - Bash(glab api:*)
   - Bash(glab mr view:*)
@@ -73,6 +75,7 @@ allowed-tools:
   - Skill(loop)
   - Skill(pr-merge)
   - Skill(voice)
+  - Skill(pr-autofix)
   - Read
   - mcp__playwright__browser_navigate
   - mcp__playwright__browser_wait_for
@@ -112,6 +115,7 @@ Polls an open MR/PR and drives it toward merge. This is the babysit stage of the
 - `BOT_NOISE_BODY_MARKERS` (skip on match): `<!-- STORYBOOK SNAPSHOT MESSAGE`, `<!-- STORYBOOK PREVIEW MESSAGE`, `<!-- SNAPSHOT MESSAGE`, `<!-- build-artifacts`, `<!-- definition-of-ready-status -->` + `bot_noise_body_markers_extra`
 - `BOT_ACTIONABLE_BODY_MARKERS`: `["DangerID: danger-id-Danger", "dangerJS"]` — match, then `/(\d+)\s+failure:/`: 0 → noise, >0 → actionable
 - `REBASE_SYNC_REPOS`: `[]` + `rebase_sync_repos` — repos whose `CLAUDE.md` mandates rebase-before-push. For these, sync/conflict steps **rebase onto the target and force-push with `--force-with-lease`** instead of merging forward. Derive `SYNC_STRATEGY = "rebase"` if `repo_id` matches, else `"merge"`.
+- `REMOTE_FIXER`: the repo's `remote_fixer` entry (`github/<owner>/<repo>`, else `*`; absent or `false` ⇒ off). Names the `adapter` skill that runs the fixer, its `settings`, and `pilot`. See Phase 0.6.
 - **State file**: `~/.claude/cache/deliver/pr-<platform>-<repo-with-slashes-as-dashes>-<number>.json` (the `deliver`-family namespace).
 
 ## Shared checkout
@@ -183,6 +187,7 @@ Abort if `source_branch` matches `PROTECTED_BRANCHES`.
 
 ### 0.3 Terminal state
 A merged/closed MR/PR won't be revisited — **delete its state file and stop** (`pr-merge`/`post-merge-cleanup` handle in-skill merges; this catches merges/closes done elsewhere):
+- **A remote fixer recorded:** read the state file first, when it exists. A `state.remote_fixer` session gets stopped and its pilot record kept, as `refs/remote-fixer.md` says, before anything is deleted.
 - **Under `deliver` (`--task-slug`)**: don't stop any loop or tell the user to; the task's loop serves its other PRs too. Return `merged` or `closed`: `deliver` runs `post-merge-cleanup` for a merge done elsewhere (it advances dependents and updates the ledger), marks a closed unit `closed`, and drops that PR's Monitor.
 - `state == "merged"`: `rm -f` the state file, announce `🎉 !<number> merged. Stopping.`, tell the user to `/loop stop`, return.
 - `state == "closed"`: `rm -f` the state file, announce `!<number> closed (not merged). Stopping.`, same, return.
@@ -190,7 +195,7 @@ A merged/closed MR/PR won't be revisited — **delete its state file and stop** 
 ### 0.4 State file
 Path above. Initialize if missing:
 ```json
-{"addressed_thread_ids":[],"seen_human_note_ids":[],"shown_but_unaddressed_thread_ids":[],"last_pipeline_id":null,"failed_fix_counts":{},"e2e_retry_counts":{},"metadata_synced_head_sha":null,"managed_title":null,"managed_body_hash":null,"screenshot_nudged":false,"needs_checkout":[]}
+{"addressed_thread_ids":[],"seen_human_note_ids":[],"shown_but_unaddressed_thread_ids":[],"last_pipeline_id":null,"failed_fix_counts":{},"e2e_retry_counts":{},"metadata_synced_head_sha":null,"managed_title":null,"managed_body_hash":null,"screenshot_nudged":false,"remote_fixer":null,"needs_checkout":[]}
 ```
 
 ### 0.4b Checkout
@@ -199,6 +204,9 @@ Take the checkout lock, then derive `checked_out` while holding it, as `shared-c
 ### 0.5 Announce + derive flags
 Announce: `Babysitting <platform>:<repo_id>!<number> (<source_branch> → <target_branch>): <title>`.
 Derive `is_behind`: GitHub `mergeStateStatus == "BEHIND"`; GitLab `git fetch origin <target_branch> <source_branch>` then `git merge-base --is-ancestor origin/<target_branch> origin/<source_branch>` — exit 1 ⇒ behind. Compare the remote refs, never `HEAD`, which may be another unit's branch.
+
+### 0.6 Remote fixer (when `REMOTE_FIXER` covers the repo, or state records one)
+Read `refs/remote-fixer.md` and follow it: start the fixer through `Skill(<adapter>)` on the first cycle, pull its pushes inside Phase 0.5's preconditions, fetch-and-merge before every local push, read its status every cycle, take a check back when it leaves one, and stop it before `pr-merge`, on a rule break, or once config stops covering the repo. While it runs, Phase 1.2 and Phase 2.0's annotations leave the checks it owns to it. No entry and nothing recorded → skip; every phase runs locally as before.
 
 ### 0.7 Queued work (when `checked_out` and `state.needs_checkout` isn't empty)
 Run the queued items before any other phase, since their usual phases' skip gates (a synced head, a pipeline already seen) would pass them over: `fix <job>` (only if it still fails on this head), `address <thread url>` (only if the thread is still open), `resolve conflicts with …` (Phase 0.5a), `capture screenshots` (2.5.2 and 2.6b). Leave `merge (ready)` to Phase 4's normal path, which runs only after this cycle's fresh CI read and comment sweep: a "hold off merging" comment posted since it was queued has to be seen first. Remove each item from `needs_checkout`, and write the state file, as it's done or found obsolete.
@@ -255,7 +263,9 @@ Conflicts or a stale base must be fixed first. After resolving, skip Phases 1-2 
 
 The name is a heuristic, not the classification: read the failure before auto-fixing one that landed in **unit-test**. A suite whose name merely contains `test` can be a Docker-backed integration run against a third party, where the failure is that service's error page rather than anything in the diff. Editing source to satisfy it is the wrong move — retry once, then batch.
 
-**Not `checked_out` (0.4b)?** A fix needs the files: queue `fix <job>` in `needs_checkout` instead. Retrying a flaky job needs no checkout.
+**A remote fixer running (0.6)?** Lint, typecheck, build and unit-test failures are its, so don't fix them locally unless the check is in `state.remote_fixer.takebacks`. Flaky-retry and skip stay here.
+
+**Not `checked_out` (0.4b)?** A fix needs the files: queue `fix <job>` in `needs_checkout` instead, unless a remote fixer owns it. Retrying a flaky job needs no checkout.
 
 **Auto-fix (lint/typecheck/build/unit-test):** if `state.failed_fix_counts[<job>] >= 2` → batch `Repeatedly failing — stopping auto-fix: <job>`. Else read log tail (~200 lines), identify package, `pnpm install` if in a worktree, then: **lint/format** `npx nx eslint:lint <pkg> --fix` then `npx nx format:write --all --no-sort-root-tsconfig-paths`; **typecheck/build** read errors, edit source (IDE diagnostics first, fall back to scoped `npx tsc --noEmit`); **unit-test** fix source (preferred) or test. Verify with the same nx target. Pass → `git add -A`, commit (ticket-prefixed if branch has one), `git push`. Fail → increment counter, `git checkout -- .`, batch `Auto-fix attempt failed: <job> — <reason>`.
 
@@ -294,7 +304,7 @@ Unified per thread: `{ thread_id, resolvable, resolved, notes:[{note_id, author,
   1. Review threads (line-level) via GraphQL: `gh api graphql -f query='query($owner:String!,$repo:String!,$number:Int!){repository(owner:$owner,name:$repo){pullRequest(number:$number){reviewThreads(first:100){nodes{id isResolved isOutdated comments(first:50){nodes{id databaseId author{login} body url createdAt}}}}}}}' -F owner=<owner> -F repo=<repo> -F number=<number>`
   2. Issue comments (PR-level, NOT resolvable): `gh api "repos/<repo_id>/issues/<number>/comments?per_page=100" --paginate`.
   3. Reviews with body: `gh api "repos/<repo_id>/pulls/<number>/reviews?per_page=100" --paginate` (`COMMENTED` + non-empty body = pseudo-thread; APPROVED/CHANGES_REQUESTED feed the approval check in `pr-merge`).
-  4. **Check-run annotations** — these render in Files Changed as `Check warning on line N`, so they read as review comments even though no API above returns them. For each check run with `output.annotations_count > 0`: `gh api "repos/<repo_id>/check-runs/<check_run_id>/annotations"`. A **passing** check still emits them, so never gate this on `conclusion == failure`. Treat a `warning`/`failure` annotation pointing at a file in your diff as an auto-fix item (it is usually lint the formatter does not cover); `notice` level and anything outside the diff is noise.
+  4. **Check-run annotations** — these render in Files Changed as `Check warning on line N`, so they read as review comments even though no API above returns them. For each check run with `output.annotations_count > 0`: `gh api "repos/<repo_id>/check-runs/<check_run_id>/annotations"`. A **passing** check still emits them, so never gate this on `conclusion == failure`. Treat a `warning`/`failure` annotation pointing at a file in your diff as an auto-fix item (it is usually lint the formatter does not cover), unless a remote fixer owns that check (0.6); `notice` level and anything outside the diff is noise.
 
 ### 2.1 Iterate threads
 Skip if `thread_id` ∈ `state.addressed_thread_ids`, OR all notes `system`, OR (`resolvable && resolved`). Take the first non-system note → `author`, `body`, `note_id`. Normalize `author_base` (GitHub: strip trailing `[bot]`).
@@ -332,7 +342,7 @@ Runs every cycle. Read `refs/storybook-screenshots.md` (Step 7) for the sizing a
 ## Phase 3: Write state + report
 
 1. Persist state.
-2. Header: `Cycle: pipeline <status> [(fixed N jobs)], <N> new batch items.` New `needs_checkout` items → one line: `Waiting for a checkout of <source_branch>: <items>`, said once per item.
+2. Header: `Cycle: pipeline <status> [(fixed N jobs)], <N> new batch items.` With a remote fixer, add `Remote fixer: <N> pushes, <M> wakes (<K> with no action) since last cycle`, and name each push. New `needs_checkout` items → one line: `Waiting for a checkout of <source_branch>: <items>`, said once per item.
 3. Batch non-empty → list items with indices, ask **"Go through these now, or keep watching?"** ("Go through" → walk one-by-one, proposing fixes, awaiting approval; "Keep watching" → return, /loop schedules next). **Skip Phase 4.**
 4. Batch empty → continue to Phase 4.
 
@@ -341,6 +351,7 @@ Runs every cycle. Read `refs/storybook-screenshots.md` (Step 7) for the sizing a
 `pr-merge` owns the full merge gate (approval, threads resolved, CI green, mergeable, pre-merge local verification) and the merge itself. So this stage only decides whether it's worth *asking*:
 
 - Skip (keep looping) if any of: `is_draft == true`, `state != opened`, batch non-empty this cycle (Phase 3 already gated), `state.last_pipeline_id` status is not `success`, a question to the user about this PR (reviewers, scope) is still unanswered, or **no approval has landed yet** — GitHub `reviewDecision` ∈ {`REVIEW_REQUIRED`, `CHANGES_REQUESTED`} (already in the 0.1 payload, so this costs nothing), GitLab an empty `approved_by`. Approval is `pr-merge`'s first gate, so without one the handoff can only load the skill, re-run local pre-merge verification and come back "not ready" — every cycle, for as long as the review sits unclaimed. **Fail open**: no cheap approval signal ⇒ hand off anyway.
+- **A remote fixer running (0.6)?** Stop it and keep its pilot record before handing off: CI is green and an approval has landed, and a merge ends in `post-merge-cleanup`, which deletes the state file.
 - **Not `checked_out`?** `pr-merge` verifies against the merged state in the files, so it can't run: queue `merge (ready)` in `needs_checkout` and keep looping.
 - Otherwise invoke `Skill(pr-merge)` with `<mr-ref>`, `--lock-token <token>` (the checkout lock you hold), and remove any `merge (ready)` item from `needs_checkout`. `pr-merge` (this MR/PR) and `--task-slug <slug>` if set. It re-verifies every condition and either merges (→ `post-merge-cleanup`) or returns "not ready — keep watching." Either way this cycle ends; `/loop` re-checks next cycle (a successful merge is caught by Phase 0.3's terminal check and stops the loop).
 
@@ -357,6 +368,7 @@ Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a 
 - Never approve, close, or comment on human threads. Allowed actions: commit, push (and, only in `REBASE_SYNC_REPOS`, `git push --force-with-lease` after a rebase), reply to AI-reviewer threads, resolve threads. Merging and cleanup are delegated to `pr-merge`/`post-merge-cleanup`.
 - Never mark a thread resolved unless the commit actually pushed.
 - Never switch branches (`git checkout <branch>`, `git switch`): only the `deliver` session moves the task worktree's checkout. Change files only when `checked_out`, holding the checkout lock.
+- A check is fixed by one side at a time: the remote fixer until `pr-babysit` takes it back. Never restart a fixer that broke a rule on this PR.
 - Never bypass pre-commit hooks except the sanctioned large cross-toolchain sync case (0.5b / `conflict-resolution.md`) where the hook fails only on CI-green files from the target.
 - Never send Slack messages (always needs user approval).
 - Maintain JSDoc coverage on edited files that already have it. Follow the repo `CLAUDE.md` + the user's feedback memories rather than re-deriving conventions.

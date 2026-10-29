@@ -63,6 +63,15 @@
     }
   },
 
+  "//remote_fixer": "Per-repo, keyed by 'github/<owner>/<repo>' with a '*' fallback, like second_opinion_review. Hands a PR's failing lint, format, typecheck, build and unit-test checks to a hosted agent that reacts to GitHub events, so CI keeps getting fixed while no local session runs; pr-babysit keeps everything else (skills/pr-babysit/refs/remote-fixer.md). Off unless an entry covers the repo, and false keeps a repo off. It is opt-in because the agent runs on the vendor's infrastructure with your branch's code and pushes to it. adapter: the skill that starts, stops and reads the fixer (pr-autofix, for Claude's auto-fix). settings: what the adapter reads; pr-autofix takes model (default claude-opus-5-5) and environment_id (default: the account's Default environment), and finds its routine by name. pilot: true records every fixer action in pr-babysit's state for the pilot report.",
+  "remote_fixer": {
+    "github/acme-org/example-repo": {
+      "adapter": "pr-autofix",
+      "settings": {"model": "claude-opus-5-5", "environment_id": null},
+      "pilot": true
+    }
+  },
+
   "//staging_verification": "Per-repo, keyed by 'github/<owner>/<repo>'. Enables deliver's B5 staging-verification phase for repos that gate deploys on manual testing. Omit a repo and the phase never runs for it. needs_testing_label: the PR label that marks a change as needing post-deploy testing. staging_url: the deployed environment to drive. deploy_state_cmd: a command that reports whether a given sha has landed on each surface. notes: free-text traps worth remembering, appended as they cost time.",
   "staging_verification": {
     "github/acme-org/example-repo": {
