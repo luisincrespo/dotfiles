@@ -43,6 +43,12 @@ Touching none of these → it doesn't apply. Say so in one line rather than skip
 Check claims about a provider's pricing, limits or caching against its docs, not memory: they change
 (see [`claims.md`](claims.md)).
 
+**For code calling Anthropic's API, where Claude Code's `claude-api` skill is available:**
+`Skill(claude-api)` with `prompt-audit` flags instructions written for older models in prompts,
+skills and tool descriptions, a fit when the diff changes one. `cost-optimize` profiles the whole
+project's spend and proposes savings one change at a time: suggest it to the user when the pass
+finds a pattern worth a wider look, rather than running it per diff.
+
 ## The bar for a finding
 
 Each finding names **what multiplies, and roughly what it costs**: "one call per row with the full
