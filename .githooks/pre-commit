@@ -18,6 +18,8 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 source "${REPO_ROOT}/.githooks/leak-checks.sh"
 
 ROSTER="${REPO_ROOT}/.githooks/placeholder-roster.txt"
+# The owner's own name is personal, so it lives in a machine-local roster, not the shared one.
+LOCAL_ROSTER="${HOME}/.agents/local/placeholder-roster.txt"
 VOICE_REFS="skills/voice/refs/"
 FOUND=0
 
@@ -60,7 +62,7 @@ VERBS='asked|approved|flagged|replied|said|wanted|proposed|corrected|noticed|poi
 # so it narrows nothing that matters — extend it as new ones turn up.
 NOT_NAMES='Also|And|But|For|Not|Now|Here|There|Then|This|That|These|Those|They|Their|We|You|She|Both|Each|Every|Everyone|Someone|Nobody|One|First|Second|Later|Again|Still|Even|Only|Just|What|When|Where|Which|Who|Why|How|Most|Some|Any|All|Before|After|Once|Instead|Rather|Better|Worse|Same|Note|Keep|Drop|Same'
 if [[ -r "$ROSTER" ]]; then
-  KNOWN="$(grep -vE '^[[:space:]]*(#|$)' "$ROSTER" | sed 's/[[:space:]]*$//' | tr 'A-Z' 'a-z')"
+  KNOWN="$(cat "$ROSTER" "$LOCAL_ROSTER" 2>/dev/null | grep -vE '^[[:space:]]*(#|$)' | sed 's/[[:space:]]*$//' | tr 'A-Z' 'a-z')"
   known() { printf '%s\n' "$KNOWN" | grep -qxF "$(printf '%s' "$1" | tr 'A-Z' 'a-z')"; }
 
   VOICE_ADDED="$(printf '%s\n' "$ADDED" | grep -F "$VOICE_REFS" || true)"
@@ -88,8 +90,8 @@ if [[ -r "$ROSTER" ]]; then
       printf '\n  \033[1;31m%s\033[0m\n' "Unrecognized person in the voice corpus"
       printf '%s' "$unknown"
       printf '\n  %s\n  %s\n' \
-        "Every person in claude/skills/voice/refs/ must be invented." \
-        "Replace with a placeholder, or add it to .githooks/placeholder-roster.txt if it is one."
+        "Every person in skills/voice/refs/ but you must be invented." \
+        "Replace with a placeholder, or add it to .githooks/placeholder-roster.txt if it is one (your own name goes in ~/.agents/local/placeholder-roster.txt)."
       FOUND=1
     fi
   fi

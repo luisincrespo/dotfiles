@@ -8,8 +8,8 @@
 # Safe to commit: these are fake. Add a new placeholder here when you coin one.
 # One entry per line, case-insensitive. # = comment.
 
-# The repo owner, who is legitimately named throughout.
-Luis
+# The owner, who is legitimately named in their own corpus, is listed in the machine-local
+# ~/.agents/local/placeholder-roster.txt instead: a name is personal, and this roster is shared.
 
 # Placeholder people.
 Sam

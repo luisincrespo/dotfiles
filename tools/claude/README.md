@@ -11,7 +11,7 @@ cd ~/code/dotfiles
 ./tools/claude/install.sh
 ```
 
-Then restart Claude Code, and fill in the three machine-local files below — none of them is ever
+Then restart Claude Code, and fill in the four machine-local files below — none of them is ever
 committed:
 
 | File | What goes in it |
@@ -19,6 +19,7 @@ committed:
 | `~/.claude/settings.json` | Model choice — the durable preferences are merged in by `install.sh`, the rest is yours |
 | `~/.agents/local/config.json` | This machine's repo id, SonarQube host, protected branches, reviewer bots — see [Machine-local overrides](#machine-local-overrides) |
 | `~/.agents/local/commit-denylist.txt` | Employer, product and service names the [leak guard](#leak-guard) must keep out of commits |
+| `~/.agents/local/placeholder-roster.txt` | Your own name, the one real person the leak guard lets appear in your voice corpus |
 
 The skills work unconfigured, so filling these in can wait until you know the new setup: SonarQube
 is skipped, no extra branches are protected, and `pr-review` derives the repo from `git remote`.
@@ -209,7 +210,7 @@ drift apart:
 | Internal hostname | `*.internal`/`*.corp`/`*.lan`, and `sonarqube.`/`gitlab.`/`jira.`/`jenkins.`… on a real domain |
 | Real-looking ticket id | any `[A-Z]{2,}-\d+` that isn't the `ABC-1234` placeholder |
 | Denylisted term | anything in `~/.agents/local/commit-denylist.txt` |
-| Unrecognized person | **`pre-commit` only**, in `skills/voice/refs/` — any person not on `.githooks/placeholder-roster.txt` |
+| Unrecognized person | **`pre-commit` only**, in `skills/voice/refs/` — any person not on `.githooks/placeholder-roster.txt` or your local `~/.agents/local/placeholder-roster.txt` |
 | Commit identity | the author/committer address, when it names an employer or an internal host |
 
 Every check but the last two runs over both a diff and a message. The person check is path-scoped, so
@@ -281,5 +282,6 @@ backstop rather than the only defence.
 
 Credentials, tokens, chat history, caches and session state all live under `~/.claude` and stay
 there — `.credentials.json`, `secrets/`, `history.jsonl`, `projects/`, `sessions/`, `plugins/`.
-So do `local/config.json`, `local/commit-denylist.txt` and the project skills in `local/skills/`.
+So do `local/config.json`, `local/commit-denylist.txt`, `local/placeholder-roster.txt` and the
+project skills in `local/skills/`.
 Nothing here should ever contain a secret.

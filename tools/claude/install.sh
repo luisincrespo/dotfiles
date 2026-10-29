@@ -237,6 +237,15 @@ else
   log "seeded    ~/.agents/local/commit-denylist.txt — add this employer's terms"
 fi
 
+run cp "${REPO_ROOT}/local/placeholder-roster.example.txt" "${LOCAL_DIR}/placeholder-roster.example.txt"
+log "copied    ~/.agents/local/placeholder-roster.example.txt"
+if [[ -e "${LOCAL_DIR}/placeholder-roster.txt" ]]; then
+  log "kept      ~/.agents/local/placeholder-roster.txt (already present, left untouched)"
+else
+  run cp "${REPO_ROOT}/local/placeholder-roster.example.txt" "${LOCAL_DIR}/placeholder-roster.txt"
+  log "seeded    ~/.agents/local/placeholder-roster.txt — add your own name"
+fi
+
 echo
 echo "Leak guard:"
 if [[ "$(git -C "${REPO_ROOT}" config --get core.hooksPath 2>/dev/null || true)" == ".githooks" ]]; then

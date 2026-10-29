@@ -1,0 +1,6 @@
+# People who may be named in YOUR voice corpus, on top of the shared roster of invented names
+# (.githooks/placeholder-roster.txt). Machine-local: install.sh seeds it once, then it's yours.
+#
+# Put your own name here: your voice principles and examples name you, and they're the one real
+# person meant to appear in them. Everyone else in the corpus stays invented, so add nobody real.
+# One entry per line, case-insensitive. # = comment.
