@@ -7,7 +7,12 @@ a comment, applying a fix, or repeating it in a commit message or PR description
 ## The claims that need checking
 
 - **Absence** ("this will never exist"): search everywhere it could come from before saying so,
-  including the other branches of a stack.
+  including the other branches of a stack. "Every reader ignores X" is an absence claim too:
+  enumerate every query of that data, not just the shared builders, since a direct lookup bypasses
+  the filter; and when the filter needs a new input (a parent's id), check each caller passes it.
+- **Covered elsewhere** ("the follow-up fixes that", "that's how the base branch does it"): check
+  the order things ship in, since a fix landing after the risky window doesn't close it, and whether
+  this change removed an invariant the base-branch logic relied on (copies it used to keep in sync).
 - **Equivalence** ("this changes nothing observable"): check side-effect ordering separately from
   rendered output. When a change alters how many rows stand for one thing, check every reader that
   iterates them, inside the diff or not: work fanned out per row (a job queued per row's key)
