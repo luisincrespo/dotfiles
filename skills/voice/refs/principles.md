@@ -64,6 +64,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 ## Substance
 - **Answer the point they made.** Before replying to someone's reason, pin down what it refers to.
   If it could mean two things, ask Luis which one rather than picking one and arguing it.
+  Answer only what they asked. When they question a design choice, give your view in a clause of why
+  and say you're open to changing it, rather than walking them through the mechanism.
 - **Frame the ask honestly.** Don't downplay a real decision/clarification as a "sanity check" or a
   "quick question" — if you're asking someone to decide something, say that.
 - **Leave "optional" to Luis.** Don't close a suggestion with "not blocking" or "fine as a
