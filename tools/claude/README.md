@@ -161,6 +161,7 @@ from it on first run only — an existing one is never overwritten.
 | `sonar_host_url` | Turns the SonarQube phase on (unset ⇒ skipped entirely) |
 | `bot_noise_body_markers_extra` | More bot-comment markers to treat as noise |
 | `verification_addenda` | Extra build/test commands for nested apps with their own pipeline |
+| `code_review_effort` | Per repo: the effort level `self-review` and `pr-review` give the built-in `/code-review` (unset ⇒ `high`) |
 | `remote_fixer` | Per repo: hands a PR's fixable CI failures to a hosted agent (`pr-autofix` here) while `pr-babysit` keeps the rest |
 
 ### Project skills

@@ -54,6 +54,11 @@
   "//review_request_handle": "Group handle to open that draft with. Preferred over naming individuals — it reaches whoever is free, which is how a claim-by-reaction channel works. Unset falls back to whoever Luis names, else an @<reviewer> placeholder.",
   "review_request_handle": "",
 
+  "//code_review_effort": "Per-repo, keyed by 'github/<owner>/<repo>' with a '*' fallback, like second_opinion_review. The effort level self-review and pr-review pass to Claude Code's bundled /code-review for their correctness pass: low (only its most confident findings), medium, high, xhigh, or max (the widest, and the costliest: it starts many reviewer subagents). Unset → high. Never ultra: that is a paid cloud review, run only when the user asks for one.",
+  "code_review_effort": {
+    "github/acme-org/example-repo": "xhigh"
+  },
+
   "//second_opinion_review": "Per-repo, keyed by 'github/<owner>/<repo>'. Turns on a second correctness pass by a different model (self-review/passes/second-opinion.md), which self-review runs on your own diff and pr-review on someone else's PR. Omit a repo and the step never runs there, unless the map has a '*' entry: the machine-wide fallback, used by any repo without an entry of its own. Set a repo's entry to false to keep it off. It is opt-in because the reviewer is handed your diff, and where that goes is a per-codebase decision, so add '*' only on a machine where every repo you'd clone may go to that vendor (a work laptop under an enterprise agreement, say). command: a non-interactive CLI taking instructions as an argument and reading content on stdin. It is run from a scratch directory, not the repo, so include whatever flag that CLI needs to accept a non-repo working directory (codex needs --skip-git-repo-check). Pin the model and reasoning effort in it too (codex: -m <model> -c model_reasoning_effort=<level>): left bare it runs whatever the CLI defaults to, which for codex was its frontier model at no reasoning at all. Pin the newest generation of a model rather than a previous one. max_rounds: how many times the convergence loop may re-run it after fixes (2 is usually enough; the cap exists because a second model will always find something on a large diff). notes: traps worth remembering.",
   "second_opinion_review": {
     "github/acme-org/example-repo": {
