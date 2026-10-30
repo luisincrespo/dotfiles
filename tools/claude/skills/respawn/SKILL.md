@@ -53,7 +53,10 @@ unset, this isn't a Claude Code background session, and `claude respawn` can't r
 interactive Claude Code session, say that exiting and running `claude --continue` resumes it on the
 installed version; in any other agent, say that respawn only applies to Claude Code. Then stop.
 
-Then check where the session runs: its `cwd` in `claude agents --json`. Sent from a background
+Then check where the session was launched: the trust check uses that directory, not its current
+`cwd` in `claude agents --json`, which an `EnterWorktree` changes (a session launched in home and
+moved into a repo worktree was still refused, Oct 30). The session's project folder under
+`~/.claude/projects/` names the launch directory (`-Users-<name>` is home). Sent from a background
 command, `claude respawn` refuses a session in a workspace Claude Code doesn't trust, and the home
 directory is one ("Workspace not trusted", seen Oct 26). For such a session, skip Step 2: write the
 handoff note, then tell the user to run `claude respawn <id>` from an interactive terminal in that
