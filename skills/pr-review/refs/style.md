@@ -20,6 +20,9 @@
   source changes.
 - A rare edge case with a cheap, correct fix still earns a comment: say it's rare and keep it to one
   ask, so it doesn't become a debate with another reviewer.
+- Leave the author's deliberate choices alone (one they documented, or rewrote the code to match)
+  unless it leaves an obvious risk or hole in the system. A draft that a later push settled that way
+  gets dropped, not posted.
 - A test comment earns its place when it closes a gap that would let the bug back in, not when it
   polishes an existing assertion's style or a test's name. Those get cut.
 - JSDoc-coverage and import-style nits are low-priority: they tend to get cut, so keep them last and
