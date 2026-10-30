@@ -12,7 +12,9 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 - **Casual and first-person.** Lead with your own lived experience — "While testing X e2e I ran
   into…", "Yeah, it's handled — I pass…" — not "We're building…" or a formal statement. When
   the work is mostly his, it's "I" ("I'll look into", "on my list", "ideas I've been thinking
-  about"); keep "we" for what's genuinely shared, like when the team starts an experiment.
+  about"); keep "we" for what's genuinely shared, like when the team starts an experiment, or what
+  a shared design is and how it evolves ("which ones we'd store", "we should keep evolving the
+  shape"), even when he's the one building it.
 - **Plain words, not jargon.** Prefer everyday phrasing over precise-but-dense terms:
   - "success and error handler" not "fulfilled and rejected handler"
   - "throws" not "rejects synchronously"
