@@ -221,10 +221,16 @@ drift apart:
 | Real-looking ticket id | any `[A-Z]{2,}-\d+` that isn't the `ABC-1234` placeholder |
 | Denylisted term | anything in `~/.agents/local/commit-denylist.txt` |
 | Unrecognized person | **`pre-commit` only**, in `skills/voice/refs/` — any person not on `.githooks/placeholder-roster.txt` or your local `~/.agents/local/placeholder-roster.txt` |
+| Voice example | **`pre-commit` only**, in any repo but the private companion — a `skills/voice/refs/examples-*` file, whatever it says |
 | Commit identity | the author/committer address, when it names an employer or an internal host |
 
-Every check but the last two runs over both a diff and a message. The person check is path-scoped, so
-it has no meaning for a message and stays in `pre-commit`.
+Every check but the last three runs over both a diff and a message. The person and example checks
+are path-scoped, so they have no meaning for a message and stay in `pre-commit`.
+
+The example check goes by path because no content check can catch an example: the corpus is
+anonymized by design, so an entry passes every rule above while still being someone's real message.
+The hooks are shared with the companion, so `install.sh` marks it with `git config dotfiles.role
+private`. A repo without the mark counts as public, so a lost mark blocks a commit, never publishes one.
 
 ### Commit identity
 

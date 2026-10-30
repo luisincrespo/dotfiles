@@ -44,6 +44,28 @@ added() {
 # was making it.
 scan_identity "author: $(git var GIT_AUTHOR_IDENT | sed -E 's/ [0-9]+ [+-][0-9]{4}$//')"
 
+# --- Voice examples outside the private companion -----------------------------
+# The examples are real messages: anonymized, so every content check here passes them by
+# design, yet still the user's own words about real work. So this check goes by path, not
+# content: outside the companion, an examples file is refused whatever it says. It runs
+# before the added-lines scan because a rename or an empty file adds no lines. The
+# companion is marked by install.sh; a repo without the mark counts as public, so a
+# missing mark blocks rather than publishes. Once, a session created one in the public
+# checkout, and only reading the diff before committing caught it.
+if [[ "$(git config --local --get dotfiles.role 2>/dev/null || true)" != "private" ]]; then
+  stray="$(git diff --cached --name-only --diff-filter=ACMR \
+    | grep -E '(^|/)skills/voice/refs/examples-[^/]*$' || true)"
+  if [[ -n "$stray" ]]; then
+    printf '\n  \033[1;31m%s\033[0m\n' "Voice example outside the private companion"
+    printf '%s\n' "$stray" | sed 's/^/    /'
+    printf '\n  %s\n  %s\n  %s\n\n' \
+      "Voice examples are real messages, so they live only in the private companion repo." \
+      "Move the entry into the companion's copy of the file, then unstage and delete this one." \
+      "If this repo IS the companion, re-run tools/claude/install.sh: it sets dotfiles.role=private."
+    exit 1
+  fi
+fi
+
 ADDED="$(added | normalize_ssh_remotes)"
 if [[ -z "$ADDED" ]]; then
   (( FOUND )) && { leak_blocked "identity"; exit 1; }

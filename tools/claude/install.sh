@@ -354,6 +354,10 @@ if [[ -d "$PRIVATE_ROOT" ]] && private_repo; then
   run cp "${REPO_ROOT}/.githooks/"* "${PRIVATE_ROOT}/.githooks/"
   run git -C "$PRIVATE_ROOT" config core.hooksPath .githooks
   log "synced    hooks from this repo (authoritative copy)"
+  # The one thing the shared hooks treat differently: voice examples are refused in any repo
+  # that doesn't carry this mark, so only the companion may hold them.
+  run git -C "$PRIVATE_ROOT" config dotfiles.role private
+  log "marked    as the private companion (dotfiles.role = private)"
   if [[ -z "$(git -C "$PRIVATE_ROOT" config --local --get user.email 2>/dev/null || true)" ]]; then
     EMAIL="$(git -C "$REPO_ROOT" config --local --get user.email 2>/dev/null || true)"
     if [[ -n "$EMAIL" ]]; then
