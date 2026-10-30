@@ -33,7 +33,7 @@ The skill's own folder is the base dir for the relative paths below.
 | Background subagents | Carry over | Leave them |
 | `CronCreate` jobs, fixed-interval `/loop` | Restored | Check `CronList` after; recreate only a missing one |
 | Monitors | Stop. The new process gets a `stopped` notice, which starts no turn | Re-arm |
-| Self-paced `/loop` wakeup | Lost | Reschedule |
+| Self-paced `/loop` wakeup | Restored on 2.1.314, as its one-shot cron under a new ID | Check `CronList`; reschedule only if it's missing, or the loop fires twice |
 | Workflows | Continue only when relaunched | Relaunch with `resumeFromRunId` |
 | The turn in progress | Cut off | Record the next step |
 
@@ -94,7 +94,7 @@ does. The helper's last line says how it went:
 - **`RESPAWN COMPLETE`**: read the note, then:
   1. Re-enter the worktree with `EnterWorktree` `path` if you're no longer in it.
   2. Re-arm each monitor with its recorded arguments.
-  3. Reschedule the self-paced wakeup.
+  3. Reschedule the self-paced wakeup, only if `CronList` no longer shows its one-shot.
   4. Relaunch each workflow.
   5. Run `CronList`, and recreate only the jobs that are missing.
   6. Carry on with the task in progress.
