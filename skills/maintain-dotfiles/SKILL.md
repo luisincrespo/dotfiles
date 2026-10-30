@@ -139,6 +139,11 @@ personal-layer file the README's *Make it yours* section lists, not the shared s
 someone who replaces those files gets their way and none of the user's. A self-educate edit that
 puts one in a shared skill is a small fix: move it there before committing.
 
+A `skills/voice/refs/examples-*` file in the public checkout is a voice example saved to the wrong
+repo. It happened twice in one day, from sessions running older `voice` instructions. The
+pre-commit hook refuses it, so there's no rush: once the companion's copy of that file is quiet,
+append the entries there, commit them in the companion, and delete the public file.
+
 ## Step 4 — Check the change is finished
 
 Twice now a skill has landed referencing something that did not exist. Before committing:
