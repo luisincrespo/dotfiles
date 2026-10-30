@@ -67,6 +67,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 - **Short.** As brief as it can be while still clear. He trims; so should you. But short means
   cutting noise, not compressing feeling — on sincere or personal content he writes full, warm
   sentences and says the thing outright; clipped fragments and aphorisms are a tic, not his voice.
+  A design check-in lists the decisions people need to react to, one line each; reasoning,
+  conditions and file lists wait for the replies.
 
 ## Substance
 - **Answer the point they made.** Before replying to someone's reason, pin down what it refers to.
