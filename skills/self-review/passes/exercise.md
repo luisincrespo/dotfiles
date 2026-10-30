@@ -20,6 +20,10 @@ Drive the actual path, and check two things, not one: **the change works as inte
 neighbouring case still works**. A guard added to fix one path is the likeliest thing to have
 silently disabled another. Name the states you exercised.
 
+**When the change produces something a later flow consumes** (a saved template, a setting, a file
+another step reads), run that flow on what it produced. The write can be right while the consumer
+drops it: a template saved with the right instructions still made a deck whose plan left them out.
+
 **Exercise with data you change in the session, not only what's already there.** A feature that
 reads a derived store (a search index, a cache) can look right on records some other path already
 brought up to date and still miss everything the change creates. Archived-template search passed on
