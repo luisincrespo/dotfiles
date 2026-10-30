@@ -140,9 +140,12 @@ someone who replaces those files gets their way and none of the user's. A self-e
 puts one in a shared skill is a small fix: move it there before committing.
 
 A `skills/voice/refs/examples-*` file in the public checkout is a voice example saved to the wrong
-repo. It happened twice in one day, from sessions running older `voice` instructions. The
-pre-commit hook refuses it, so there's no rush: once the companion's copy of that file is quiet,
-append the entries there, commit them in the companion, and delete the public file.
+repo. The pre-commit hook refuses it, so there's no rush: once the companion's copy of that file is
+quiet, append the entries there, commit them in the companion, and delete the public file. It
+happened three times in one day, all from one long-running session that had started writing to the
+public path, which no skill fix reaches once it's in a session's context. When one recurs, find the
+writer (grep recent transcripts under `~/.claude/projects/` for the public path) and message it the
+companion's path.
 
 ## Step 4 — Check the change is finished
 
