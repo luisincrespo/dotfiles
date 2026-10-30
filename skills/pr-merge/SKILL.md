@@ -91,6 +91,7 @@ Merges one open MR/PR **only when every condition holds**, after a local verific
 5. **Platform mergeable**: GitLab `merge_status == "can_be_merged"` AND `!has_conflicts` AND `blocking_discussions_resolved`; GitHub `mergeable == "MERGEABLE"` AND `mergeStateStatus ∈ ["CLEAN", "HAS_HOOKS"]`. `UNSTABLE` passes only when every failing check is in `NONBLOCKING_CHECKS` for this repo; `BLOCKED`/`BEHIND`/`DIRTY` always fail.
 6. **Local conflict check**: `git fetch origin <target_branch>` then `git merge-tree HEAD "origin/<target_branch>"` — no markers AND exit 0 → pass; else → Phase 3 (conflict).
 7. `is_draft == false`.
+8. **Exercised locally**: the PR description or the task ledger records a local run of the changed behavior (what ran, what was seen), or says why it can't run locally. Unit tests, review passes and a later staging check don't count. Missing → not merge-ready.
 
 Any condition unmet → announce which one and **return** `Not merge-ready (<reason>) — keep watching.` (no mutation).
 

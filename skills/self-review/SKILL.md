@@ -85,7 +85,7 @@ Run these over the diff and collect findings:
 Run the independent passes in parallel where the tooling allows.
 
 ## Step 3.5 — Exercise it
-When the change is user-facing and you can launch the app, run it as `passes/exercise.md` says, from *this* checkout. For a fix, "works as intended" means the defect is gone. Name the states you exercised in the report, and what stayed unverified.
+Whenever the changed behavior can run locally (user-facing or not: an app screen, a command, a server route), run it as `passes/exercise.md` says, from *this* checkout. For a fix, "works as intended" means the defect is gone. Name the states you exercised in the report, and what stayed unverified, so the PR can record the run. When it can't run locally, say why; "didn't run it" when it could have run blocks the merge (`pr-merge` checks), rather than shipping as unverified.
 
 ## Step 3.6 — Second opinion, different model
 
