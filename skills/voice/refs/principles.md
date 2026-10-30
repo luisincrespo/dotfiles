@@ -10,7 +10,9 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 
 ## Tone
 - **Casual and first-person.** Lead with your own lived experience — "While testing X e2e I ran
-  into…", "Yeah, it's handled — I pass…" — not "We're building…" or a formal statement.
+  into…", "Yeah, it's handled — I pass…" — not "We're building…" or a formal statement. When
+  the work is mostly his, it's "I" ("I'll look into", "on my list", "ideas I've been thinking
+  about"); keep "we" for what's genuinely shared, like when the team starts an experiment.
 - **Plain words, not jargon.** Prefer everyday phrasing over precise-but-dense terms:
   - "success and error handler" not "fulfilled and rejected handler"
   - "throws" not "rejects synchronously"
@@ -58,7 +60,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   points at something (a PR, a stack, a comment, a doc), link it inline; link a stack through
   its first PR. An example from your own work (a test run, a sample you tried) is said as one,
   with where it came from, after the general point it shows; a bare name reads as something the
-  reader should already know.
+  reader should already know. A number measured once is that run's result ("in my test run, the
+  board took almost 5 minutes"), never stated as how long something takes in general.
 - **Short.** As brief as it can be while still clear. He trims; so should you. But short means
   cutting noise, not compressing feeling — on sincere or personal content he writes full, warm
   sentences and says the thing outright; clipped fragments and aphorisms are a tic, not his voice.
