@@ -23,6 +23,8 @@
 - Leave the author's deliberate choices alone (one they documented, or rewrote the code to match)
   unless it leaves an obvious risk or hole in the system. A draft that a later push settled that way
   gets dropped, not posted.
+- Leave the author's ticket housekeeping to them (a closing keyword, which ticket tracks a
+  follow-up): asking about it reads as micro-managing.
 - A test comment earns its place when it closes a gap that would let the bug back in, not when it
   polishes an existing assertion's style or a test's name. Those get cut.
 - JSDoc-coverage and import-style nits are low-priority: they tend to get cut, so keep them last and
