@@ -56,7 +56,10 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 - **Name things the way the reader sees them, and don't leave a reference for them to
   reconstruct.** Internal words (`unfiled`, `chip`, "the PRs") and shorthand that made sense while
   writing ("merge bottom up", `A → this → C`) read as noise, or as wrong, to someone meeting it
-  once. Same for an implicit comparison: "before or after" attaches to the nearest thing in the
+  once. A design's own step or component names count too: in a team-wide post, say what each step
+  does in plain words and leave the names to the linked doc, or readers read too much into them;
+  a name that says what it does on its own ("normalize" into our own format) is fine to use. An
+  implicit comparison has the same problem: "before or after" attaches to the nearest thing in the
   sentence, not the one you meant, so name the baseline. And watch for names that collide with
   their context, like "the main list" in a message that also discusses `main`. When a message
   points at something (a PR, a stack, a comment, a doc), link it inline; link a stack through
@@ -75,6 +78,11 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   If it could mean two things, ask Luis which one rather than picking one and arguing it.
   Answer only what they asked. When they question a design choice, give your view in a clause of why
   and say you're open to changing it, rather than walking them through the mechanism.
+- **Compare versions on what actually changed.** In "what's different from the old one", claim only
+  what the old one couldn't do (check it), and lead with the gains he cares about, such as the
+  architecture or better output, rather than a list of visible features. Output he expects to be
+  better but hasn't measured is said as his own subjective take, with why, and that he hasn't
+  measured it; don't turn measuring into something the team should do.
 - **Frame the ask honestly.** Don't downplay a real decision/clarification as a "sanity check" or a
   "quick question" — if you're asking someone to decide something, say that.
 - **Leave "optional" to Luis.** Don't close a suggestion with "not blocking" or "fine as a
