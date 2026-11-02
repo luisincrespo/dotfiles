@@ -49,13 +49,12 @@ With the lock held, `checked_out` holds for a PR when all of these do:
 `git merge --ff-only origin/<source_branch>`. If local commits make it diverge, merge without
 rebasing. A conflict there is between the branch's own local and remote commits, which no automated
 step should pick between: `git merge --abort`, batch it for the user, and make no local change to
-this PR until it's resolved. A pushed no-checkout merge, a remote fixer's commit or a teammate's push
-all leave the local branch behind otherwise. If this moved the checkout past the head the cycle
+this PR until it's resolved. A pushed no-checkout merge or a teammate's push all leave the local
+branch behind otherwise. If this moved the checkout past the head the cycle
 read, read the PR again before going on, so every later step works on the head that's checked
 out.
 
-**Work that needs the PR's files runs only when checked out:** CI fixes (unless a remote fixer owns
-them), AI-reviewer fixes, Danger coverage tests, conflict resolution, screenshots, and `pr-merge`'s
+**Work that needs the PR's files runs only when checked out:** CI fixes, AI-reviewer fixes, Danger coverage tests, conflict resolution, screenshots, and `pr-merge`'s
 local verification. Every push from the checkout fetches and merges `origin/<source_branch>` just
 before it, and verifies again when that changed the tree.
 
@@ -76,7 +75,7 @@ as `{"what": "<the work>", "since": "<time>"}`, once per kind of work:
   `pr-merge`). Create it with `pr-babysit`'s initial state (its Phase 0.4) first, then add the item.
 - **Say once** that it's waiting for a checkout of `source_branch`. Don't batch it again every cycle.
 
-`pr-babysit` runs queued items first whenever it finds the PR checked out (its Phase 0.7), and
+`pr-babysit` runs queued items first whenever it finds the PR checked out (its Phase 0.6), and
 removes each one once it's done or no longer applies.
 
 ## Keeping a branch current without a checkout

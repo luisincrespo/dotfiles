@@ -132,7 +132,6 @@ every other agent for the second, and there is one file behind both.
 | `self-review` | Runs the repo's gates over your own diff, then composes the review passes |
 | `pr-open` | Opens one MR/PR following your conventions (title, template, draft-if-stacked) |
 | `pr-babysit` | Polls an open MR/PR toward merge-ready: sync, CI, comments, SonarQube |
-| `pr-autofix` | Claude-only: runs Claude's PR auto-fix as `pr-babysit`'s remote fixer, through a routine |
 | `pr-merge` | Re-verifies every merge condition, verifies locally against the merged state, merges |
 | `post-merge-cleanup` | Advances stacked dependents, deletes branch/worktree, closes the ticket |
 | `pr-review` | Reviews someone else's PR, inline, in your voice, never posting without approval |
@@ -173,7 +172,6 @@ from it on first run only — an existing one is never overwritten.
 | `bot_noise_body_markers_extra` | More bot-comment markers to treat as noise |
 | `verification_addenda` | Extra build/test commands for nested apps with their own pipeline |
 | `code_review_effort` | Per repo: the effort level `self-review` and `pr-review` give the built-in `/code-review` (unset ⇒ `high`) |
-| `remote_fixer` | Per repo: hands a PR's fixable CI failures to a hosted agent (`pr-autofix` here) while `pr-babysit` keeps the rest |
 
 ### Project skills
 
