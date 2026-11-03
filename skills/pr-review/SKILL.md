@@ -122,8 +122,8 @@ it's in play and apply it to the diff.
   reader that breaks; a customer-data comment, the data, where it lands and what fails. A design or UX comment is a suggestion that names its cost, or a question when it rests on
   taste, per `refs/style.md` on product and UX concerns; a redesign the PR shouldn't carry goes to
   the ledger as a follow-up.
-- **Lenses to offer**: `react.md` (memoization that buys nothing, derivations in effects, hooks,
-  component API) and `api-shape.md` (endpoints).
+- **Lenses to offer**: `react.md` (effects, state identity, render purity, memoization, hooks,
+  component API, against react.dev for the repo's version) and `api-shape.md` (endpoints).
 - **Reuse / simplification / correctness** — does it reinvent an existing util/pattern? Hold your
   own suggested code to the same bar: when it would repeat a calculation other callers already
   inline, propose the one shared function they'd all call, not another copy.
