@@ -155,6 +155,17 @@ check each with `claims.md`, dedupe against your findings and the existing threa
 rounds which ones only it raised. `ultra <N>`, a deeper review in the cloud that costs usage credits
 after a few free runs, only when the user asks for it, and never with `--post`.
 
+**A security sweep too, the same way.** `Skill(security-review)` reviews the session's own working
+directory and branch, so it can't see a PR that's only fetched as the Step 1 ref. Launch an `Agent`
+instead, with the PR's diff (`git diff origin/<base>...refs/pr-review/<N>`) and its changed files
+read from the ref, briefed to review it as `/security-review` does: injection, broken
+authentication or authorization (one user or tenant reaching another's data), secrets in the code,
+unsafe deserialization, server-side request forgery, path traversal, cross-site scripting and
+insecure defaults, each with a concrete way to exploit it and no theoretical ones. Have it show the
+diff stat first, so a wrong diff shows. Its findings are candidates like the correctness sweep's:
+checked, deduped and marked in the rounds. A confirmed vulnerability is worth a blocking comment,
+unlike most findings, and the comment says how it's exploited.
+
 ### 3.5 Second opinion, different model
 Follow `second-opinion.md`, after your own pass and before drafting. Here the payload is:
 - `gh pr diff <N>`, which is already relative to the merge-base, so it carries only this PR;
