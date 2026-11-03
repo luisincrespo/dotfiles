@@ -71,7 +71,8 @@ run stay unverified.
 **Each root cause goes to one pass.** This one owns whether signals are right, delivered and
 affordable to collect; [`performance.md`](performance.md) owns what instrumenting costs the
 application at runtime; [`ai-usage.md`](ai-usage.md) owns model calls whose token usage isn't logged
-or metered.
+or metered; [`customer-data.md`](customer-data.md) owns where customer data is stored, how long it
+stays, whether deletion reaches it, and what leaves the product outside telemetry.
 
 ## The bar for a finding
 
