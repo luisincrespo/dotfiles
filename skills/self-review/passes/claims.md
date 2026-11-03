@@ -32,7 +32,10 @@ a comment, applying a fix, or repeating it in a commit message or PR description
   tighten" becomes a red build.
 - **How an external engine behaves** (a template language's escaping or scoping, a query planner, a
   provider's API): check it against that engine when a read-only call is available. A repo
-  convention is a hint, not proof.
+  convention is a hint, not proof. The same goes for what a library or standard recommends (a
+  framework's patterns, an accessibility rule): check it against the official docs for the version
+  the repo uses, not memory. Recommended patterns change between versions, and a finding built on
+  last year's advice reads as authoritative and is wrong.
 - **Causation** ("this is what caused it"): when a change bundles fixes for several diagnosed
   causes, confirm each is load-bearing by removing it alone and re-testing. A cause inferred from
   reading code, rather than isolated by experiment, may not exist, and a fix for a non-existent
