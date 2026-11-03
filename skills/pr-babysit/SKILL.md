@@ -133,8 +133,9 @@ build its change signature from: `state`, `is_draft`, `reviewDecision`, `head_sh
 failing checks, a binary `running`/`all-done` for CI, the number of **open review threads**, and the
 counts of **human** reviews and of comments, **taken excluding the account this session posts as**:
 a reply you post lands under that account (on GitHub a thread reply registers as an empty-bodied
-review), so raw totals wake the loop on its own previous cycle. Count open threads rather than every
-review: a bot reviewer's clean re-review on each push adds a review but no thread, so a raw review
+review), so raw totals wake the loop on its own previous cycle. Tell a bot by the GraphQL author's
+`__typename` (`Bot`), not its login: GraphQL drops the `[bot]` suffix the REST API shows.
+Count open threads rather than every review: a bot reviewer's clean re-review on each push adds a review but no thread, so a raw review
 count wakes the loop on nothing, while a real finding, from a bot or a human, always opens one.
 Don't drop a bot from the signature to quiet it; that hides its findings too. Leave out
 `mergeStateStatus` and any per-check running *count* — both flap on their own (GitHub recomputes
