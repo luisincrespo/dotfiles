@@ -142,8 +142,10 @@ This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when
    **Match how the tracker project already uses priority and status.** If its tickets carry
    priorities, propose one per ticket alongside the filing decision and get it signed off with
    the rest (a proposal-shaped ticket takes the lowest rung, since anything higher implies the idea
-   is already agreed); if they don't, leave it unset rather than being the only one. File the
-   ticket in the status its siblings use for ready work, not the tracker's untriaged inbox.
+   is already agreed, but the deferred rest of a ticket the user chose to split is agreed work and
+   keeps the parent ticket's priority); if they don't, leave it unset rather than being the only
+   one. File the ticket in the status its siblings use for ready work, not the tracker's untriaged
+   inbox.
 3. On approval, file the approved ones and skip the rest:
    - GitHub issue: `gh issue create --title "<title>" --body "<body>"`.
    - Jira/Linear, or a repo that ships its own ticket skill: delegate to that skill / MCP rather than guessing field values. Do NOT invent tracker field values.
