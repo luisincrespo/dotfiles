@@ -4,8 +4,8 @@ description: >-
   Clean up after a merged MR/PR. Advances stacked dependents (retarget off the disappearing base,
   merge forward, promote the next out of draft), deletes the merged branch and its worktree,
   clears the per-PR state file, moves the tracker ticket to Done, and turns the task's deferred
-  items into follow-ups, proposing them for approval before filing anything. Normally triggered by
-  pr-merge.
+  items and the friction its testing ran into into follow-ups, proposing them for approval before
+  filing anything. Normally triggered by pr-merge.
 allowed-tools:
   - Bash(glab api:*)
   - Bash(glab mr list:*)
@@ -134,10 +134,21 @@ Run only when `--task-slug` is set, this was the **last** unit (all `units[]` in
 ## Step 5.6: Revisit sibling tickets (last unit)
 Same gate as Step 5.5. List the other open tickets assigned to the user in the task's milestone (or project, if it has none). Propose a change only where this task moved one: now unblocked (raise it), superseded or partly done by this work (lower or close it), or newly blocked by something it found. Give a one-line reason each, apply only what the user approves, and never touch other people's tickets. Nothing moved → say so in a line.
 
-## Step 6: Raise deferred follow-ups (approval-gated)
+## Step 6: Raise deferred follow-ups and testing fixes (approval-gated)
 This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when `--task-slug` is set AND this was the **last** unit of the task (all `units[]` in the ledger are `status:"merged"`). If earlier units remain open, skip for now — the last unit's cleanup will do it.
 
-1. Read `deferred_items` from the task ledger. Empty → announce `No deferred follow-ups for this task.` and skip.
+1. Read `deferred_items` and `e2e_friction` from the task ledger. Both empty → announce `No deferred follow-ups or testing friction for this task.` and skip.
+   **Turn the friction into fixes first.** `e2e_friction` holds what made running the change slow or
+   needed the user (the exercise pass's notes, locally and on staging). Group notes with the same
+   cause, drop any a merge since has fixed, and for each cause left propose the smallest change that
+   would have saved that time, with what it cost as the reason: a seed or fixture, a script or make
+   target, a fix to the repo's run instructions in its README or `CLAUDE.md`, a dev-only shortcut. A
+   rework of the dev environment isn't slight: propose it as a ticket for its owner. Route each fix:
+   - specific to this machine → the repo's `local_e2e` entry in local config: apply it, and say so;
+   - a procedure for running this project that agents keep needing → a project skill (global rule
+     13);
+   - a change to the codebase → into the list below beside the deferred items, as a follow-up
+     ticket or, when it's a few lines, its own small PR, offered rather than opened.
 2. **Before drafting, search the tracker for an existing ticket covering the item; if one exists, report it instead of proposing a new one.** **Then re-check each item against the current target branch** — a finding logged days ago may already be fixed by someone else's merge; drop it, with the evidence, if so. Then, for each item that survives, draft a concise follow-up (title + one-line why + risk + suggested owner + **a proposed priority and status, per the rule below**). **Propose the full list to the user and ask which to file** — filing tickets/issues is outward-facing and often cross-team, so it always needs explicit approval (never auto-file; ties to the user's "scope: low-lift only, document the rest" and "no outward action without approval" habits).
    **Match how the tracker project already uses priority and status.** If its tickets carry
    priorities, propose one per ticket alongside the filing decision and get it signed off with
@@ -154,7 +165,7 @@ This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when
      page, placed where its `layout` says new entries go — that destination is the source of truth, so don't also leave a local copy to
      drift. With none configured, or its connector unavailable this session, fall back to a
      local markdown note and say which you used.
-4. Announce what was filed with links; leave the un-filed items in the note. Then clear the filed items from the ledger (keep the un-filed ones for later).
+4. Announce what was filed with links; leave the un-filed items in the note. Then clear the filed items from the ledger, deferred items and friction alike (keep the un-filed ones for later).
 
 ## Step 7: Announce + housekeeping
 - `🧹 Deleted branch <source_branch> and worktree <wt_path>.` (omit the worktree clause if there wasn't one).

@@ -36,6 +36,14 @@ that pre-migration state is what every user sees on day one. Backfilling a colum
 new branch had something to read left the un-backfilled path, the whole production estate until
 someone runs the script, verified by nothing.
 
+## Note the friction
+
+Write down, as it happens, what made running it slow or needed the user: a missing seed or fixture,
+a manual login or secret, a slow or broken script, a run instruction that's wrong, state you had to
+build by hand. Each note says what it cost (minutes, a step only the user could take) and how you
+got past it. A trap specific to this machine also goes in `local_e2e`, as above. The notes are what
+lets the next run be easier than this one, so keep them even when the run succeeded.
+
 ## When the environment is broken
 
 For reasons unrelated to the change → say so plainly, and report what stayed unverified. Don't
@@ -43,4 +51,5 @@ count "couldn't run it" as verified, and don't sink the run into fixing someone'
 
 ## Left to the skill running it
 
-When running it is worth the time, where the code is checked out, and who hears what was exercised.
+When running it is worth the time, where the code is checked out, who hears what was exercised, and
+where the friction notes go.

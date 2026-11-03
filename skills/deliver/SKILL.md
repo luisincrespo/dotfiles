@@ -42,7 +42,7 @@ A conductor for the whole task lifecycle. It owns only the **spine** — phase s
 - **Task ledger**: `~/.claude/cache/deliver/task-<repo-with-slashes-as-dashes>-<task-slug>.json`
   ```json
   {"task_ref":null,"project_ref":null,"requirements":null,"acceptance":null,"plan_summary":null,"phase":"understand","worktree":null,"paused":null,
-   "deferred_items":[],"carried_over":[],
+   "deferred_items":[],"e2e_friction":[],"carried_over":[],
    "ticket_sync":{"enabled":false,"in_progress":false,"in_review":false,"done":false},
    "units":[{"id":1,"title":null,"branch":null,"base":null,"kind":"independent","depends_on":null,"pr_number":null,"status":"pending","needs_staging_verification":false,"staging_verified":null,"prod_checks":[]}]}
   ```
@@ -136,6 +136,7 @@ A unit whose PR carried the repo's needs-testing label isn't finished at merge: 
 - **Drive the deployed environment** (`staging_url`) the way `self-review`'s `passes/exercise.md` drives local: real clicks, and both the cancel and the confirm path of anything destructive.
 - **Attribute failures before reporting them.** Check whether the same failure reproduces without the unit's change; a bug that pre-dates it is not a regression, and calling it one costs a deploy. Say which of the two you established.
 - **Record the outcome** in `staging_verified` as `{at, sha, result}`. On a fail, report and stop: the fix is a new unit, not an edit to a merged one.
+- **Record the friction** in `e2e_friction`, as `exercise.md`'s *Note the friction* says. `post-merge-cleanup` proposed fixes for what was recorded up to the last merge; once no unit is left pending verification, propose fixes for what's been recorded since, the same way (its Step 6).
 - **On a pass, remove the label** — `gh pr edit <n> --remove-label <needs_testing_label>`. The label is the signal: it's what the reminder and release-candidate workflows query, and an unresolved one blocks the promotion to production. The `NEEDS_TESTING` checkbox is read once, at merge, by the labeler that adds the label; unchecking it afterwards changes nothing, so don't mistake an unchecked box for a cleared flag. Confirm before removing (outward-facing), and post a one-line note saying what was verified and against which sha.
 - **Production checks after it lands.** A unit's PR description can name checks for once it's live in production (its "After it lands" section, or the Working signal in its risk table). Staging verification doesn't cover them. Record them on the unit as `prod_checks` at merge, run them once `deploy_state_cmd` shows the unit in production, and record each result. They keep the ledger open like a pending staging verification.
 
