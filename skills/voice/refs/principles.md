@@ -23,6 +23,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 - **Low ceremony, friendly, direct.** A wave-emoji opener ("Hey folks 👋") is a Slack thing. A
   tracker-ticket comment or PR/MR comment takes no greeting at all: lead with the @-mention and go
   straight into the finding.
+- **Casual Spanish punctuates like English.** No opening `¡` or `¿`, only the closing mark
+  ("te amo!", "todo bien?"): the inverted marks read formal in a casual message.
 - **Openers he actually uses:** "Yeah, …", "Hey folks 👋", "Heads up …". When someone tagged him into
   their thread, he opens by thanking them by name ("Thanks for looping me in, Sam!") before his point.
   When one reviewer has been getting a run of his PRs, he owns it with a light joke aimed at them
