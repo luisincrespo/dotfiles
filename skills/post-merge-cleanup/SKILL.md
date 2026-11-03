@@ -4,7 +4,7 @@ description: >-
   Clean up after a merged MR/PR. Advances stacked dependents (retarget off the disappearing base,
   merge forward, promote the next out of draft), deletes the merged branch and its worktree,
   clears the per-PR state file, moves the tracker ticket to Done, and turns the task's deferred
-  items and the friction its testing ran into into follow-ups, proposing them for approval before
+  items, and the friction its testing hit, into follow-ups, proposing them for approval before
   filing anything. Normally triggered by pr-merge.
 allowed-tools:
   - Bash(glab api:*)
