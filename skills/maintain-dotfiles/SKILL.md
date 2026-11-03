@@ -3,8 +3,8 @@ name: maintain-dotfiles
 description: >-
   Land changes to the dotfiles repo pair — review what's pending, judge whether it belongs in
   the public repo or the private one, group it by concern, commit, push, and resync the tools
-  that consume it. Use when changes are sitting uncommitted in ~/code/dotfiles, when a skill
-  has just amended itself, or to keep both repos current: it watches by default, re-checking on
+  that consume it. Use when changes are sitting uncommitted in the dotfiles repo or its private
+  companion, when a skill has just amended itself, or to keep both repos current: it watches by default, re-checking on
   an interval (`--once` for a single pass). Knows the public/private split, the leak
   guard's three entry points, and which surfaces go stale. On idle rounds, trims whichever skill
   has grown most. Only for this repo pair; for any other repo use deliver.
@@ -42,8 +42,13 @@ Two repos, split by what can be published, not by what a thing is:
 
 | | | |
 |---|---|---|
-| `~/code/dotfiles` | **public** | `AGENTS.md`, `skills/`, `local/` schemas, `tools/<vendor>/` adapters |
-| `~/code/dotfiles-private` | **private** | mirrors the public layout; today the `voice` example corpus |
+| this repo | **public** | `AGENTS.md`, `skills/`, `local/` schemas, `tools/<vendor>/` adapters |
+| its companion | **private** | mirrors the public layout; today the `voice` example corpus |
+
+Find both the way `install.sh` does, since neither has a fixed location: this repo is the checkout
+this skill's folder resolves into (`git -C "$(dirname "$(readlink -f <skill folder>)")" rev-parse
+--show-toplevel`), and the companion is `$DOTFILES_PRIVATE` when it's set, else `dotfiles-private`
+beside this repo. Run every command below in those two, not wherever the session started.
 
 `tools/claude/install.sh` overlays them into `~/.claude` **at install time**. Neither checkout
 ever holds the other's files — that is deliberate, and Step 3 below is why.
