@@ -2,10 +2,10 @@
 name: post-merge-cleanup
 description: >-
   Clean up after a merged MR/PR. Advances stacked dependents (retarget off the disappearing base,
-  merge forward, promote the next out of draft), deletes the merged branch and its worktree,
-  clears the per-PR state file, moves the tracker ticket to Done, and turns the task's deferred
-  items, and the friction its testing hit, into follow-ups, proposing them for approval before
-  filing anything. Normally triggered by pr-merge.
+  merge forward), deletes the merged branch and its worktree, clears the per-PR state file, moves
+  the tracker ticket to Done, and turns the task's deferred items, and the friction its testing
+  hit, into follow-ups, proposing them for approval before filing anything. Normally triggered by
+  pr-merge.
 allowed-tools:
   - Bash(glab api:*)
   - Bash(glab mr list:*)
@@ -78,13 +78,13 @@ First entry of `git worktree list` → `<main_root>`. Run every git command belo
 
 **`ExitWorktree` only handles worktrees `EnterWorktree` created *in this session*.** When the worktree is simply the session's launch directory (the common case for a session started with `cwd` already inside one), `ExitWorktree` returns `No-op: there is no active EnterWorktree session to exit` and changes nothing. That is not an error to work around — fall through to the ordinary Step 3/4 removal below. A squash-merged branch will be reported as having N unmerged commits: verify the squash commit is on the target and the change is present there, then confirm with the user before `discard_changes: true`.
 
-## Step 1: Stacked-PR guard — retarget, merge forward, promote
+## Step 1: Stacked-PR guard — retarget, merge forward
 When a PR in a stack merges, the rest of the stack must be advanced **before** deleting `<source_branch>` (deleting a base branch **closes** dependents on GitHub with no auto-retarget, and you can't reopen while the base is gone):
-- **Native GitHub stacks retarget themselves, but may not rebase.** When the PRs are linked as a GitHub stack (`pr-open` links them with `gh stack link`), GitHub retargets the dependent to the target after the merge, so skip the retarget below. A stack linked with `gh stack link` (no local `gh stack` tracking) has been seen not to rebase it: after a few minutes `gh pr view <dependent> --json headRefOid` still showed the old head and the PR diff still listed the merged parent's files. So give it a few minutes; if the head moved, check its diff against the target and reset the local branch to the remote one, and if it didn't, do the merge-forward below with a plain push. Promotion out of draft still applies.
+- **Native GitHub stacks retarget themselves, but may not rebase.** When the PRs are linked as a GitHub stack (`pr-open` links them with `gh stack link`), GitHub retargets the dependent to the target after the merge, so skip the retarget below. A stack linked with `gh stack link` (no local `gh stack` tracking) has been seen not to rebase it: after a few minutes `gh pr view <dependent> --json headRefOid` still showed the old head and the PR diff still listed the merged parent's files. So give it a few minutes; if the head moved, check its diff against the target and reset the local branch to the remote one, and if it didn't, do the merge-forward below with a plain push.
 - **Retarget dependents.** GitHub: `gh pr list --base <source_branch> --state open --json number` → each `gh pr edit <number> --base <target_branch>`. GitLab: `glab mr list --target-branch <source_branch> --state opened` → `glab mr update <iid> --target-branch <target_branch>`.
 - **Merge the target forward into each dependent's head** so its diff is clean against the new base, **without switching branches**: in a `deliver` task the dependents' branches live in the same worktree as this one, and the session's checkout isn't this skill's to move. Use the no-checkout merge in `../deliver/refs/shared-checkout.md` (`merge-tree`, `commit-tree`, a plain push). A conflict → queue `resolve conflicts with <target_branch>` in that dependent's state file `needs_checkout` (`pr-<platform>-<repo-dashes>-<number>.json`), and the `deliver` session resolves it with the branch checked out, using the notes below. Only when the dependent is itself checked out and clean, merge in the checkout as before. A dependent that was never babysat has no state file yet: create it with `pr-babysit`'s initial state before queuing. If the pre-commit hook fails only on files dragged in from the target that belong to a separate toolchain (e.g. `apps/extension`'s own lint) and are already CI-green, commit the forward-merge with `--no-verify` (the **only** sanctioned `--no-verify`; CI re-runs on push).
 - **After a squash merge, expect conflicts in files both PRs touched.** The platform may retarget a dependent without rebasing it, and the dependent still carries the parent's original commits, which the squash replaced. When the target's copy of a conflicted file matches the parent's final head (`git diff --quiet origin/<target_branch> <parent_head> -- <file>`), take the dependent's side: it already holds the parent's version plus its own changes. Then check the dependent's diff against the target, by content, not only file names: `git diff origin/<target_branch> | grep '^+'` should show only the dependent's own additions. Git can auto-merge the parent's addition next to the dependent's identical copy without a conflict, leaving a duplicated function, and a type checker may not flag it.
-- **Promote the new front-of-stack** out of draft: `gh pr ready <number>` / `glab mr update <iid> --ready`. It's now up for review → draft (don't send) its review-request ping via `Skill(voice)`, per `pr-open` Step 7.
+- **Leave a dependent's draft state alone.** Stacked PRs open ready (`pr-open` Step 5), so one still in draft is waiting on something else. Say it's now first in the stack, and what its draft is waiting on if the report says.
 - **Deleted the base too early?** Recreate the branch at its last sha (`git push origin <sha>:refs/heads/<source_branch>`), reopen the closed PR, retarget, then delete.
 
 ## Step 2: Delete the remote branch

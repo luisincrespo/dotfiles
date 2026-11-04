@@ -104,7 +104,7 @@ Then, driven by the breakdown:
 
 - **Adopted units** (from A0 adoption or `--stage`): enter the loop at the resolved entry stage and **skip the earlier steps** — an already-open PR runs **B4 only**; a committed-but-unopened branch runs **B2→B4**. Only run B1 (execute) for units still `pending`. Don't create a new worktree/branch for a PR you're adopting — you're already on it; record the worktree it's in as the ledger's `worktree`.
 - **Independent / sequential units:** by default run the full sub-cycle (B1→B4) for a unit and let it merge + clean up **before** starting the next (each later unit branches off the freshly-updated default branch). When the user wants pieces merged early, or a later unit doesn't need an earlier one merged first, build and open the next while earlier ones are in review, branching off the current default branch, and babysit the open ones together (B4).
-- **Stacked units:** run **B1→B3 for every unit first** (build + verify + open each, stacking bases: unit 1 off the default branch and **ready**, units 2..N off the previous unit's branch and **draft**), then babysit them together (B4). Merges still go **bottom-up**: units 2..N stay draft, which `pr-babysit` never hands to `pr-merge`, until the front unit's `post-merge-cleanup` retargets and promotes the next.
+- **Stacked units:** run **B1→B3 for every unit first** (build + verify + open each, stacking bases: unit 1 off the default branch, units 2..N off the previous unit's branch, each ready for review unless `pr-open` Step 5 says draft), then babysit them together (B4). Merges still go **bottom-up**: `pr-merge` won't merge a unit into another unit's branch, so each waits until the one below merges and its `post-merge-cleanup` retargets it.
 
 For each unit:
 
@@ -116,7 +116,7 @@ For each unit:
 - Invoke `Skill(self-review)` with `--base <unit base>` and `--task-slug <slug>`. Address its fix-now items; relay its batch. **Loop B1↔B2** until the gates are green and no clear findings remain.
 
 ### B3. Open
-- Invoke `Skill(pr-open)` with `--target <unit base>` and `--task-slug <slug>`. It creates the PR (draft-if-stacked) and records `pr_number` / `status:"open"` in the unit. For a **ready** PR it also asks for review (Step 7): reviewers proposed for the PR itself where the repo works that way, else a Slack ping drafted via `voice`. Neither blocks — the PR is already open, so carry straight on to B4 and add reviewers when the user answers. Pass `--no-review-ping` through.
+- Invoke `Skill(pr-open)` with `--target <unit base>` and `--task-slug <slug>`. It creates the PR (ready unless it isn't, per its Step 5) and records `pr_number` / `status:"open"` in the unit. For a **ready** PR it also asks for review (Step 7): reviewers proposed for the PR itself where the repo works that way, else a Slack ping drafted via `voice`. Neither blocks — the PR is already open, so carry straight on to B4 and add reviewers when the user answers. Pass `--no-review-ping` through.
 - **Ticket → In Review** (once per task): when the task's **last** unit has an open PR — right after this `pr-open` returns for a single-unit task; for a breakdown, only once every unit is open, since In Review while units are still being built tells teammates the work is done. On adoption, when A0 found every unit's PR open. Move the ticket forward per `## Ticket status sync`.
 
 ### B4. Babysit → merge → cleanup

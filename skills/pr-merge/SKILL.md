@@ -2,9 +2,9 @@
 name: pr-merge
 description: >-
   Merge one open, review-complete MR/PR. Re-verifies every condition (approved, threads resolved,
-  CI green, platform-mergeable, not draft), runs a local pre-merge check against the merged state
-  to catch semantic conflicts CI missed, merges with the repo's enforced strategy, then triggers
-  post-merge-cleanup. No-ops with "not ready" if any condition fails, so it is safe to call
+  CI green, platform-mergeable, not draft, not stacked on an open PR), runs a local pre-merge check
+  against the merged state to catch semantic conflicts CI missed, merges with the repo's enforced
+  strategy, then triggers post-merge-cleanup. No-ops with "not ready" if any condition fails, so it is safe to call
   speculatively.
 allowed-tools:
   - Bash(glab api:*)
@@ -92,6 +92,7 @@ Merges one open MR/PR **only when every condition holds**, after a local verific
 6. **Local conflict check**: `git fetch origin <target_branch>` then `git merge-tree HEAD "origin/<target_branch>"` — no markers AND exit 0 → pass; else → Phase 3 (conflict).
 7. `is_draft == false`.
 8. **Exercised locally**: the PR description or the task ledger records a local run of the changed behavior (what ran, what was seen), or says why it can't run locally. Unit tests, review passes and a later staging check don't count. Missing → not merge-ready.
+9. **Not stacked on an open PR.** `target_branch` is the default branch or matches `PROTECTED_BRANCHES`, unless the user asked for this merge into its base. A stacked PR opens ready for review (`pr-open` Step 5), so this is what keeps it from merging into the PR below and folding into it: it waits until that PR merges and `post-merge-cleanup` retargets it.
 
 Any condition unmet → announce which one and **return** `Not merge-ready (<reason>) — keep watching.` (no mutation).
 
@@ -160,7 +161,7 @@ Route it: repo- or employer-specific facts → `~/.agents/local/config.json`; a 
 
 ## Hard constraints
 
-- Never merge unless **every** Phase 1 condition holds and the pre-merge local verification passed. Never merge a draft or a `PROTECTED_BRANCHES` source branch.
+- Never merge unless **every** Phase 1 condition holds and the pre-merge local verification passed. Never merge a draft, a `PROTECTED_BRANCHES` source branch, or a PR into another open PR's branch (condition 9).
 - Merge via this skill only. Respect the repo's enforced merge strategy — never impose one, never pass an unsupported mode.
 - **Never rebase or force-push by default** — only the `REBASE_SYNC_REPOS` conflict path in `refs/conflict-resolution.md`, `--force-with-lease` only, discard-and-batch on a rejected lease.
 - Never pass `--delete-branch` to the merge — branch/worktree deletion happens only in `post-merge-cleanup`, after retargeting any stacked dependents.

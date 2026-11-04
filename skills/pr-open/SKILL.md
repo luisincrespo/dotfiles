@@ -3,9 +3,9 @@ name: pr-open
 description: >-
   Open one MR/PR for the current branch. Follows the user's conventions: a concise title with any
   ticket referenced in the summary rather than the title, the repo's template filled reviewer-
-  facing, draft-if-stacked, and Storybook screenshots for UI changes. It creates and returns; it
-  does not poll, babysit or merge. Use deliver for the full lifecycle, this directly when you want
-  create-without-babysit.
+  facing, ready for review unless it isn't (stacked or not), and Storybook screenshots for UI
+  changes. It creates and returns; it does not poll, babysit or merge. Use deliver for the full
+  lifecycle, this directly when you want create-without-babysit.
 allowed-tools:
   - Bash(glab api:*)
   - Bash(glab mr list:*)
@@ -57,7 +57,7 @@ Opens **one** MR/PR for the current branch and returns. This is the create stage
 
 ## Args (all optional)
 
-- `--target <branch>` / `--base <branch>`: base branch for the new MR/PR. Default: the repo's default branch. When `deliver` opens a **stacked** unit, it passes the previous unit's branch here (which also makes this MR a draft).
+- `--target <branch>` / `--base <branch>`: base branch for the new MR/PR. Default: the repo's default branch. When `deliver` opens a **stacked** unit, it passes the previous unit's branch here.
 - `--task-slug <slug>`: the `deliver` task this unit belongs to, used to update the task ledger's `units[]` entry with the created PR number. Omit when run standalone.
 - `--no-review-ping`: skip the Step 7 review-request draft entirely.
 
@@ -131,7 +131,8 @@ Any capture step fails → don't block; create without screenshots and note it i
 
 ## Step 5: Draft vs ready
 
-- **Draft** if `target != default branch` (stacked — base is another feature branch). **Ready** otherwise.
+- **Ready** by default, stacked or not. A stack exists so its small PRs get reviewed side by side, and reviewers and review bots pass over drafts. Merge order is `pr-merge`'s job: it won't merge a PR into another PR's branch.
+- **Draft** only when the PR isn't ready for review: its diff still carries changes that aren't its own (a merge of someone else's open PR, say), or its design hangs on a question still open on the PR below. Say why in the report, and mark it ready (`gh pr ready` / `glab mr update --ready`) once that's settled.
 
 ## Step 6: Create
 
@@ -139,13 +140,13 @@ Any capture step fails → don't block; create without screenshots and note it i
 - **GitHub**: `gh pr create --base <target> --head <branch> --title "<title>" --body "<desc>" [--draft]`
 - `--draft` only when Step 5 says draft.
 - Announce: `✅ Opened <web_url> (<draft|ready>, → <target>).`
-- **Link a stacked GitHub PR into a native stack.** When Step 5 made it a draft because its base is another open PR's branch, run `gh stack link <base PR number> <new PR number>` (bottom to top) right after creating it. It adds the PR to the base PR's stack, or creates one when the base isn't in a stack, and never removes a PR. Skip it when the base PR is itself based on a branch other than the default (stacked on someone else's PR): creating the stack moves the bottom PR onto the default branch, so its diff suddenly carries that other PR's changes; use Step 3's stack list instead. Don't pass `--open`, which marks every PR in the stack ready. It needs GitHub's `gh-stack` extension (`gh extension list` shows `github/gh-stack`); don't install it yourself. Without it, or when the link fails, add Step 3's stack list with `gh pr edit` and say so in the report.
+- **Link a stacked GitHub PR into a native stack.** When its base is another open PR's branch, run `gh stack link <base PR number> <new PR number>` (bottom to top) right after creating it. It adds the PR to the base PR's stack, or creates one when the base isn't in a stack, and never removes a PR. Skip it when the base PR is itself based on a branch other than the default (stacked on someone else's PR): creating the stack moves the bottom PR onto the default branch, so its diff suddenly carries that other PR's changes; use Step 3's stack list instead. Don't pass `--open`, which marks every PR in the stack ready, drafts included. It needs GitHub's `gh-stack` extension (`gh extension list` shows `github/gh-stack`); don't install it yourself. Without it, or when the link fails, add Step 3's stack list with `gh pr edit` and say so in the report.
 - If `--task-slug` was passed, update that unit's `pr_number`/`status:"open"` in the task ledger (`~/.claude/cache/deliver/task-<repo-dashes>-<slug>.json`).
 - **Automated-approval opt-in.** When the repo configures one (local config `auto_approval`) and the diff meets its `opt_in_criterion`, add the label once the MR/PR exists and say so in the report. Applying it only *requests* a review, so it needs no gate: the bot triages risk itself and declines what it doesn't like.
 
 ## Step 7: Request review
 
-Only for a **ready** PR (skip a draft/stacked unit — its review request happens when it's promoted to ready in `post-merge-cleanup`). Unless `--no-review-ping`:
+Only for a **ready** PR, stacked or not; a draft gets its request when it's marked ready. Unless `--no-review-ping`:
 
 - **Ask on the PR, not in Slack**, where local config sets `review_request_mechanism` to `github-reviewers`. A Slack ping as well just splits the thread.
 - **Propose reviewers; don't pick them, and don't block on it.** The PR already exists (Step 6), so nothing is gated on this. Name two or three candidates with a one-line reason each, drawn from a CODEOWNERS rule matching the changed paths, recent authorship in those paths (`git log --since`), and whoever reviewed the closest recent PR. Surface them with the open announcement and let the caller carry on to `pr-babysit`. They confirm, substitute, or say no one — **"no one" is a normal answer** and ends the step. No standing list: a default puts the same names on every PR regardless of what it touches.
