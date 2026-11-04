@@ -57,7 +57,7 @@ Opens **one** MR/PR for the current branch and returns. This is the create stage
 
 ## Args (all optional)
 
-- `--target <branch>` / `--base <branch>`: base branch for the new MR/PR. Default: the repo's default branch. When `deliver` opens a **stacked** unit, it passes the previous unit's branch here.
+- `--target <branch>` / `--base <branch>`: base branch for the new MR/PR. Default: the repo's default branch. When `deliver` opens a **stacked** unit, it passes the branch of the unit it depends on here.
 - `--task-slug <slug>`: the `deliver` task this unit belongs to, used to update the task ledger's `units[]` entry with the created PR number. Omit when run standalone.
 - `--no-review-ping`: skip the Step 7 review-request draft entirely.
 

@@ -80,13 +80,13 @@ When the resolved entry stage is past understand/plan (adoption, `--stage`, or w
 - **Ambiguity gate:** if it stopped to ask, relay the question and wait. Otherwise continue.
 
 ### A2. Plan + PR breakdown *(skip when adopting past this stage)*
-- From the brief, form the smallest approach that satisfies the acceptance criteria (reuse existing code first). Decide the **breakdown**:
+- From the brief, form the smallest approach that satisfies the acceptance criteria (reuse existing code first). Decide the **breakdown** as `refs/breakdown.md` says: the seams to split on, size as a prompt to look for one, stack versus separate, and the guard against over-splitting.
   - One cohesive, reviewable change → **one unit** (`kind:"independent"`).
-  - Genuinely separable or too large for one review → **multiple units**. Mark them `stacked` when a later unit builds on an earlier unit's not-yet-merged code (base = the previous unit's branch); `independent` when they can each target the default branch on their own.
+  - Separable along a seam, or too large for one review → **multiple units**. Mark them `stacked` when a later unit builds on an earlier unit's not-yet-merged code (base = the branch of the unit it depends on, its `depends_on`); `independent` when they can each target the default branch on their own.
 - **Follow the brief's Project context.** A plan that departs from a decision recorded on the project page says so at the plan checkpoint, rather than quietly diverging.
 - Write `plan_summary` and the ordered `units[]` (with `title`, `base`, `kind`, `depends_on`) into the ledger.
 - **Plan checkpoint (gate) — always, no exceptions.** Present the plan + breakdown for approval via `EnterPlanMode` → `ExitPlanMode` before building, however small the change looks. "Straightforward" is your own estimate of work you have not done yet, and the runs where that estimate is wrong are precisely the ones worth catching while the cost is a sentence rather than a diff. Approving a one-line plan takes seconds; finding out the approach was wrong once a PR is open costs the review.
-- **Size the plan to the change.** A single-unit fix deserves a line or two — what you'll change, and why it's the smallest thing that satisfies the acceptance criteria. Don't pad it to justify the gate: a long plan for a small change is harder to check than a short one, which defeats the point of asking. A multi-unit or stacked breakdown is where detail belongs, because the stack is itself the decision.
+- **Size the plan to the change.** A single-unit fix deserves a line or two — what you'll change, and why it's the smallest thing that satisfies the acceptance criteria. Don't pad it to justify the gate: a long plan for a small change is harder to check than a short one, which defeats the point of asking. A multi-unit or stacked breakdown is where detail belongs, because the stack is itself the decision: one line per unit on what it does on its own, its rough size and whether it stacks, and for a single unit past the size prompt, the cuts considered and why it stays whole.
 
 ## Phase B — Per-unit loop
 
@@ -104,7 +104,7 @@ Then, driven by the breakdown:
 
 - **Adopted units** (from A0 adoption or `--stage`): enter the loop at the resolved entry stage and **skip the earlier steps** — an already-open PR runs **B4 only**; a committed-but-unopened branch runs **B2→B4**. Only run B1 (execute) for units still `pending`. Don't create a new worktree/branch for a PR you're adopting — you're already on it; record the worktree it's in as the ledger's `worktree`.
 - **Independent / sequential units:** by default run the full sub-cycle (B1→B4) for a unit and let it merge + clean up **before** starting the next (each later unit branches off the freshly-updated default branch). When the user wants pieces merged early, or a later unit doesn't need an earlier one merged first, build and open the next while earlier ones are in review, branching off the current default branch, and babysit the open ones together (B4).
-- **Stacked units:** run **B1→B3 for every unit first** (build + verify + open each, stacking bases: unit 1 off the default branch, units 2..N off the previous unit's branch, each ready for review unless `pr-open` Step 5 says draft), then babysit them together (B4). Merges still go **bottom-up**: `pr-merge` won't merge a unit into another unit's branch, so each waits until the one below merges and its `post-merge-cleanup` retargets it.
+- **Stacked units:** run **B1→B3 for every unit first** (build + verify + open each, stacking bases: unit 1 off the default branch, each later unit off the unit it depends on, each ready for review unless `pr-open` Step 5 says draft), then babysit them together (B4). Merges still go **bottom-up**: `pr-merge` won't merge a unit into another unit's branch, so each waits until the one below merges and its `post-merge-cleanup` retargets it.
 
 For each unit:
 
@@ -113,9 +113,11 @@ For each unit:
 - Create the unit's branch off its `base` in the task worktree, holding the checkout lock (`refs/shared-checkout.md`) until the unit's change is committed. Implement the smallest change that satisfies this unit, following the repo's own `CLAUDE.md` plus the user's global rules and memories (doc comments, strict equality, no non-null assertions, AAA tests, …). Anything you consciously punt → append to `deferred_items`. Commit (ticket-prefixed if the task has an id). Update the unit `status:"executing"`.
 
 ### B2. Verify
+- **Reassess the split as the code grows**, before self-review: a unit whose diff passes the size prompt or picks up a second concern is cheaper to split now than after review (`refs/breakdown.md`, *When the code says otherwise*).
 - Invoke `Skill(self-review)` with `--base <unit base>` and `--task-slug <slug>`. Address its fix-now items; relay its batch. **Loop B1↔B2** until the gates are green and no clear findings remain.
 
 ### B3. Open
+- **Final check of the split.** Measure the unit's diff against its base (`git diff --stat <unit base>...HEAD`) and read it for a concern the plan didn't foresee, against `refs/breakdown.md`. Propose a change only for something new: an unforeseen concern, or growth well past what the user approved. Otherwise one line says why the breakdown still holds. A split follows that file's steps for splitting a built branch, and each new unit goes back through B1/B2.
 - Invoke `Skill(pr-open)` with `--target <unit base>` and `--task-slug <slug>`. It creates the PR (ready unless it isn't, per its Step 5) and records `pr_number` / `status:"open"` in the unit. For a **ready** PR it also asks for review (Step 7): reviewers proposed for the PR itself where the repo works that way, else a Slack ping drafted via `voice`. Neither blocks — the PR is already open, so carry straight on to B4 and add reviewers when the user answers. Pass `--no-review-ping` through.
 - **Ticket → In Review** (once per task): when the task's **last** unit has an open PR — right after this `pr-open` returns for a single-unit task; for a breakdown, only once every unit is open, since In Review while units are still being built tells teammates the work is done. On adoption, when A0 found every unit's PR open. Move the ticket forward per `## Ticket status sync`.
 
