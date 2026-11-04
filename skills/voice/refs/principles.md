@@ -55,6 +55,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 - **End a Slack ask with a single open-ended question**, not a checklist of asks; say what you're
   trying to understand. A second ask smuggled into the same sentence ("who can do X, and what about
   Y?") is still two asks — pick the one that unblocks you and let the rest come up in the replies.
+  Sharing a view in a peer's design thread isn't an ask: he closes it with an open "Let me know what
+  you think!", not a yes/no like "Does that sound right to you?".
 - **Name things the way the reader sees them, and don't leave a reference for them to
   reconstruct.** Internal words (`unfiled`, `chip`, "the PRs") and shorthand that made sense while
   writing ("merge bottom up", `A → this → C`) read as noise, or as wrong, to someone meeting it
