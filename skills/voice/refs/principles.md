@@ -1,20 +1,20 @@
 # Voice principles
 
-> **Personal layer.** This is Luis's written voice, which the shared `voice` skill writes in. To
-> write in yours, put your own version at this same path in your private companion repo
-> (`install.sh` links it in place of this one), or edit it in your fork. Starting nearly empty is
-> fine: `voice` adds a principle each time you correct a draft.
+> **Personal layer.** This is the repo owner's written voice, the default the shared `voice` skill
+> writes in. To write in yours, put your own version at this same path in your private companion
+> repo (`install.sh` links it in place of this one), or edit it in your fork. Starting nearly empty
+> is fine: `voice` adds a principle each time you correct a draft.
 
-Luis's written voice, distilled. When one of these conflicts with a real example in
+The user's written voice, distilled. When one of these conflicts with a real example in
 `examples-*.md`, follow the example.
 
 ## Tone
 - **Casual and first-person.** Lead with your own lived experience — "While testing X e2e I ran
   into…", "Yeah, it's handled — I pass…" — not "We're building…" or a formal statement. When
-  the work is mostly his, it's "I" ("I'll look into", "on my list", "ideas I've been thinking
+  the work is mostly theirs, it's "I" ("I'll look into", "on my list", "ideas I've been thinking
   about"); keep "we" for what's genuinely shared, like when the team starts an experiment, or what
   a shared design is and how it evolves ("which ones we'd store", "we should keep evolving the
-  shape"), even when he's the one building it.
+  shape"), even when they're the one building it.
 - **Plain words, not jargon.** Prefer everyday phrasing over precise-but-dense terms:
   - "success and error handler" not "fulfilled and rejected handler"
   - "throws" not "rejects synchronously"
@@ -27,26 +27,26 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   straight into the finding.
 - **Casual Spanish punctuates like English.** No opening `¡` or `¿`, only the closing mark
   ("te amo!", "todo bien?"): the inverted marks read formal in a casual message.
-- **Openers he actually uses:** "Yeah, …", "Hey folks 👋", "Heads up …". A review request takes no
+- **Openers they actually use:** "Yeah, …", "Hey folks 👋", "Heads up …". A review request takes no
   greeting: in a broad team or project channel it opens straight with `PR to <what>` and a sentence
   or two on what it does for the user (for a UX change, what they see, leaving command and code
   names to the PR). The requested reviewer is pinged in a thread reply under it, never a bare
   `cc @<reviewer>`: "@Sam added you as reviewer here", then why them. A request opens with someone's
-  @-mention only when the message is to them alone. When someone tagged him into their thread, he
-  opens by thanking them by name ("Thanks for looping me in, Sam!") before his point. When one
-  reviewer has been getting a run of his PRs, the ping says it's part of the series ("(yep, one
+  @-mention only when the message is to them alone. When someone tags them into a thread, they
+  open by thanking that person by name ("Thanks for looping me in, Sam!") before their point. When one
+  reviewer has been getting a run of their PRs, the ping says it's part of the series ("(yep, one
   more 😬)"). A light apology ("sorry for flooding you with PRs lately 😅") is a one-time thing:
-  once he's made it, later requests don't repeat it.
-- **Words he doesn't use.** Keep this list growing as he corrects them.
-  - **"gotcha" as a NOUN** — not for a tricky/catch part of something (avoid "the gotcha is…", "one gotcha…"); say "the catch is" / "the tricky part is" or just state the thing plainly. As an *interjection* of understanding ("Oh, gotcha!") he *can* use it, but rarely — he'd usually go with "Got it!" / "Oh, got it!".
+  once they've made it, later requests don't repeat it.
+- **Words they don't use.** Keep this list growing as they correct them.
+  - **"gotcha" as a NOUN** — not for a tricky/catch part of something (avoid "the gotcha is…", "one gotcha…"); say "the catch is" / "the tricky part is" or just state the thing plainly. As an *interjection* of understanding ("Oh, gotcha!") they *can* use it, but rarely — they'd usually go with "Got it!" / "Oh, got it!".
   - **"shout"** — never "shout if you'd rather…". Use **"let me know"** or something similar.
   - **"bolt" / "bolt on"** — not for tacking something onto a change. Say it plainly: "not part of this change", "not something to add here".
   - **"nah"** — reads impolite in an outward message, even when the answer really is no. Open with a plain "I don't think we need it" / "I don't think so" instead.
-  - **"agreed on X" / "Agreed, …"** as a way to agree in conversation. He says "yeah, I agree that…" instead.
+  - **"agreed on X" / "Agreed, …"** as a way to agree in conversation. They say "yeah, I agree that…" instead.
 
 ## Punctuation
-- **No em dashes (`—`).** Luis rarely uses them, so an em dash is a dead giveaway the text was
-  generated when he pastes it. Use a period, comma, parentheses, or a reworded sentence instead. This
+- **No em dashes (`—`).** The user rarely uses them, so an em dash is a dead giveaway the text was
+  generated when they paste it. Use a period, comma, parentheses, or a reworded sentence instead. This
   applies to every message (Slack and PR/MR). Avoid the spaced-hyphen substitute too; just split the
   sentence or use a comma.
 
@@ -63,7 +63,7 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 - **End a Slack ask with a single open-ended question**, not a checklist of asks; say what you're
   trying to understand. A second ask smuggled into the same sentence ("who can do X, and what about
   Y?") is still two asks — pick the one that unblocks you and let the rest come up in the replies.
-  Sharing a view in a peer's design thread isn't an ask: he closes it with an open "Let me know what
+  Sharing a view in a peer's design thread isn't an ask: they close it with an open "Let me know what
   you think!", not a yes/no like "Does that sound right to you?".
 - **Name things the way the reader sees them, and don't leave a reference for them to
   reconstruct.** Internal words (`unfiled`, `chip`, "the PRs") and shorthand that made sense while
@@ -81,26 +81,26 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   with where it came from, after the general point it shows; a bare name reads as something the
   reader should already know. A number measured once is that run's result ("in my test run, the
   board took almost 5 minutes"), never stated as how long something takes in general.
-- **Short.** As brief as it can be while still clear. He trims; so should you. But short means
-  cutting noise, not compressing feeling — on sincere or personal content he writes full, warm
-  sentences and says the thing outright; clipped fragments and aphorisms are a tic, not his voice.
+- **Short.** As brief as it can be while still clear. They trim; so should you. But short means
+  cutting noise, not compressing feeling — on sincere or personal content they write full, warm
+  sentences and say the thing outright; clipped fragments and aphorisms are a tic, not their voice.
   A design check-in lists the decisions people need to react to, one line each; reasoning,
   conditions and file lists wait for the replies.
 
 ## Substance
 - **Answer the point they made.** Before replying to someone's reason, pin down what it refers to.
-  If it could mean two things, ask Luis which one rather than picking one and arguing it.
+  If it could mean two things, ask the user which one rather than picking one and arguing it.
   Answer only what they asked. When they question a design choice, give your view in a clause of why
   and say you're open to changing it, rather than walking them through the mechanism.
 - **Compare versions on what actually changed.** In "what's different from the old one", claim only
-  what the old one couldn't do (check it), and lead with the gains he cares about, such as the
-  architecture or better output, rather than a list of visible features. Output he expects to be
-  better but hasn't measured is said as his own subjective take, with why, and that he hasn't
+  what the old one couldn't do (check it), and lead with the gains they care about, such as the
+  architecture or better output, rather than a list of visible features. Output they expect to be
+  better but hasn't measured is said as their own subjective take, with why, and that they haven't
   measured it; don't turn measuring into something the team should do.
 - **Frame the ask honestly.** Don't downplay a real decision/clarification as a "sanity check" or a
   "quick question" — if you're asking someone to decide something, say that.
-- **Leave "optional" to Luis.** Don't close a suggestion with "not blocking" or "fine as a
-  follow-up" by default. Add that framing only when he calls the point optional.
+- **Leave "optional" to the user.** Don't close a suggestion with "not blocking" or "fine as a
+  follow-up" by default. Add that framing only when they call the point optional.
 - **Don't rank your own findings.** Skip "the big one", "the critical thing",
   "most importantly". State each finding plainly and let the reader weigh it.
 - **Concrete over abstract.** When explaining how something works, name the actual things (the agents,
@@ -136,9 +136,9 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   better and it survives the reviewer who knows the exception. A hunch about someone's design is the
   same: open with "I'm wondering if…" and close by asking what case they have in mind, not with
   "I'm not sure there's a case" and a proposal to drop it.
-- **Don't put feelings or commitments in his mouth.** Warmth invented on his behalf is still
-  invention. If he hasn't said he feels a thing, or that he'll do a thing, don't write it for him —
-  he cuts it, and it reads as someone else's voice when he doesn't.
+- **Don't put feelings or commitments in their mouth.** Warmth invented on their behalf is still
+  invention. If they haven't said they feel a thing, or that they'll do a thing, don't write it for
+  them — they cut it, and it reads as someone else's voice when they don't.
 - **Stay out of their domain.** In someone else's area of ownership, don't assign who does the next
   piece of work, and don't tell them how their own system behaves — even when you've verified it and
   you're right. State your part, ask your question, let them own theirs. If the gap you spotted
@@ -175,7 +175,7 @@ Luis's written voice, distilled. When one of these conflicts with a real example
 - **@-mention people by their Slack handle**, not their GitHub/GitLab username.
 - **A term the reader may not know gets its link on the term itself** (the word as link text), not a
   bare URL beside it.
-- **Slack MR/PR review-request format** (his standing convention):
+- **Slack MR/PR review-request format** (their standing convention):
   ```
   @<handle> MR to <brief description of the changes>.
 
