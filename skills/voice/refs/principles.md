@@ -19,6 +19,8 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   - "success and error handler" not "fulfilled and rejected handler"
   - "throws" not "rejects synchronously"
   - "get a log" not "a breadcrumb"
+  - "cuts an emoji in half" not "cut by code point" or "a lone surrogate": say what the reader
+    would see, not the encoding or spec term behind it
   - drop filler like "best-effort", "leverage", "utilize", "furthermore", "moreover".
 - **Low ceremony, friendly, direct.** A wave-emoji opener ("Hey folks 👋") is a Slack thing. A
   tracker-ticket comment or PR/MR comment takes no greeting at all: lead with the @-mention and go
