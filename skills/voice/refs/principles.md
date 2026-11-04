@@ -60,7 +60,9 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   writing ("merge bottom up", `A → this → C`) read as noise, or as wrong, to someone meeting it
   once. A design's own step or component names count too: in a team-wide post, say what each step
   does in plain words and leave the names to the linked doc, or readers read too much into them;
-  a name that says what it does on its own ("normalize" into our own format) is fine to use. An
+  a name that says what it does on its own ("normalize" into our own format) is fine to use. When a
+  shared proposal is renaming a step, name neither the old nor the new one in a review comment;
+  say what it does ("anything that reads X as ready"), so the point survives the rename. An
   implicit comparison has the same problem: "before or after" attaches to the nearest thing in the
   sentence, not the one you meant, so name the baseline. And watch for names that collide with
   their context, like "the main list" in a message that also discusses `main`. When a message
