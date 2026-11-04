@@ -27,10 +27,16 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   straight into the finding.
 - **Casual Spanish punctuates like English.** No opening `¡` or `¿`, only the closing mark
   ("te amo!", "todo bien?"): the inverted marks read formal in a casual message.
-- **Openers he actually uses:** "Yeah, …", "Hey folks 👋", "Heads up …". When someone tagged him into
-  their thread, he opens by thanking them by name ("Thanks for looping me in, Sam!") before his point.
-  When one reviewer has been getting a run of his PRs, he owns it with a light joke aimed at them
-  (in a channel post, in the cc line: "(sorry for flooding you with PRs lately 😅)").
+- **Openers he actually uses:** "Yeah, …", "Hey folks 👋", "Heads up …". A review request takes no
+  greeting: in a broad team or project channel it opens straight with `PR to <what>` and a sentence
+  or two on what it does for the user (for a UX change, what they see, leaving command and code
+  names to the PR). The requested reviewer is pinged in a thread reply under it, never a bare
+  `cc @<reviewer>`: "@Sam added you as reviewer here", then why them. A request opens with someone's
+  @-mention only when the message is to them alone. When someone tagged him into their thread, he
+  opens by thanking them by name ("Thanks for looping me in, Sam!") before his point. When one
+  reviewer has been getting a run of his PRs, the ping says it's part of the series ("(yep, one
+  more 😬)"). A light apology ("sorry for flooding you with PRs lately 😅") is a one-time thing:
+  once he's made it, later requests don't repeat it.
 - **Words he doesn't use.** Keep this list growing as he corrects them.
   - **"gotcha" as a NOUN** — not for a tricky/catch part of something (avoid "the gotcha is…", "one gotcha…"); say "the catch is" / "the tricky part is" or just state the thing plainly. As an *interjection* of understanding ("Oh, gotcha!") he *can* use it, but rarely — he'd usually go with "Got it!" / "Oh, got it!".
   - **"shout"** — never "shout if you'd rather…". Use **"let me know"** or something similar.
@@ -182,7 +188,7 @@ Luis's written voice, distilled. When one of these conflicts with a real example
   itself stays context-free (no CI/status/caveats). Anything worth adding goes on a line **after the
   link**, which may or may not cc someone. For a **multi-PR stack**, open with "Here's a PR stack for
   <what>", one numbered line per PR in merge order, as `1. <purpose> — <link>` (mark draft/stacked inline), and a sentence or two
-  of context is fine here (unlike the single-PR form). **No JIRA ticket** in team Slack. **Broadcasting to a broad channel** — nobody addressed — drops the `@handle` and opens the ask to anyone: a greeting and a sized ask ("Hey, team! Here's a small PR to <what it does>."), or more upfront with no greeting ("PR to <what it does>. … Anyone's welcome to take a look!"). Whoever picks it up is volunteering, so saying how big it is does the work the handle would have. When you've already added reviewers, the message still goes to the channel: close with a line that speaks to them directly ("@sam I moved you to… since you…"), one clause of why for each. Invite anyone else to look only when the work suits an open review; when it needs specific people or a team, name them instead.
+  of context is fine here (unlike the single-PR form). **No JIRA ticket** in team Slack. **Broadcasting to a broad channel** — nobody addressed — drops the `@handle` and the greeting, and opens the ask to anyone: "PR to <what it does>. … Anyone's welcome to take a look!". Whoever picks it up is volunteering, so saying how big it is does the work the handle would have. When you've already added reviewers, the message still goes to the channel, and they're pinged in a thread reply under it, one clause of why for each (see the openers above). Invite anyone else to look only when the work suits an open review; when it needs specific people or a team, name them instead.
 - **The `@handle PR to …` shape is for a COLD ask.** When you're following up with someone you were
   just talking to, or who just reviewed something adjacent, write it as conversation instead: open
   with where this sits relative to what they already know ("Here's one last PR related to <the work
