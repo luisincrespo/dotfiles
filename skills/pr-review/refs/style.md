@@ -25,8 +25,10 @@
   gets dropped, not posted.
 - Leave the author's ticket housekeeping to them (a closing keyword, which ticket tracks a
   follow-up): asking about it reads as micro-managing.
-- A test comment earns its place when it closes a gap that would let the bug back in, not when it
-  polishes an existing assertion's style or a test's name. Those get cut.
+- A test comment earns its place when it adds coverage that would otherwise let a bug back in, when
+  the test doesn't actually verify what it claims to, or when it's prone to flakiness. Cut one that
+  polishes an assertion's style or a test's name, and one about a test that simply fails, since CI
+  flags that the first time it runs.
 - JSDoc-coverage and import-style nits are low-priority: they tend to get cut, so keep them last and
   brief.
 
@@ -55,8 +57,9 @@ sound like the user typed it, which the `voice` skill's ground truth is for.
   named first. Stick to problem and fix against the current code, and leave out the PR's own
   history ("the first commit did X") and behavior that's working as intended. Give it the ask and
   one reason. What you checked to be sure of it (an exception filter, another PR, how many call
-  sites do the same) goes in your notes to the user, not the comment: a stack of cross-references
-  reads as an audit report, not as something the user wrote. After drafting, do a trim pass: cut
+  sites do the same), and why nothing has caught it yet (CI hasn't run, the PR is a draft), goes in
+  your notes to the user, not the comment: a stack of cross-references reads as an audit report, not
+  as something the user wrote. After drafting, do a trim pass: cut
   hedges, qualifiers, and idiom doing rhetorical rather than factual work ("that lands", "fair
   enough", "something smaller underneath", "reads as incidental"). Open an acknowledgement with the
   plainest words available ("Got it, makes sense.") and go straight to the point.
