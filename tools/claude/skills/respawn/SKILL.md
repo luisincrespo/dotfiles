@@ -92,7 +92,10 @@ The helper's completion notice starts a turn, or, after a manual respawn, the us
 does. The helper's last line says how it went:
 
 - **`RESPAWN COMPLETE`**: read the note, then:
-  1. Re-enter the worktree with `EnterWorktree` `path` if you're no longer in it.
+  1. Get back into the worktree if you're no longer in it. A session launched outside a repo
+     (home, say) restarts there, and `EnterWorktree` `path` then refuses: from a directory that
+     isn't a repo, and for the directory you're already in (2.1.318). `cd <worktree>` in Bash
+     moves the session's working directory, which is all the pickup needs.
   2. Re-arm each monitor with its recorded arguments.
   3. Reschedule the self-paced wakeup, only if `CronList` no longer shows its one-shot.
   4. Relaunch each workflow.
