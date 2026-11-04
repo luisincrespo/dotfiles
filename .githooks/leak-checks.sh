@@ -63,11 +63,16 @@ scan_common() {
   check "Internal hostname" \
     '[A-Za-z0-9-]+\.(internal|corp|intranet|lan)\b|(sonar|sonarqube|gitlab|jira|jenkins|artifactory|grafana|confluence)\.[A-Za-z0-9-]+\.[A-Za-z]{2,}'
 
-  # Ticket ids: ABC- is the documented placeholder prefix.
+  # Ticket ids: ABC- is the documented placeholder prefix. Standard names share the
+  # shape (UTF-16, ISO-8601, SHA-256, CVE-…, RFC-…), so they're blanked out first
+  # rather than excluded by line, which would let a real id beside one through.
+  local scan_all="$SCAN"
+  SCAN="$(printf '%s\n' "$SCAN" | sed -E 's/(^|[^A-Za-z0-9])(UTF|ISO|SHA|CVE|RFC)-[0-9]+/\1<standard>/g')"
   check "Real-looking ticket id (use ABC-1234 as the placeholder)" \
     '(^|[^A-Za-z0-9])[A-Z]{2,}-[0-9]+' \
     '(^|[^A-Za-z0-9])ABC-[0-9]+' \
     cs
+  SCAN="$scan_all"
 
   check_denylist
 }
