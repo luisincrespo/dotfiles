@@ -51,7 +51,7 @@
   "//review_request_channel": "Slack channel the Step 7 draft is addressed to, when Slack is the mechanism.",
   "review_request_channel": "",
 
-  "//review_request_handle": "Group handle to open that draft with. Preferred over naming individuals — it reaches whoever is free, which is how a claim-by-reaction channel works. Unset falls back to whoever Luis names, else an @<reviewer> placeholder.",
+  "//review_request_handle": "Group handle to open that draft with. Preferred over naming individuals — it reaches whoever is free, which is how a claim-by-reaction channel works. Unset falls back to whoever the user names, else an @<reviewer> placeholder.",
   "review_request_handle": "",
 
   "//code_review_effort": "Per-repo, keyed by 'github/<owner>/<repo>' with a '*' fallback, like second_opinion_review. The effort level self-review and pr-review pass to Claude Code's bundled /code-review for their correctness pass: low (only its most confident findings), medium, high, xhigh, or max (the widest, and the costliest: it starts many reviewer subagents). Unset → high. Never ultra: that is a paid cloud review, run only when the user asks for one.",
