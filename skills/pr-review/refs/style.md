@@ -20,6 +20,9 @@
   source changes.
 - A rare edge case with a cheap, correct fix still earns a comment: say it's rare and keep it to one
   ask, so it doesn't become a debate with another reviewer.
+- Stay out of a design disagreement between the author and another reviewer. When the
+  implementation is correct either way, help unblock by approving, not by siding or proposing a
+  middle ground.
 - Leave the author's deliberate choices alone (one they documented, or rewrote the code to match)
   unless it leaves an obvious risk or hole in the system. A draft that a later push settled that way
   gets dropped, not posted.
