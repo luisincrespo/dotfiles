@@ -291,7 +291,9 @@ that doesn't compile costs the author a CI round and the comment its credibility
   each wake, re-run this step until all comments are resolved, then do Step 7. Surface anything
   that needs the user (a reply asking a question, a pushback you don't buy, CI gone red) instead
   of forcing resolution. Stop polling only when approved (by a requested reviewer, when the user
-  is only helping) or the user calls it off. Watch commits and comments, not CI state — a red
+  is only helping), the user calls it off, or the PR closes; a PR closed as superseded gets each
+  open finding checked against its replacement, so the user can choose to carry over what still
+  applies. Watch commits and comments, not CI state — a red
   check on an unchanged SHA is noise — and verify any alarm your own tooling raises against the
   PR before relaying it. If the PR goes quiet for a day or more, say so and offer to stop rather
   than accruing silent ticks, especially when every prior fix came from one bot answering another:
