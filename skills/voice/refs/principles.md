@@ -148,7 +148,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   suggest where it could fit and ask where they see it ("I think your X could be …, but I'm curious
   to see where you think it fits"), instead of placing it for them. With a vendor whose system
   fails, ask why, with your guess as a yes/no ("Is it because …?"), and what you'd like it to tell
-  you; don't ask them to decide how our product should handle it.
+  you; don't ask them to decide how our product should handle it. Asking a vendor for something
+  new, name the call and what you'd like it to say, and leave the design to them: no sketched
+  fields or values, and no "so we can …".
 - **When two things relate, say precisely how.** "overlap but aren't the same" beats "you get both".
 - **When the author has answered and the outcome is settled, reply with the acknowledgement only.**
   No clarifying what your original comment meant, no restating the mechanism already sitting in the
