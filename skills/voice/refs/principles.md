@@ -63,8 +63,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **End a Slack ask with a single open-ended question**, not a checklist of asks; say what you're
   trying to understand. A second ask smuggled into the same sentence ("who can do X, and what about
   Y?") is still two asks — pick the one that unblocks you and let the rest come up in the replies.
-  Sharing a view in a peer's design thread isn't an ask: they close it with an open "Let me know what
-  you think!", not a yes/no like "Does that sound right to you?".
+  A new ask posted under your own still-unanswered questions says so ("one more, separate from the
+  two questions above"), so it isn't read as part of them. Sharing a view in a peer's design thread
+  isn't an ask: they close it with an open "Let me know what you think!", not a yes/no like "Does
+  that sound right to you?".
 - **Name things the way the reader sees them, and don't leave a reference for them to
   reconstruct.** Internal words (`unfiled`, `chip`, "the PRs") and shorthand that made sense while
   writing ("merge bottom up", `A → this → C`) read as noise, or as wrong, to someone meeting it
@@ -144,7 +146,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   you're right. State your part, ask your question, let them own theirs. If the gap you spotted
   matters, it surfaces on their side or comes up when they ask. When your design touches their work,
   suggest where it could fit and ask where they see it ("I think your X could be …, but I'm curious
-  to see where you think it fits"), instead of placing it for them.
+  to see where you think it fits"), instead of placing it for them. With a vendor whose system
+  fails, ask why, with your guess as a yes/no ("Is it because …?"), and what you'd like it to tell
+  you; don't ask them to decide how our product should handle it.
 - **When two things relate, say precisely how.** "overlap but aren't the same" beats "you get both".
 - **When the author has answered and the outcome is settled, reply with the acknowledgement only.**
   No clarifying what your original comment meant, no restating the mechanism already sitting in the
