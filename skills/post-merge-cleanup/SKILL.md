@@ -165,13 +165,13 @@ This is the pipeline's loop-closer beyond a plain merge + cleanup. Only run when
      page, placed where its `layout` says new entries go — that destination is the source of truth, so don't also leave a local copy to
      drift. With none configured, or its connector unavailable this session, fall back to a
      local markdown note and say which you used.
-4. Announce what was filed with links; leave the un-filed items in the note. Then clear the filed items from the ledger, deferred items and friction alike (keep the un-filed ones for later).
+4. Announce what was filed with links. No follow-up waits in the ledger: one the user neither filed nor dropped, an offered PR they didn't take included, goes to the personal backlog as in step 3, and one they dropped is gone. Say so when proposing the list, so "not now" has a home. Then clear every item from the ledger, deferred items and friction alike.
 
 ## Step 7: Announce + housekeeping
 - `🧹 Deleted branch <source_branch> and worktree <wt_path>.` (omit the worktree clause if there wasn't one).
 - **Heads-up if the session ran inside the removed worktree**: that dir no longer exists, so tell the user to `/loop stop` and `cd <main_root>`.
 - **If the merged PR carried the repo's needs-testing label** (`staging_verification.needs_testing_label` in local config), set `needs_staging_verification: true` on its unit. The deploy gets tested later, in another session, so this step only records it — `deliver` B5 is what acts on it.
-- Once every unit's PR is merged and cleaned, mark the task ledger done. **Keep the ledger** while any unit still has `needs_staging_verification: true` and `staging_verified: null`, or unrecorded `prod_checks` — deleting it there would strand the pending verification; delete only when no un-filed follow-ups and no pending verification remain. If the user wants it closed anyway, move each pending item into the next task's ledger under `carried_over` (`deliver` § Handoff / resume) rather than dropping it, and archive the closed ledger next to the task's evidence instead of only deleting it.
+- Once every unit's PR is merged and cleaned, mark the task ledger done. **Keep the ledger** while any unit still has `needs_staging_verification: true` and `staging_verified: null`, or unrecorded `prod_checks` — deleting it there would strand the pending verification; delete it once no verification is pending (follow-ups never hold it open; Step 6 routes each one out). If the user wants it closed anyway, move each pending item into the next task's ledger under `carried_over` (`deliver` § Handoff / resume) rather than dropping it, and archive the closed ledger next to the task's evidence instead of only deleting it.
 
 **Session / integration worktree.** The same recipe (Steps 3–4) applies to the worktree this session runs in once all its PRs are merged/closed. Hard prerequisite: no *unpushed, unmerged* work — verify `git -C <wt> status --porcelain` is empty and its HEAD is merged or still on a remote branch (`git -C <wt> for-each-ref --format='%(upstream:short)' refs/heads/<branch>`) before removing.
 
