@@ -145,7 +145,11 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   "I'm not sure there's a case" and a proposal to drop it.
 - **Don't put feelings or commitments in their mouth.** Warmth invented on their behalf is still
   invention. If they haven't said they feel a thing, or that they'll do a thing, don't write it for
-  them — they cut it, and it reads as someone else's voice when they don't.
+  them — they cut it, and it reads as someone else's voice when they don't. That includes a
+  courtesy close like "happy to do it sooner as its own PR": after arguing a change isn't worth
+  it yet, end on the position and when you'd revisit it, not an offer to do the work anyway. And
+  expertise: keep the reasons to ones they could explain if the reader follows up. Analysis of
+  someone else's system that only the drafter worked out gets cut, even when it's right.
 - **Stay out of their domain.** In someone else's area of ownership, don't assign who does the next
   piece of work, and don't tell them how their own system behaves — even when you've verified it and
   you're right. State your part, ask your question, let them own theirs. If the gap you spotted
