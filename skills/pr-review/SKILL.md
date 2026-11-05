@@ -103,8 +103,9 @@ the next review goes better.
   types), and any "analogous"/"mirrors X" code it references. Comparing against the existing
   pattern is often where the best comments come from.
 - If the PR is part of a stack, read every PR in it before claiming something is absent or won't
-  exist — grep all branches, not just this one. Read the existing review threads first
-  (`gh api repos/…/pulls/<N>/comments`): dedupe against them, and note which findings other
+  exist — grep all branches, not just this one — and check every finding against the top of the
+  stack before drafting: a later PR may already fix it, or move the line it anchors on. Read the
+  existing review threads first (`gh api repos/…/pulls/<N>/comments`): dedupe against them, and note which findings other
   reviewers already own. Before replying that one of those findings is wrong, check *when* it was
   made against when the code it describes appeared (`git log -S`, or the per-commit diff). A finding
   that reads as mistaken against the current file is usually one the author already fixed — a commit
