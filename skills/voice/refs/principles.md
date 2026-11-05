@@ -28,11 +28,16 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **Casual Spanish punctuates like English.** No opening `¡` or `¿`, only the closing mark
   ("te amo!", "todo bien?"): the inverted marks read formal in a casual message.
 - **Openers they actually use:** "Yeah, …", "Hey folks 👋", "Heads up …". A review request takes no
-  greeting: in a broad team or project channel it opens straight with `PR to <what>` and a sentence
-  or two on what it does for the user (for a UX change, what they see, leaving command and code
-  names to the PR). The requested reviewer is pinged in a thread reply under it, never a bare
-  `cc @<reviewer>`: "@Sam added you as reviewer here", then why them. A request opens with someone's
-  @-mention only when the message is to them alone. When someone tags them into a thread, they
+  greeting: in a broad team or project channel it opens straight with `Here's a PR to <what>` (or
+  a bare `PR to <what>`) and a sentence or two on what it does for the user (for a UX change, what
+  they see, leaving command and code names to the PR). The requested reviewer is pinged with a reason, never a bare `cc @<reviewer>`:
+  a thread reply under it ("@Sam added you as reviewer here", then why them), or a last line of
+  the message itself when the reason is short ("cc @Sam the comments you had already left there
+  are now addressed!"). Someone stepping in for an absent reviewer is doing a favor: ask for their
+  help with the reason first ("since Sam is out today, could you help out by reviewing this
+  one?", not "help me review", which sounds like a joint review), and leave that you added them
+  as a trailing fact. A request opens with someone's @-mention only when the message is to them
+  alone. When someone tags them into a thread, they
   open by thanking that person by name ("Thanks for looping me in, Sam!") before their point. When one
   reviewer has been getting a run of their PRs, the ping says it's part of the series ("(yep, one
   more 😬)"). A light apology ("sorry for flooding you with PRs lately 😅") is a one-time thing:
@@ -125,7 +130,7 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   The same goes for your own work: what isn't built yet is what you plan to do ("we plan to
   create"), not what you do. And for the product: an argument for robustness doesn't claim a
   precondition won't hold ("we can't count on X"); it says the system shouldn't depend on it even
-  when it does.
+  when it does. And for people: an absence you've only inferred is "I think Sam is out", not a fact.
 - **When you decline on cost, put the position first and the concession last.** A closing "if it
   needed real work I'd agree" names the condition under which the reviewer would be right, which is
   worth saying; an opening concession only cushions. Open by showing you weighed the alternatives
