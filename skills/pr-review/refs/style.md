@@ -20,6 +20,9 @@
   source changes.
 - A rare edge case with a cheap, correct fix still earns a comment: say it's rare and keep it to one
   ask, so it doesn't become a debate with another reviewer.
+- A real speedup with a cheap, verified fix earns a comment, even when the author already planned
+  for the slow path: it leaves the code in a better state. Cut only a change that's purely a nicer
+  way of writing the same thing. Work out how much it actually changes before deciding which it is.
 - Stay out of a design disagreement between the author and another reviewer. When the
   implementation is correct either way, help unblock by approving, not by siding or proposing a
   middle ground.
