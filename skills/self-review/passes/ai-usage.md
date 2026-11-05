@@ -57,7 +57,10 @@ expensive". Context counts as cost too: a prompt that fills the window degrades 
 fails outright.
 
 A fix that trades quality for cost, like a smaller model, a truncation or a cached answer, is a
-judgment call, not a clear fix.
+judgment call, not a clear fix. A claim that a settings change (model, thinking level, tier)
+leaves the output unchanged needs every part of the output compared against a rerun on the old
+settings, free text included: exact fields can match while a summary or a list of rules quietly
+thins.
 
 ## Why it's a pass of its own
 
