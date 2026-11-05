@@ -90,7 +90,7 @@ When the resolved entry stage is past understand/plan (adoption, `--stage`, or w
 
 ## Phase B — Per-unit loop
 
-Set up **one integration worktree per task** if not already working in one, per global rule 12 (the repo's own worktree tooling first, since it encodes setup like certs, secrets and direnv; else `<repo_root>/.claude/worktrees/<task-slug>`), record its path as the ledger's `worktree`, and create a branch per unit inside it.
+Set up **one integration worktree per task** if not already working in one, per global rule 12 (the repo's own worktree tooling first, since it encodes setup like certs, secrets and direnv; else `<repo_root>/.claude/worktrees/<task-slug>`), record its path as the ledger's `worktree`, and create a branch per unit inside it. Read the repo's `local_e2e` notes in local config before running that setup: they record this machine's known setup failures.
 
 **This session owns the worktree's checkout.** Several units' PRs are often in flight at once while only one branch is checked out, so `pr-babysit`, `pr-merge` and `post-merge-cleanup` never switch branches: work that needs a PR's files waits in its state file until that branch is checked out here. The rules, and how this session runs that queued work, are in `refs/shared-checkout.md`; read it before the first switch. Take the checkout lock before switching branches or changing files, and release it once the change is committed.
 
