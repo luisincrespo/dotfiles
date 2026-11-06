@@ -28,20 +28,27 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **Casual Spanish punctuates like English.** No opening `¡` or `¿`, only the closing mark
   ("te amo!", "todo bien?"): the inverted marks read formal in a casual message.
 - **Openers they actually use:** "Yeah, …", "Hey folks 👋", "Heads up …". A review request takes no
-  greeting: in a broad team or project channel it opens straight with `Here's a PR to <what>` (or
-  a bare `PR to <what>`) and a sentence or two on what it does for the user (for a UX change, what
-  they see, leaving command and code names to the PR). The requested reviewer is pinged with a reason, never a bare `cc @<reviewer>`:
-  a thread reply under it ("@Sam added you as reviewer here", then why them), or a last line of
-  the message itself when the reason is short ("cc @Sam the comments you had already left there
-  are now addressed!"). Someone stepping in for an absent reviewer is doing a favor: ask for their
-  help with the reason first ("since Sam is out today, could you help out by reviewing this
-  one?", not "help me review", which sounds like a joint review), and leave that you added them
-  as a trailing fact. A request opens with someone's @-mention only when the message is to them
-  alone. When someone tags them into a thread, they
-  open by thanking that person by name ("Thanks for looping me in, Sam!") before their point. When one
-  reviewer has been getting a run of their PRs, the ping says it's part of the series ("(yep, one
-  more 😬)"). A light apology ("sorry for flooding you with PRs lately 😅") is a one-time thing:
-  once they've made it, later requests don't repeat it.
+  greeting: in a broad team or project channel it opens straight with `Here's a PR to <what>` (or a
+  bare `PR to <what>`) and a sentence or two on what it does for the user (for a UX change, what
+  they see, in the words someone in the channel would use: leave command and code names, UI
+  component labels, version tags and vendor names to the PR). When part of the work already shipped,
+  say in a word which part ("the form itself (UI component) is already merged"). Members of the
+  project pinged in that project's own channel need no reason: the channel is the reason, so the
+  last line is just "@Sam @Jordan could you please help review this one when you have some time?".
+  Anywhere else, the requested reviewer is pinged with a reason, never a bare `cc @<reviewer>`: a
+  thread reply under it ("@Sam added you as reviewer here", then why them), or a last line of the
+  message itself when the reason is short ("cc @Sam the comments you had already left there are now
+  addressed!"). Someone stepping in for an absent reviewer is doing a favor: ask for their help with
+  the reason first ("since Sam is out today, could you help out by reviewing this one?", not "help
+  me review", which sounds like a joint review), and leave that you added them as a trailing fact. A
+  request opens with someone's @-mention only when the message is to them alone. A request posted as
+  a reply under a related PR's request opens by tying itself to it ("Related to this one: here's the
+  PR that…") and points back at what that one introduced ("that form"); a bare "Here's another PR
+  for…" reads as a new, unrelated ask. When someone tags them into a thread, they open by thanking
+  that person by name ("Thanks for looping me in, Sam!") before their point. When one reviewer has
+  been getting a run of their PRs, the ping says it's part of the series ("(yep, one more 😬)"). A
+  light apology ("sorry for flooding you with PRs lately 😅") is a one-time thing: once they've made
+  it, later requests don't repeat it.
 - **Words they don't use.** Keep this list growing as they correct them.
   - **"gotcha" as a NOUN** — not for a tricky/catch part of something (avoid "the gotcha is…", "one gotcha…"); say "the catch is" / "the tricky part is" or just state the thing plainly. As an *interjection* of understanding ("Oh, gotcha!") they *can* use it, but rarely — they'd usually go with "Got it!" / "Oh, got it!".
   - **"shout"** — never "shout if you'd rather…". Use **"let me know"** or something similar.
