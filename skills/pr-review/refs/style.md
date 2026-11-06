@@ -20,6 +20,10 @@
   source changes.
 - A rare edge case with a cheap, correct fix still earns a comment: say it's rare and keep it to one
   ask, so it doesn't become a debate with another reviewer.
+- On a flow nobody has designed yet, ask only for correctness and permissions on the paths that
+  exist, and leave the behavior open in a sentence ("We haven't really decided how X should work
+  yet, so…") instead of proposing it. When the author moves a fix to a later PR, ask that it also
+  cover the related paths rather than asking for changes now.
 - A real speedup with a cheap, verified fix earns a comment, even when the author already planned
   for the slow path: it leaves the code in a better state. Cut only a change that's purely a nicer
   way of writing the same thing. Work out how much it actually changes before deciding which it is.
