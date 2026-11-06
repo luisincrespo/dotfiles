@@ -130,8 +130,10 @@ the next review goes better.
   credibility.
 
 ### 2. Decide the focus
-Ask the user what to focus on if they didn't say. Each pass file says when it applies; read it when
-it's in play and apply it to the diff.
+Ask the user what to focus on if they didn't say. When they aren't a requested reviewer, ask what
+they need from the PR: it's usually a use of their own that builds on it, and that becomes the
+review's main lens. Each pass file says when it applies; read it when it's in play and apply it to
+the diff.
 
 - **Whatever the focus, when they apply**: `design.md`, `ux.md`, `observability.md`,
   `customer-data.md`, `docs.md`, `performance.md`, `ai-usage.md` and `accessibility.md`, plus
