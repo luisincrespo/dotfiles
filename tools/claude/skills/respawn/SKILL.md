@@ -32,7 +32,7 @@ The skill's own folder is the base dir for the relative paths below.
 | Background Bash commands | Keep running; their completion notices reach the new process | Leave them. Restarting one runs it twice |
 | Background subagents | Carry over | Leave them |
 | `CronCreate` jobs, fixed-interval `/loop` | Restored | Check `CronList` after; recreate only a missing one |
-| Monitors | Stop. The new process gets a `stopped` notice, which starts no turn | Re-arm |
+| Monitors | Stop. The new process gets a `stopped` notice, which starts no turn; it also lists monitors that had already expired (2.1.319) | Re-arm only the ones the note lists |
 | Self-paced `/loop` wakeup | Restored (2.1.314, 2.1.318), as its one-shot cron under a new ID | Check `CronList`; reschedule only if it's missing, or the loop fires twice |
 | Workflows | Continue only when relaunched | Relaunch with `resumeFromRunId` |
 | The turn in progress | Cut off | Record the next step |
