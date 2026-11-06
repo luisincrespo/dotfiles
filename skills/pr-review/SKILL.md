@@ -271,7 +271,8 @@ that doesn't compile costs the author a CI round and the comment its credibility
   question to the author on that thread rather than waiting longer: an agent's fix round works
   from the threads it was pointed at, and a comment added later can be left out. A reply that
   cites a commit SHA gets checked against the remote too: an agent's push can be rejected after a
-  concurrent merge, leaving its replies ahead of the code. Before telling the author, confirm it
+  concurrent merge, or a later force-push from the author can drop it while its thread stays
+  resolved, leaving its replies ahead of the code. Before telling the author, confirm it
   through the remote (`git ls-remote`, the PR's commit list), and word it as a push that may not
   have landed.
 - `git grep` for stale references after renames (the only legit leftover is a domain *type* that
