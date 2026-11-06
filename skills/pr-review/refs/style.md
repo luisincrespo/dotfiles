@@ -33,8 +33,10 @@
   follow-up): asking about it reads as micro-managing.
 - A test comment earns its place when it adds coverage that would otherwise let a bug back in, when
   the test doesn't actually verify what it claims to, or when it's prone to flakiness. Cut one that
-  polishes an assertion's style or a test's name, and one about a test that simply fails, since CI
-  flags that the first time it runs.
+  polishes an assertion's style or a test's name.
+- Skip a comment or follow-up whose point CI will lead the author to anyway (a test that simply
+  fails, a type error in the code the comment is about): they'll notice. Raise it only when nothing
+  in CI points there.
 - JSDoc-coverage and import-style nits are low-priority: they tend to get cut, so keep them last and
   brief.
 
