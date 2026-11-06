@@ -18,6 +18,13 @@ allowed-tools:
   - Bash(rm -f ~/.claude/cache/pr-review/:*)
   - Read
   - Skill(code-review)
+  - mcp__claude_ai_Atlassian__getJiraIssue
+  - mcp__claude_ai_Linear__get_issue
+  - mcp__claude_ai_Linear__get_project
+  - mcp__claude_ai_Linear__get_document
+  - mcp__claude_ai_Notion__notion-fetch
+  - mcp__claude_ai_Google_Drive__read_file_content
+  - mcp__claude_ai_Slack__slack_read_canvas
   - Edit
   - Write
   - Grep
@@ -57,7 +64,7 @@ the next review goes better.
   Then always pass the result explicitly as `--repo <repo>` so the review can't drift onto the
   wrong project mid-run.
 - **Review ledger**: `~/.claude/cache/pr-review/<repo-with-slashes-as-dashes>-<N>.json`, holding
-  `{"deferred_items":[]}`. An item takes the shape `deliver`'s task ledger uses —
+  `{"project_ref":null,"deferred_items":[]}`. An item takes the shape `deliver`'s task ledger uses —
   `{summary, why_deferred, risk, suggested_owner}` — plus `evidence` (`file:line`, the test or
   command that shows it) and any `options` the user named, so one settling procedure fits both.
 
@@ -93,6 +100,16 @@ the next review goes better.
   a labeled design pass) still gets comments placed and worded as `refs/style.md` says.
 - **If a review ledger already exists for this PR, load it.** An earlier round or session deferred
   those findings already; re-raising one as new undoes a decision the user made.
+- **The project background**, if the PR belongs to a project: the one page holding its engineering
+  background. First hit wins: (1) `--project-ref <url>`, or a link the user gave with the request;
+  (2) `project_ref` in the review ledger; (3) local config `project_context`, keyed by the tracker
+  project of the ticket the PR links. Record it in the ledger as `project_ref = {url, title,
+  source}`, read it the way `understand-task` Step 1 says, and check the PR against what it decides
+  or rules out. A departure is a finding like any other, raised as a question, since the author may
+  have agreed a change the page doesn't show yet. A review never edits the page. Nothing resolves
+  but the PR's ticket sits in a tracker project with no `project_context` entry → ask for the page
+  once, with Step 2's focus question when there is one, and save the answer (a link, or `null`)
+  there.
 - `gh pr view <N> --repo <repo> --json title,body,author,headRefName,baseRefName,files,additions,deletions,state`
 - `gh pr diff <N> --repo <repo>`
 - Fetch the PR and read the **full files**, not just the diff — context outside the diff
@@ -326,7 +343,7 @@ what they had seen.
   Step 6, items 1–4 (its last-unit gate is `deliver`'s; skip it). Delegate rather than paraphrase:
   a summary drops its existing-ticket search and its priority rule, and goes stale when it changes.
   Besides a ticket or the personal backlog, an item here can become a PR of the user's own. Filed
-  items leave the ledger and un-filed ones stay; delete it only once it's empty.
+  items leave the ledger and un-filed ones stay; delete it only once `deferred_items` is empty.
 - **Then clean up**, here or whenever the user calls the review off: stop any Monitor or pending
   wakeup, delete the Step 1 ref (`git update-ref -d refs/pr-review/<N>`) and the comment body
   files, and remove anything else the review created locally. Only delete what this review
