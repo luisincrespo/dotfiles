@@ -48,6 +48,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   - **"bolt" / "bolt on"** — not for tacking something onto a change. Say it plainly: "not part of this change", "not something to add here".
   - **"nah"** — reads impolite in an outward message, even when the answer really is no. Open with a plain "I don't think we need it" / "I don't think so" instead.
   - **"agreed on X" / "Agreed, …"** as a way to agree in conversation. They say "yeah, I agree that…" instead.
+  - **Someone else's jargon** ("bench set") picked up from the thread or from the drafter: they
+    wouldn't have used it on their own, so say the plain thing instead.
 
 ## Punctuation
 - **No em dashes (`—`).** The user rarely uses them, so an em dash is a dead giveaway the text was
@@ -89,8 +91,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   its first PR. An example from your own work (a test run, a sample you tried) is said as one,
   with where it came from, after the general point it shows; a bare name reads as something the
   reader should already know. A number measured once is that run's result ("in my test run, the
-  board took almost 5 minutes"), never stated as how long something takes in general. Size a gain
-  instead of praising it: "about 2x faster end to end in a few of my own runs", not "a lot faster".
+  board took almost 5 minutes"), never stated as how long something takes in general. An exact
+  tally from your own digging ("57 runs so far") reads machine-written in a casual message: say the
+  pattern ("every run since last night") and leave the count out. Size a gain instead of praising
+  it: "about 2x faster end to end in a few of my own runs", not "a lot faster".
 - **Short.** As brief as it can be while still clear. They trim; so should you. But short means
   cutting noise, not compressing feeling — on sincere or personal content they write full, warm
   sentences and say the thing outright; clipped fragments and aphorisms are a tic, not their voice.
@@ -134,7 +138,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   The same goes for your own work: what isn't built yet is what you plan to do ("we plan to
   create"), not what you do. And for the product: an argument for robustness doesn't claim a
   precondition won't hold ("we can't count on X"); it says the system shouldn't depend on it even
-  when it does. And for people: an absence you've only inferred is "I think Sam is out", not a fact.
+  when it does. And for people: an absence you've only inferred is "I think Sam is out", not a
+  fact. And for someone else's PR: say what it does and what shows it works ("moves X to https to
+  get around it, and its own run passed"), not that it's the fix. Nudging a ready PR, ask what's
+  holding back the merge, not when it'll land.
 - **When you decline on cost, put the position first and the concession last.** A closing "if it
   needed real work I'd agree" names the condition under which the reviewer would be right, which is
   worth saying; an opening concession only cushions. Open by showing you weighed the alternatives
