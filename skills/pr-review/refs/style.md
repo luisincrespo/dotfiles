@@ -53,8 +53,9 @@ the most relevant single declaration line.
 ## How drafts are shown to the user
 
 When the user hasn't read the code, open with two plain sentences on what the PR does, and note
-under each draft, without identifiers, what breaks and for whom (walked through as one concrete case
-when it takes a sequence of events), so they can judge it and answer the author. Pitch those drafts
+under each draft, without identifiers or terms they'd need defined (say what a component is for,
+not just its name), what breaks and for whom (walked through as one concrete case when it takes a
+sequence of events), so they can judge it and answer the author. Pitch those drafts
 at the depth they can defend in a reply: the ask, one reason, "I think" where you're inferring, and
 fix code held back until the author asks.
 
