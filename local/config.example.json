@@ -25,7 +25,7 @@
   "//personal_backlog": "Where post-merge-cleanup writes a deferred item that doesn't warrant a tracker ticket. Not per-repo — it's your backlog, wherever you keep it. Configure the app/destination its connector needs; that destination is then the source of truth, so nothing is also written locally to drift from it. Unset, or its connector missing this session, falls back to a local markdown note.",
   "personal_backlog": {
     "app": "<connector or app name>",
-    "page_url": "<url of the page to append to>",
+    "page_url": "<url of the page or database new entries go in>",
     "page_id": "<its id, if the connector needs one>",
     "shape": "<how one entry should be structured>",
     "page_sections": [],
