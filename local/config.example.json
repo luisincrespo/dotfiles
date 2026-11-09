@@ -30,7 +30,7 @@
     "shape": "<how one entry should be structured>",
     "page_sections": [],
     "fallback": "<what to do when the connector is unavailable>",
-    "layout": "<where a new entry goes, and how a finished one is marked done>",
+    "layout": "<where a new entry goes, and how a finished one is marked done. E.g. a row in a Backlog database with Status = Open, Priority, Area and Source (the PR, thread or ticket it came from), set to Status = Done with a Completed date when finished, or Dropped when decided against; one page per entry, moved under a Done page when finished, works too>",
     "notes": []
   },
 
