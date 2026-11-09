@@ -102,6 +102,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   tally from your own digging ("57 runs so far") reads machine-written in a casual message: say the
   pattern ("every run since last night") and leave the count out. Size a gain instead of praising
   it: "about 2x faster end to end in a few of my own runs", not "a lot faster".
+- **Vary the openers across a batch of replies.** Several replies to one reviewer that all open
+  with "Yeah, good catch." read robotic side by side. Mix them ("Good catch!", "That's a good
+  point,", "Fair,", "You're right,"), and let one or two open straight with the fix ("Fixed in
+  `abc1234`.").
 - **Short.** As brief as it can be while still clear. They trim; so should you. But short means
   cutting noise, not compressing feeling — on sincere or personal content they write full, warm
   sentences and say the thing outright; clipped fragments and aphorisms are a tic, not their voice.
