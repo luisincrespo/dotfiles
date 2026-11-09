@@ -42,14 +42,14 @@
     "notes": []
   },
 
-  "//chat_skill_uploads": "Skills uploaded by hand to a chat app that can't read local files, keyed by surface (e.g. 'claude.ai'). uploader: the skill that packages a copy and uploads it there. Per skill: upload_name, what the copy is called there, which differs from the skill's own name where the app syncs its skills back into the coding agent, so the stale copy isn't mistaken for the current one; description, a short one within the app's limit; refresh_after_days, how stale an uploaded copy may get before it's flagged. When each copy was last uploaded is state, not config: ~/.agents/local/state/chat-uploads.json.",
+  "//chat_skill_uploads": "Skills uploaded by hand to a chat app that can't read local files, keyed by surface (e.g. 'claude.ai'). uploader: the skill that packages a copy and uploads it there. Per skill: upload_name, what the copy is called there, which differs from the skill's own name where the app syncs its skills back into the coding agent, so the stale copy isn't mistaken for the current one; description, a short one within the app's limit that opens with when to use it (\"Use for any …\"), since it's all the app reads to decide whether a request needs the skill; refresh_after_days, how stale an uploaded copy may get before it's flagged. When each copy was last uploaded is state, not config: ~/.agents/local/state/chat-uploads.json.",
   "chat_skill_uploads": {
     "<surface>": {
       "uploader": "<skill that packages and uploads a copy>",
       "skills": {
         "<skill>": {
           "upload_name": "<skill>-chat",
-          "description": "<short description, within the app's limit>",
+          "description": "<when to use it, then what it does, within the app's limit>",
           "refresh_after_days": 7
         }
       }
