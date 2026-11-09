@@ -47,7 +47,8 @@ copy already there.
    meanwhile; the page says a minute or two, but the first one took over seven. Don't hold the
    session on it: check back later (`maintain-dotfiles`' next round will do). Once it passes, check
    it's turned on and listed only under Yours ("by you"), with "Publish to org" still on offer,
-   which means it isn't published. Never press that: the copy holds the private corpus.
+   which means it isn't published. A passed scan also brings a "Share" button, for sharing with
+   named people. Never press either: the copy holds the private corpus.
 
 When one step fails two or three times, stop driving the browser: `open` the skills page, reveal
 the ZIP with `open -R <zip>`, tell the user the clicks, and wait for them to say it's done.
