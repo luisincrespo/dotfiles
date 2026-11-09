@@ -71,6 +71,12 @@ If the caller asks to **generate but not send** — e.g. a review-request ping t
 Whenever the user edits, rewrites, or rejects a draft — or gives tone feedback ("too formal", "less
 robotic", "you don't say it like that") — capture it **before moving on**:
 
+**In a copy that can't write these files** (one uploaded to a chat app, which carries a
+`refs/chat-copy.md`), build the entry and any principle change exactly as below, anonymized first
+(item 3), and save them where `refs/chat-copy.md` says. With no destination there, or when saving
+fails, end your reply with them as one block the user can paste into a coding session, which
+records it with this step.
+
 1. Append a new entry to the **genre-matching** `refs/examples-*.md` (`examples-slack.md`, `examples-pr-comments.md`, or `examples-pr-descriptions.md`) **in the private companion repo**, never in this public one: they're real messages. The companion is the `dotfiles-private` checkout beside the public one (e.g. `~/code/dotfiles-private` next to `~/code/dotfiles`), or `$DOTFILES_PRIVATE`; write to its `skills/voice/refs/<file>`. Before writing, check that `git -C <that dir> rev-parse --show-toplevel` names the companion, not the public repo: `principles.md` lives in the public checkout, and a session once created a fresh `examples-pr-comments.md` beside it there, one `git add` from publishing a real message. Create a missing file in the companion and re-run `tools/claude/install.sh` so it's linked in. With no companion repo at all, skip the example and keep only the principle (step 2), and say once that examples need one. Each entry has:
    - **Context** — one line on what the message was about.
    - **❌ draft** — the version that missed (verbatim), if there was one.

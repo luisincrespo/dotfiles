@@ -34,6 +34,28 @@
     "notes": []
   },
 
+  "//voice_inbox": "Where a copy of the voice skill that can't write to the repos (one uploaded to a chat app) saves a correction, for a session that can write to fold into the corpus. Holds the app, the destination, and how an entry is written and marked folded in. Unset, such a copy hands the correction back as a block to paste into a coding session instead.",
+  "voice_inbox": {
+    "app": "<connector or app name>",
+    "url": "<url of the page or database entries go in>",
+    "layout": "<how a new entry is written and how a folded one is marked. E.g. a row in a database with Name, Genre (Slack, PR comment, PR description) and Status = New, holding the anonymized entry in its body; set to Folded in once it's in the corpus, or Skipped with a reason>",
+    "notes": []
+  },
+
+  "//chat_skill_uploads": "Skills uploaded by hand to a chat app that can't read local files, keyed by surface (e.g. 'claude.ai'). uploader: the skill that packages a copy and uploads it there. Per skill: upload_name, what the copy is called there, which differs from the skill's own name where the app syncs its skills back into the coding agent, so the stale copy isn't mistaken for the current one; description, a short one within the app's limit; refresh_after_days, how stale an uploaded copy may get before it's flagged. When each copy was last uploaded is state, not config: ~/.agents/local/state/chat-uploads.json.",
+  "chat_skill_uploads": {
+    "<surface>": {
+      "uploader": "<skill that packages and uploads a copy>",
+      "skills": {
+        "<skill>": {
+          "upload_name": "<skill>-chat",
+          "description": "<short description, within the app's limit>",
+          "refresh_after_days": 7
+        }
+      }
+    }
+  },
+
   "//auto_approval": "Per-repo, keyed by 'github/<owner>/<repo>'. A repo where applying a label requests an automated review. pr-open adds it after opening when the diff meets opt_in_criterion. label: the label to add. mechanism: how it is triggered, for the report. opt_in / opt_in_criterion: when it applies and the test a diff must meet. notes: traps worth remembering. Applying it only requests a review — the bot triages risk itself and declines what it does not like — so it needs no approval gate. Omit a repo and pr-open never labels it.",
   "auto_approval": {
     "github/acme-org/example-repo": {

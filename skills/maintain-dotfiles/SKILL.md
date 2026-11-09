@@ -92,6 +92,20 @@ done for the day: the skill works the same when run on demand.
 `git status --porcelain` in both repos, and `git fetch` to see if either is behind. Behind →
 `git pull` (merge, never rebase — global rule 10) before anything else.
 
+**Then fold the voice inbox**, when local config `voice_inbox` is set. Each entry it still marks
+new is a correction that a chat copy of `voice` couldn't write itself. Run `voice` Step 4 on it,
+checking the anonymization again before anything lands, then mark it folded in, or skipped with the
+reason (a duplicate, say). Those writes are this round's own and complete, so Step 2's hold doesn't
+apply to them. Its connector missing this session → say so in a line, and leave the entries for a
+round that has it.
+
+**And check the uploaded copies**, since one goes stale silently. For each copy in
+`~/.agents/local/state/chat-uploads.json` uploaded more than its `refresh_after_days` ago, check
+whether its skill changed since (`git log <uploaded commit>..HEAD -- skills/<skill>` in each
+repo). If it did, say so in one line of the round's summary and offer to run its surface's
+`uploader`, at most once a day: record `reminded_on` in that entry. Only the user's go-ahead
+starts an upload.
+
 Clean and in sync → skip to Step 8. That is the common outcome.
 
 ## Step 2 — Is anything still being written?
@@ -180,6 +194,7 @@ They do not stay current the same way:
 | Claude Code | immediately — `~/.claude` symlinks into the repo |
 | Devin, cloud | next session — fetched from the git source |
 | Devin, local | **only after** `devin plugins update` |
+| A chat app's uploaded copy (`chat_skill_uploads`) | **only after** the user approves a new upload |
 
 `./tools/devin/sync-plugin.sh` pushes and refreshes in one step (`--no-push` to refresh only).
 Re-run `./tools/claude/install.sh` as well if a skill was added, renamed or removed, or if the

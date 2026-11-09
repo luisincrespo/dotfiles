@@ -146,6 +146,23 @@ review after the fact, unless they change how a skill behaves (the self-educate 
 `AGENTS.md`). Run under `deliver`, a skill hands its lesson up rather than editing,
 so `deliver`'s end-of-run reflection routes it once instead of two skills recording it twice.
 
+## Skills in claude.ai chats
+
+A claude.ai chat, on the web, desktop or mobile, can't read `~/.claude/skills`. It sees only the
+skills uploaded to your account, and only claude.ai's own UI can upload one. `claude-ai-upload`
+packages an installed skill, private overlay included, and drives that upload through Claude in
+Chrome once you approve it. Three things follow:
+
+- **The copy goes by another name** (`voice-chat` for `voice`). claude.ai skills sync down into
+  Claude Code as `anthropic-skills:<name>`, and a stale copy under the same name could be picked in
+  place of the live skill.
+- **It stays as it was until the next upload.** `maintain-dotfiles` flags a copy whose skill has
+  changed once it's older than its `refresh_after_days`.
+- **It can't write back.** A correction made in a chat goes to the configured `voice_inbox`, and
+  `maintain-dotfiles` folds it into the corpus; with no inbox, the chat hands it back to paste.
+
+The copy holds the private examples, so it stays in your account, shared with no one.
+
 ## Also read by Devin
 
 The Devin CLI can consume this config directly — `CLAUDE.md` becomes an always-on rule and the
