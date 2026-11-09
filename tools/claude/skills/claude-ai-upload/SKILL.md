@@ -34,21 +34,28 @@ copy already there.
 
 ## Step 3 — Upload through Claude in Chrome
 
-1. In a new tab, open claude.ai's skills settings (Customize › Skills).
-2. A copy under the same name already there: replace it in place if the page offers that;
-   otherwise remove it first. The first upload hasn't shown which yet; record it here once known.
-3. Add the ZIP (+, Create skill, Upload a skill), attaching the path Step 1 printed with the
-   file-upload tool.
-4. Check that it's listed and turned on, and that it isn't shared with anyone or published to the
-   organization's library. One shared by mistake: unshare it, and tell the user.
+1. The file-upload tool takes only files this session can read, and the build folder isn't one:
+   copy the ZIP into the session's scratch folder (a background job's `$CLAUDE_JOB_DIR/tmp`), in a
+   subfolder only the user can read, and delete that copy once the upload is done.
+2. **First upload:** open `https://claude.ai/customize/skills/new/upload` (Customize › Skills,
+   + Add, Upload skill) and attach the copy to the page's hidden file input with the file-upload
+   tool. Never click the drop zone: it opens the system file picker, which the browser tools
+   can't reach. Check the preview's name and description, then Upload.
+3. **A refresh:** open the copy from the skills list (Yours), and use ⋯ › Replace, which keeps
+   the same skill and adds a version, instead of removing it and uploading again.
+4. A security scan runs before the copy can be used, and the list shows it as "In review"
+   meanwhile; the page says a minute or two, but the first one took over seven. Don't hold the
+   session on it: check back later (`maintain-dotfiles`' next round will do). Once it passes, check
+   it's turned on and listed only under Yours ("by you"), with "Publish to org" still on offer,
+   which means it isn't published. Never press that: the copy holds the private corpus.
 
 When one step fails two or three times, stop driving the browser: `open` the skills page, reveal
 the ZIP with `open -R <zip>`, tell the user the clicks, and wait for them to say it's done.
 
 ## Step 4 — Record it
 
-`python3 package.py mark-uploaded <skill>` once the copy is live, so staleness is measured from it.
-Never before: a failed upload recorded as done hides a stale copy.
+`python3 package.py mark-uploaded <skill>` once the scan has passed, so staleness is measured from
+it. Never before: a failed upload recorded as done hides a stale copy.
 
 ## Self-educate
 
