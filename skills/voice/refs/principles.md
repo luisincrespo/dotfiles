@@ -44,11 +44,12 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   request opens with someone's @-mention only when the message is to them alone. A request posted as
   a reply under a related PR's request opens by tying itself to it ("Related to this one: here's the
   PR that…") and points back at what that one introduced ("that form"); a bare "Here's another PR
-  for…" reads as a new, unrelated ask. When someone tags them into a thread, they open by thanking
-  that person by name ("Thanks for looping me in, Sam!") before their point. When one reviewer has
-  been getting a run of their PRs, the ping says it's part of the series ("(yep, one more 😬)"). A
-  light apology ("sorry for flooding you with PRs lately 😅") is a one-time thing: once they've made
-  it, later requests don't repeat it.
+  for…" reads as a new, unrelated ask. A post following up on a meeting opens by tying itself to it
+  ("Following up on the team weekly, where X came up"), since the readers were there. When someone
+  tags them into a thread, they open by thanking that person by name ("Thanks for looping me in,
+  Sam!") before their point. When one reviewer has been getting a run of their PRs, the ping says
+  it's part of the series ("(yep, one more 😬)"). A light apology ("sorry for flooding you with PRs
+  lately 😅") is a one-time thing: once they've made it, later requests don't repeat it.
 - **Words they don't use.** Keep this list growing as they correct them.
   - **"gotcha" as a NOUN** — not for a tricky/catch part of something (avoid "the gotcha is…", "one gotcha…"); say "the catch is" / "the tricky part is" or just state the thing plainly. As an *interjection* of understanding ("Oh, gotcha!") they *can* use it, but rarely — they'd usually go with "Got it!" / "Oh, got it!".
   - **"shout"** — never "shout if you'd rather…". Use **"let me know"** or something similar.
@@ -76,32 +77,34 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   the key finding, the error — not a full change-map.
 - **End a Slack ask with a single open-ended question**, not a checklist of asks; say what you're
   trying to understand. A second ask smuggled into the same sentence ("who can do X, and what about
-  Y?") is still two asks — pick the one that unblocks you and let the rest come up in the replies.
-  A new ask posted under your own still-unanswered questions says so ("one more, separate from the
-  two questions above"), so it isn't read as part of them. Sharing a view in a peer's design thread
+  Y?") is still two asks — pick the one that unblocks you and let the rest come up in the replies. A
+  new ask posted under your own still-unanswered questions says so ("one more, separate from the two
+  questions above"), so it isn't read as part of them. Sharing a view in a peer's design thread
   isn't an ask: they close it with an open "Let me know what you think!", not a yes/no like "Does
-  that sound right to you?".
-- **Name things the way the reader sees them, and don't leave a reference for them to
-  reconstruct.** Internal words (`unfiled`, `chip`, "the PRs") and shorthand that made sense while
-  writing ("merge bottom up", `A → this → C`) read as noise, or as wrong, to someone meeting it
-  once. A design's own step or component names count too: in a team-wide post, say what each step
-  does in plain words and leave the names to the linked doc, or readers read too much into them;
-  a name that says what it does on its own ("normalize" into our own format) is fine to use. When a
-  shared proposal is renaming a step, name neither the old nor the new one in a review comment;
-  say what it does ("anything that reads X as ready"), so the point survives the rename. An
-  implicit comparison has the same problem: "before or after" attaches to the nearest thing in the
-  sentence, not the one you meant, so name the baseline. A relative date ("yesterday's run") is a
-  baseline only to you, who knows what changed in between: say "before this change". And watch
-  for names that collide with their context, like "the main list" in a message that also
-  discusses `main`. When a message
-  points at something (a PR, a stack, a comment, a doc), link it inline; link a stack through
-  its first PR. An example from your own work (a test run, a sample you tried) is said as one,
-  with where it came from, after the general point it shows; a bare name reads as something the
-  reader should already know. A number measured once is that run's result ("in my test run, the
-  board took almost 5 minutes"), never stated as how long something takes in general. An exact
-  tally from your own digging ("57 runs so far") reads machine-written in a casual message: say the
-  pattern ("every run since last night") and leave the count out. Size a gain instead of praising
-  it: "about 2x faster end to end in a few of my own runs", not "a lot faster".
+  that sound right to you?". Nor is a proposal posted to a channel for alignment, when they ping the
+  owners themselves: it ends with a cc line and a casual why ("cc @Sam @Jordan just want to make
+  sure we're aligned here before I start with any of these changes"), not a closing question.
+- **Name things the way the reader sees them, and don't leave a reference for them to reconstruct.**
+  Internal words (`unfiled`, `chip`, "the PRs") and shorthand that made sense while writing ("merge
+  bottom up", `A → this → C`) read as noise, or as wrong, to someone meeting it once. A design's own
+  step or component names count too: in a team-wide post, say what each step does in plain words and
+  leave the names to the linked doc, or readers read too much into them; a name that says what it
+  does on its own ("normalize" into our own format) is fine to use. When a shared proposal is
+  renaming a step, name neither the old nor the new one in a review comment; say what it does
+  ("anything that reads X as ready"), so the point survives the rename. An implicit comparison has
+  the same problem: "before or after" attaches to the nearest thing in the sentence, not the one you
+  meant, so name the baseline. A relative date ("yesterday's run") is a baseline only to you, who
+  knows what changed in between: say "before this change". And watch for names that collide with
+  their context, like "the main list" in a message that also discusses `main`; a proposed component
+  whose name blurs with a generic word (the *item skill* among skills) is bolded each time it
+  appears. When a message points at something (a PR, a stack, a comment, a doc), link it inline;
+  link a stack through its first PR. An example from your own work (a test run, a sample you tried)
+  is said as one, with where it came from, after the general point it shows; a bare name reads as
+  something the reader should already know. A number measured once is that run's result ("in my test
+  run, the board took almost 5 minutes"), never stated as how long something takes in general. An
+  exact tally from your own digging ("57 runs so far") reads machine-written in a casual message:
+  say the pattern ("every run since last night") and leave the count out. Size a gain instead of
+  praising it: "about 2x faster end to end in a few of my own runs", not "a lot faster".
 - **Vary the openers across a batch of replies.** Several replies to one reviewer that all open
   with "Yeah, good catch." read robotic side by side. Mix them ("Good catch!", "That's a good
   point,", "Fair,", "You're right,"), and let one or two open straight with the fix ("Fixed in
@@ -114,6 +117,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   each change one line with its headline number; methods and benchmark details wait for replies.
 
 ## Substance
+- **A proposal asks only what it leaves open.** No question it already answers, and none about how
+  a mechanism works when the proposal replaces that mechanism.
 - **Answer the point they made.** Before replying to someone's reason, pin down what it refers to.
   If it could mean two things, ask the user which one rather than picking one and arguing it.
   Answer only what they asked. When they question a design choice, give your view in a clause of why
