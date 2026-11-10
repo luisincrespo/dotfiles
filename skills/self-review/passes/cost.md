@@ -1,11 +1,21 @@
-# AI usage pass
+# Cost pass
 
-A check of a diff for model usage whose cost or context grows faster than it needs to: model
-calls, what goes into their context, and the instructions agents load.
+A check of a diff for work whose cost grows faster than it needs to: queries, requests and
+rendering that grow with data or traffic, and model calls whose number or context grows with them.
+It applies to any diff, your own or someone else's; the skill that reads it decides what happens to
+the findings.
 
 ## When it applies
 
-When the diff touches any of:
+When the diff touches work that grows with data or traffic:
+
+- database queries or ORM calls;
+- network or API calls;
+- loops over collections that grow with usage;
+- request handlers, jobs and queue consumers;
+- UI rendering: components, hooks, state.
+
+Or model usage:
 
 - a call to a model: an LLM or embedding API, an SDK client, an agent framework or tool loop;
 - a prompt, prompt template, system prompt or tool definition;
@@ -14,8 +24,21 @@ When the diff touches any of:
   definition.
 
 Touching none of these → it doesn't apply. Say so in one line rather than skipping it silently.
+Check only the half the diff touches.
 
 ## What to look for
+
+### Data and traffic
+
+- **A query or request inside a loop** (N+1): one call per item where one call for all of them
+  would do.
+- **Unbounded work**: a fetch, list or scan with no limit or pagination.
+- **Repeated work on a hot path**: the same fetch twice, recomputing on every render,
+  re-rendering on every keystroke, an effect whose dependencies change every render.
+- **A new query no index serves.**
+- **A large new dependency** in what the client downloads.
+
+### Model usage
 
 - **Calls that multiply.** One model call per item where one batched call would do; parallel
   agents or subagents fanned out with no bound; retries with no cap or backoff; the same call
@@ -51,21 +74,24 @@ finds a pattern worth a wider look, rather than running it per diff.
 
 ## The bar for a finding
 
-Each finding names **what multiplies, and roughly what it costs**: "one call per row with the full
-3k-token brief, so a 200-row import is 200 calls and 600k input tokens", not "this could be
-expensive". Context counts as cost too: a prompt that fills the window degrades answers before it
-fails outright.
+Each finding names **what grows or multiplies, and roughly what it costs as it does**: "one query
+per row, so a 500-row board makes 500 queries", or "one call per row with the full 3k-token brief,
+so a 200-row import is 200 calls and 600k input tokens", not "this could be slow" or "this could be
+expensive". That makes it a claim the reader can check rather than a hunch. Context counts as cost
+too: a prompt that fills the window degrades answers before it fails outright. Micro-optimizations
+on cold paths are noise; leave them out.
 
-A fix that trades quality for cost, like a smaller model, a truncation or a cached answer, is a
-judgment call, not a clear fix. A claim that a settings change (model, thinking level, tier)
-leaves the output unchanged needs every part of the output compared against a rerun on the old
-settings, free text included: exact fields can match while a summary or a list of rules quietly
-thins.
+A fix that trades something away is a judgment call, not a clear fix: a cache (staleness), an index
+(a migration, write cost), a smaller model, a truncation or a cached answer (quality). A claim that
+a settings change (model, thinking level, tier) leaves the output unchanged needs every part of the
+output compared against a rerun on the old settings, free text included: exact fields can match
+while a summary or a list of rules quietly thins.
 
 ## Why it's a pass of its own
 
-Model cost doesn't show up where code gets checked. Tests mock the model, so a call per item runs
-as fast as one call; a correctness review reads the prompt and finds it right; and the cost grows
-with usage and data, showing up as a bill, a rate limit, or answers that get worse as the context
-fills. Agent-written code makes it likely: it reaches for the strongest model and passes everything
-it has into the prompt, because that's the version that works first.
+These costs don't show up where code gets checked. A correctness review reads the logic or the
+prompt and finds it right; tests on small fixtures, with the model mocked, run fast whatever the
+shape. The cost grows with usage and data, and shows up as load, a bill, a rate limit, or answers
+that get worse as the context fills. Agent-written code produces it readily: a query or a model
+call per item reads naturally when each line is written for the item in hand, and the strongest
+model with everything in the prompt is the version that works first.

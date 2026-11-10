@@ -136,9 +136,9 @@ review's main lens. Each pass file says when it applies; read it when it's in pl
 the diff.
 
 - **Whatever the focus, when they apply**: `design.md`, `ux.md`, `observability.md`,
-  `customer-data.md`, `docs.md`, `performance.md`, `ai-usage.md` and `accessibility.md`, plus
-  `conventions.md` on every PR. Their findings join the rounds like any other. A performance or
-  AI-usage comment says what grows and what it costs; an observability comment, the question nobody
+  `customer-data.md`, `docs.md`, `cost.md` and `accessibility.md`, plus
+  `conventions.md` on every PR. Their findings join the rounds like any other. A cost comment says
+  what grows and what it costs; an observability comment, the question nobody
   could answer or the reader that breaks; a customer-data comment, the data, where it lands and what
   fails; a docs comment, what to cut and where the reader already gets it. A design or UX comment is a suggestion that names its cost, or a question when it rests on
   taste, per `refs/style.md` on product and UX concerns; a redesign the PR shouldn't carry goes to

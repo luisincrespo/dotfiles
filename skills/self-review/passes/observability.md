@@ -69,9 +69,9 @@ logger's output). Say which findings you saw at runtime and which you read in co
 run stay unverified.
 
 **Each root cause goes to one pass.** This one owns whether signals are right, delivered and
-affordable to collect; [`performance.md`](performance.md) owns what instrumenting costs the
-application at runtime; [`ai-usage.md`](ai-usage.md) owns model calls whose token usage isn't logged
-or metered; [`customer-data.md`](customer-data.md) owns where customer data is stored, how long it
+affordable to collect; [`cost.md`](cost.md) owns what instrumenting costs the application at
+runtime, and model calls whose token usage isn't logged or metered;
+[`customer-data.md`](customer-data.md) owns where customer data is stored, how long it
 stays, whether deletion reaches it, and what leaves the product outside telemetry.
 
 ## The bar for a finding

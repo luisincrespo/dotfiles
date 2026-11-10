@@ -55,7 +55,7 @@ UX judgments are the most subjective of any pass, so anchor each one in somethin
   the product could make for them.
 
 Keyboard, focus, contrast and screen readers are [`accessibility.md`](accessibility.md)'s; what a
-re-render costs is [`performance.md`](performance.md)'s.
+re-render costs is [`cost.md`](cost.md)'s.
 
 ## The bar for a finding
 
