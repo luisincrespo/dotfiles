@@ -9,7 +9,8 @@ else's; the skill that reads it decides what happens to the findings.
 When the diff changes the code's structure, not just its lines:
 
 - a new module, service, component family or abstraction;
-- a new or changed public API: an exported interface, an endpoint, a shared type, a schema;
+- a new or changed public API: an exported interface, an endpoint (its route, request or response
+  shape, or how it reports failure), a shared type, a schema;
 - a change that cuts across several modules or layers;
 - a change to where state lives, or to how data flows between parts.
 
@@ -28,7 +29,9 @@ not a virtue.
 
 **How the codebase already solves the same problem.** Find the closest existing example before
 proposing a shape. A design that's better in isolation but unlike everything around it is usually
-worse to maintain, since every reader has to learn two ways.
+worse to maintain, since every reader has to learn two ways. That's a reason to match a pattern,
+not to copy one that's clearly wrong: a bug, a deprecated API, or one the repo is moving away
+from. Then the new code does it right and says why it differs.
 
 ## What to look for
 
@@ -46,6 +49,10 @@ worse to maintain, since every reader has to learn two ways.
 - **Robustness as a structure.** Failures handled the same way throughout, one owner for each piece
   of state, invariants kept in one place. A single bug is the correctness pass's; a design that makes
   that kind of bug easy to write is this one's.
+- **Endpoints.** A failure returned as a success, like a 200 with a `success: false` body, hides it
+  from status-code monitoring and from anything that only sees thrown errors. And when the change
+  already breaks a request shape, check that the route and field names still say what it does now:
+  renaming later is a second break for every caller.
 - **Readability at the level of the change.** Could a reader new to it find where to start and
   follow the flow? Names of modules and types that say what they are, not how they were built.
 

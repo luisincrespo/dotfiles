@@ -62,7 +62,7 @@ The checks themselves live in `passes/` in this skill's folder, and `pr-review` 
 
 ## Step 1 — Scope the diff
 - Compute the changeset: `git diff --name-only <base>...HEAD` plus any uncommitted changes (`git status --porcelain`). List the affected packages. **Resolve `<base>` to its remote-tracking ref (`origin/<base>`) when one exists** — in a worktree the local branch ref is frozen at creation time, so a bare name can be far behind and silently widen the diff to include other people's commits.
-- Decide which **targeted passes** apply, by each file's own *When it applies*: `design.md`, `ux.md`, `observability.md`, `customer-data.md`, `docs.md`, `performance.md`, `ai-usage.md`, `react.md`, `api-shape.md` and `accessibility.md`, all in `passes/`. Give the design, UX and observability passes what they need to know first: the brief, ticket or project page for what's coming next and what the change should move, and the exercise pass's states when it ran. Note the ones that don't, so the report can say so.
+- Decide which **targeted passes** apply, by each file's own *When it applies*: `design.md`, `ux.md`, `observability.md`, `customer-data.md`, `docs.md`, `performance.md`, `ai-usage.md`, `react.md` and `accessibility.md`, all in `passes/`. Give the design, UX and observability passes what they need to know first: the brief, ticket or project page for what's coming next and what the change should move, and the exercise pass's states when it ran. Note the ones that don't, so the report can say so.
 
 ## Step 2 — Automated gates (fix failures)
 Run the repo-appropriate checks scoped to the change (don't reformat the world):

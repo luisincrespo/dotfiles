@@ -145,7 +145,7 @@ the diff.
   the ledger as a follow-up. The UX pass's designer verdict goes to the user with the first round,
   not into a draft: whether to bring a designer in, and how, is theirs to decide.
 - **Lenses to offer**: `react.md` (effects, state identity, render purity, memoization, hooks,
-  component API, against react.dev for the repo's version) and `api-shape.md` (endpoints).
+  component API, against react.dev for the repo's version).
 - **Reuse / simplification / correctness** — does it reinvent an existing util/pattern? Hold your
   own suggested code to the same bar: when it would repeat a calculation other callers already
   inline, propose the one shared function they'd all call, not another copy.
