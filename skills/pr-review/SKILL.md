@@ -266,7 +266,8 @@ that doesn't compile costs the author a CI round and the comment its credibility
 ### 6. Re-review after the author pushes changes (and monitor until fully addressed)
 - `git fetch … --force`, look at the new commit, and **map each of your comments to a concrete
   change** in a small table (addressed / partially / missed). For a test written in answer to your
-  comment, check that it would fail if the bug came back (`claims.md`, *Protection*). Also check
+  comment, check that it would fail if the bug came back (`claims.md`, *Protection*); for a guard,
+  that it runs before the work it guards, not after the paid or destructive part. Also check
   thread replies (`gh api repos/.../pulls/<N>/comments`) — a reasoned "won't do" reply counts as
   addressed; a question back to you is yours to relay, not to silently resolve. A reply that points
   to a discussion elsewhere (a chat thread, a doc) gets read before you relay it: it usually
