@@ -31,13 +31,15 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   greeting: in a broad team or project channel it opens straight with `Here's a PR to <what>` (or a
   bare `PR to <what>`) and a sentence or two on what it does for the user (for a UX change, what
   they see, in the words someone in the channel would use: leave command and code names, UI
-  component labels, version tags and vendor names to the PR). When part of the work already shipped,
-  say in a word which part ("the form itself (UI component) is already merged"). Members of the
-  project pinged in that project's own channel need no reason: the channel is the reason, so the
-  last line is just "@Sam @Jordan could you please help review this one when you have some time?".
-  Anywhere else, the requested reviewer is pinged with a reason, never a bare `cc @<reviewer>`: a
-  thread reply under it ("@Sam added you as reviewer here", then why them), or a last line of the
-  message itself when the reason is short ("cc @Sam the comments you had already left there are now
+  component labels, version tags and vendor names to the PR; for several PRs too, never a walk
+  through every case, which the PRs explain). Something not in scope yet goes in a thread reply
+  under the request ("Heads up: this first step only …"). When part of the work already shipped, say
+  in a word which part ("the form itself (UI component) is already merged"). Members of the project
+  pinged in that project's own channel need no reason: the channel is the reason, so the last line
+  is just "@Sam @Jordan could you please help review this one when you have some time?". Anywhere
+  else, the requested reviewer is pinged with a reason, never a bare `cc @<reviewer>`: a thread
+  reply under it ("@Sam added you as reviewer here", then why them), or a last line of the message
+  itself when the reason is short ("cc @Sam the comments you had already left there are now
   addressed!"). Someone stepping in for an absent reviewer is doing a favor: ask for their help with
   the reason first ("since Sam is out today, could you help out by reviewing this one?", not "help
   me review", which sounds like a joint review), and leave that you added them as a trailing fact. A
@@ -185,15 +187,17 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   you're right. State your part, ask your question, let them own theirs. If the gap you spotted
   matters, it surfaces on their side or comes up when they ask. When your design touches their work,
   suggest where it could fit and ask where they see it ("I think your X could be …, but I'm curious
-  to see where you think it fits"), instead of placing it for them. A heads-up to the owner about
-  work near theirs says how the two relate ("I know you have plans to look more closely at X;
-  these are just quick wins in the meantime") and stops: don't invite them to report a conflict
-  you don't expect, and don't describe how they'll approach their part (what you'd guess it is,
-  how big a change), since that's theirs to decide. With a vendor whose system fails, ask why, with
-  your guess as a yes/no ("Is it because …?"), and what you'd like it to tell you; don't ask them
-  to decide how our product should handle it. Asking a vendor for something new, name the call and
-  what you'd like it to say, and leave the design to them: no sketched fields or values, and no
-  "so we can …".
+  to see where you think it fits"), instead of placing it for them. That holds while the placement
+  is theirs to choose; when the shape they have can't serve something already decided, be suggestive
+  instead: open with the concrete alternative as a "Could …?" ask, say why the current one won't
+  work, then what it needs. A heads-up to the owner about work near theirs says how the two relate
+  ("I know you have plans to look more closely at X; these are just quick wins in the meantime") and
+  stops: don't invite them to report a conflict you don't expect, and don't describe how they'll
+  approach their part (what you'd guess it is, how big a change), since that's theirs to decide.
+  With a vendor whose system fails, ask why, with your guess as a yes/no ("Is it because …?"), and
+  what you'd like it to tell you; don't ask them to decide how our product should handle it. Asking
+  a vendor for something new, name the call and what you'd like it to say, and leave the design to
+  them: no sketched fields or values, and no "so we can …".
 - **A heads-up about shipped work opens with what it was for**, then the result: "I wanted to cut
   down how long X takes, so I merged …", before "it came out about 2x faster".
 - **When two things relate, say precisely how.** "overlap but aren't the same" beats "you get both".
