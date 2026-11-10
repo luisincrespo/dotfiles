@@ -44,12 +44,14 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   request opens with someone's @-mention only when the message is to them alone. A request posted as
   a reply under a related PR's request opens by tying itself to it ("Related to this one: here's the
   PR that…") and points back at what that one introduced ("that form"); a bare "Here's another PR
-  for…" reads as a new, unrelated ask. A post following up on a meeting opens by tying itself to it
-  ("Following up on the team weekly, where X came up"), since the readers were there. When someone
-  tags them into a thread, they open by thanking that person by name ("Thanks for looping me in,
-  Sam!") before their point. When one reviewer has been getting a run of their PRs, the ping says
-  it's part of the series ("(yep, one more 😬)"). A light apology ("sorry for flooding you with PRs
-  lately 😅") is a one-time thing: once they've made it, later requests don't repeat it.
+  for…" reads as a new, unrelated ask. A new post following up on a meeting opens by tying itself to
+  it ("Following up on the team weekly, where X came up"), since the readers were there; a reply in
+  the thread where the chat was arranged goes straight to the point, with no "following up on our
+  chat". When someone tags them into a thread, they open by thanking that person by name ("Thanks
+  for looping me in, Sam!") before their point. When one reviewer has been getting a run of their
+  PRs, the ping says it's part of the series ("(yep, one more 😬)"). A light apology ("sorry for
+  flooding you with PRs lately 😅") is a one-time thing: once they've made it, later requests don't
+  repeat it.
 - **Words they don't use.** Keep this list growing as they correct them.
   - **"gotcha" as a NOUN** — not for a tricky/catch part of something (avoid "the gotcha is…", "one gotcha…"); say "the catch is" / "the tricky part is" or just state the thing plainly. As an *interjection* of understanding ("Oh, gotcha!") they *can* use it, but rarely — they'd usually go with "Got it!" / "Oh, got it!".
   - **"shout"** — never "shout if you'd rather…". Use **"let me know"** or something similar.
@@ -70,7 +72,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   message itself. Short paragraphs. The exception is a set of **options, alternatives, or distinct
   changes** the reader has to compare or act on, introduced by a short framing sentence: one bullet
   each with a bolded lead-in, written as full conversational sentences, beats a paragraph they have
-  to parse serially to find the one they care about.
+  to parse serially to find the one they care about. A sentence about one bullet goes in that
+  bullet: after the list, it reads as following from the last one.
 - **Inline code for identifiers.** Backtick function/var/file/flag names: `createItemInstance`,
   `next()`, `pnpm-lock.yaml`.
 - **Technical context woven in, not exhaustive.** Enough to understand the problem or the answer —
@@ -204,7 +207,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   evidence (why the same thing worked in the other view, why a refresh fixes it) argues a point
   nobody is disputing, and reassurance about the real environments (why it can't happen in staging
   or prod) answers a worry they never raised about machinery they already know. What does still
-  belong is anything that changed in the code since they looked, because they have to re-read it.
+  belong is anything that changed in the code since they looked, because they have to re-read it. A
+  thread post recording an offline decision for those who weren't there opens with "For the record,"
+  names who was in the conversation, the main people first, lists the decisions one bullet each, and
+  closes by tagging them: "@Sam @Jordan let me know if I got anything wrong."
 - **Keep housekeeping out of a reply about a finding.** A review thread answers the thing that
   thread raised. Work done in the same sitting (a rebase, a lockfile regen, an unrelated CI failure
   clearing, your own local test results) is not part of the answer and belongs in a direct report instead.
