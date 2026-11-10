@@ -131,12 +131,14 @@ What actually recurs here:
 - **A gate Step 2 got wrong** — the repo's real lint/test/build invocation, a bundled command whose parts shouldn't be re-run after it, a package manager the fallbacks don't cover.
 - **A finding the user waved off** — something flagged that this codebase does deliberately. Record it so the next run doesn't re-raise it.
 - **A pass that produced noise** instead of findings, or one that keeps earning its place.
+- **A fix the loop kept making** that the code could have been written right for in the first place.
 
 Route by **portability**, which decides the file:
 - **Repo- or employer-specific mechanics** (the actual command, a nested pipeline, a host) → `verification_addenda` or another key in `~/.agents/local/config.json`. This skill travels between jobs; a build command naming a private package doesn't belong in it.
 - **A procedure that recurs on one project** → a project skill (global rule 13).
 - **A convention that's the user's own taste** (they corrected something the review let through, or waved off something it flagged as theirs) → `passes/personal-conventions.md`, the personal layer, rather than the shared passes.
-- **A lesson that would hold at any job** → the relevant section of this skill, or, when it's about a check itself, its file in `passes/`. `pr-review` reads those too, so word the lesson for both: what the check looks for, not what happens to the finding here.
+- **A lesson that would hold at any job** → the relevant section of this skill, or, when it's about a check itself, its file in `passes/`. `pr-review` reads those too, so word the lesson for both: what the check looks for, not what happens to the finding here. A changed pass means checking the `write-code` principle that cites it still agrees (`CLAUDE.md`).
+- **A fix the code should have been written right for**, at the level of a principle rather than a convention (a convention goes to `personal-conventions.md`, above) → `../write-code/refs/principles.md`: a sharper principle, or a new one citing the pass that caught it.
 - **A durable one-off fact** → a memory, not a rule.
 
 **Under `deliver`** (`--task-slug` set): don't edit a skill here. Hand the lesson up with the batch — `deliver`'s end-of-run reflection owns the routing, and two skills acting on one lesson records it twice.

@@ -32,5 +32,6 @@ supplies that guidance, the way the UX pass reads a project's design guidance.
 
 ## Kept in step with write-code
 
-Each principle in `../write-code/refs/principles.md` cites the pass that checks it in depth.
-Changing a pass means checking that principle still says the same thing, and the reverse.
+A principle in `../write-code/refs/principles.md` that cites a pass is that pass's rule in a
+sentence. Changing a pass means checking the principle citing it still says the same thing, and
+the reverse.

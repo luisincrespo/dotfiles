@@ -110,7 +110,8 @@ replacing those files; nothing else needs editing.
 | `skills/voice/refs/principles.md` | How you write. `voice` drafts PR descriptions, review comments and messages in it |
 | `skills/voice/refs/examples-*.md` | Real messages of yours, the voice's ground truth. Private by nature, so they only ever live in the private companion |
 | `skills/pr-review/refs/style.md` | How you review: what's worth a comment, where comments go, how they read, how drafts are shown to you |
-| `skills/self-review/passes/personal-conventions.md` | Your code conventions beyond what the rules and each repo's `CLAUDE.md` say |
+| `skills/write-code/refs/principles.md` | How you want code written, a line per principle, each pointing at the review pass that checks it |
+| `skills/self-review/passes/personal-conventions.md` | Your code conventions beyond what the rules and each repo's `CLAUDE.md` say, grouped by stack |
 | `tools/claude/settings.stable.json`, `tools/claude/global.stable.json` | Your Claude Code preferences |
 
 `zsh/` and `cmux/` document one person's shell and terminal; nothing reads them, so take or leave

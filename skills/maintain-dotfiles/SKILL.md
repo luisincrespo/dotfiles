@@ -173,6 +173,8 @@ Twice now a skill has landed referencing something that did not exist. Before co
 - a new config key the skill reads → is it in `local/config.example.json`?
 - a referenced path, script or sibling skill → does it exist at that path?
 - a renamed heading or moved file → did every link and doc reference follow?
+- a changed review pass, or a changed `write-code` principle → does the other one still say the
+  same thing? Each principle cites its pass, so the two drift apart quietly.
 
 Complete it, or say why you left it.
 

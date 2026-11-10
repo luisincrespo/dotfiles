@@ -129,6 +129,7 @@ every other agent for the second, and there is one file behind both.
 |---|---|
 | `deliver` | Conductor for a whole task: understand → plan → execute → verify → open → merge → clean up |
 | `understand-task` | Builds a grounded brief from a ticket or ask, before any code is written |
+| `write-code` | Writes code to your principles and conventions, and to the review passes that will check it |
 | `self-review` | Runs the repo's gates over your own diff, then composes the review passes |
 | `pr-open` | Opens one MR/PR following your conventions (title, template, ready unless it isn't) |
 | `pr-babysit` | Polls an open MR/PR toward merge-ready: sync, CI, comments, SonarQube |
