@@ -120,7 +120,7 @@ round.
 Apply `passes/conventions.md` to the diff, the repo's `REVIEW.md` included: it lists what a reviewer here will flag, so a miss caught now is one they don't have to raise. Flag anything off as a fix-now or batch item.
 
 ## Output
-When the loop settles, report: gates status (green/what's red), what you ran it against (or why you couldn't), what you fixed, and the batch (unresolved items for the user). If `--task-slug` was set, fold unresolved items into the task ledger's notes. This stage does **not** commit, push, or open a PR — it leaves a clean, reviewed diff for the next stage (`pr-open`).
+When the loop settles, report: gates status (green/what's red), what you ran it against (or why you couldn't), what you fixed, and the batch (unresolved items for the user), with the UX pass's designer verdict when it ran. If `--task-slug` was set, fold unresolved items into the task ledger's notes. This stage does **not** commit, push, or open a PR — it leaves a clean, reviewed diff for the next stage (`pr-open`).
 
 ## Step 6 — Capture learnings (self-educate)
 After reporting, take one beat: did anything about *how this review ran* warrant a durable edit? Never invent one — "nothing to capture" is the common and correct answer, said in a line and moved past.

@@ -34,6 +34,13 @@
     "notes": []
   },
 
+  "//ux_guidance": "Per repo, keyed by 'github/<owner>/<repo>': design and copy guidance kept outside the repo, to check a UI change against (a design doc, a style guide page, a copy guide). Each source names where it lives, what it covers (design, copy, components) and, optionally, the paths it applies to. Guidance the repo itself points reviewers at, from a REVIEW.md or CLAUDE.md or as one of its own skills, needs no entry.",
+  "ux_guidance": {
+    "github/acme-org/example-repo": [
+      {"source": "<url or path>", "covers": "<design | copy | components>", "paths": ["<glob it applies to>"]}
+    ]
+  },
+
   "//voice_inbox": "Where a copy of the voice skill that can't write to the repos (one uploaded to a chat app) saves a correction, for a session that can write to fold into the corpus. Holds the app, the destination, and how an entry is written and marked folded in. Unset, such a copy hands the correction back as a block to paste into a coding session instead.",
   "voice_inbox": {
     "app": "<connector or app name>",
