@@ -135,17 +135,16 @@ they need from the PR: it's usually a use of their own that builds on it, and th
 review's main lens. Each pass file says when it applies; read it when it's in play and apply it to
 the diff.
 
-- **Whatever the focus, when they apply**: `design.md`, `ux.md`, `observability.md`,
-  `customer-data.md`, `docs.md`, `cost.md` and `accessibility.md`, plus
+- **Whatever the focus, every pass that applies**: each file in `../self-review/passes/` and its
+  `stack/` folder with a *When it applies* section, by that section's own test, plus
   `conventions.md` on every PR. Their findings join the rounds like any other. A cost comment says
-  what grows and what it costs; an observability comment, the question nobody
-  could answer or the reader that breaks; a customer-data comment, the data, where it lands and what
-  fails; a docs comment, what to cut and where the reader already gets it. A design or UX comment is a suggestion that names its cost, or a question when it rests on
+  what grows and what it costs; an observability comment, the question nobody could answer or the
+  reader that breaks; a customer-data comment, the data, where it lands and what fails; a docs
+  comment, what to cut and where the reader already gets it; a stack comment, the doc page it rests
+  on. A design or UX comment is a suggestion that names its cost, or a question when it rests on
   taste, per `refs/style.md` on product and UX concerns; a redesign the PR shouldn't carry goes to
   the ledger as a follow-up. The UX pass's designer verdict goes to the user with the first round,
   not into a draft: whether to bring a designer in, and how, is theirs to decide.
-- **Lenses to offer**: `react.md` (effects, state identity, render purity, memoization, hooks,
-  component API, against react.dev for the repo's version).
 - **Reuse / simplification / correctness** — does it reinvent an existing util/pattern? Hold your
   own suggested code to the same bar: when it would repeat a calculation other callers already
   inline, propose the one shared function they'd all call, not another copy.

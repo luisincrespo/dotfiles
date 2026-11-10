@@ -45,7 +45,7 @@ When the diff adds or changes a React component or hook. None → it doesn't app
   costs something nameable. With the compiler covering the file, its docs recommend relying on it
   for new code, keeping `useMemo`/`useCallback` as an escape hatch (an effect's dependency, say),
   and testing before removing existing memoization. What a re-render costs under load is
-  [`cost.md`](cost.md)'s question.
+  [`cost.md`](../cost.md)'s question.
 - **Rules of Hooks**: hooks called unconditionally, at the top level, from components or hooks.
   `use` is the exception: it can be called in conditionals and loops. The rest of the
   [Rules of React](https://react.dev/reference/rules) too: components and hooks pure, props and
