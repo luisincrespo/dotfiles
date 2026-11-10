@@ -235,9 +235,10 @@ next editor deleting a rule as paranoia. Cut those and the imperative survives w
 which is changing impact, not trimming.
 
 **Cutting a step from the pipeline needs evidence, not a hunch.** A step earns removal when it
-reliably produces nothing — `self-review` Step 6 already records passes that come back empty — or
-when it re-does what an earlier stage already established. "This seems slow" is not enough; a step
-that catches one bad merge in twenty is worth its time on the other nineteen.
+reliably produces nothing — the pass log, `~/.agents/local/state/review-passes.jsonl`, records for
+each review which passes applied and what each found and kept — or when it re-does what an earlier
+stage already established. "This seems slow" is not enough; a step that catches one bad merge in
+twenty is worth its time on the other nineteen.
 
 **Check nothing was lost.** Where `second_opinion_review` covers the repo (its own entry, else `*`;
 see `self-review`'s `passes/second-opinion.md`), hand it the old and new text and ask for any

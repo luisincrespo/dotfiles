@@ -259,6 +259,9 @@ that doesn't compile costs the author a CI round and the comment its credibility
 - Edit a posted comment: `gh api -X PATCH "repos/.../pulls/comments/<comment_id>" -f body="$(cat …)"`.
 - Capture each returned comment id — you'll need it to edit, and to link comments to each other
   (`…/pull/<N>#discussion_r<comment_id>`).
+- After the first round goes out, add this review's line to the pass log, in the shape
+  `self-review`'s Output gives, with `"skill": "pr-review"` and `kept` counting the findings that
+  went out as comments. Later rounds and re-reviews add none.
 
 ### 6. Re-review after the author pushes changes (and monitor until fully addressed)
 - `git fetch … --force`, look at the new commit, and **map each of your comments to a concrete
