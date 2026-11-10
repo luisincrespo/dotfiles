@@ -85,8 +85,9 @@ sound like the user typed it, which the `voice` skill's ground truth is for.
   "to match the convention".
 - For non-trivial suggestions, include a **code example as a proper fenced block** (not inline),
   using the PR's own variable/type names so it drops in. When a finding hinges on two
-  conditions/values that must agree, show both literally side by side: naming them abstractly ("the
-  predicate", "the same condition") makes the reader reconstruct them.
+  conditions/values that must agree, or two parts of the change that contradict each other (a
+  fixture and the spec it's graded by), quote both, each as its own bullet: naming them abstractly
+  ("the predicate", "the facts definition") makes the reader reconstruct them.
 - Every comment must **stand alone**. Don't say "per the note above": inline comments have no
   reliable order, so **link** to the other comment via its `#discussion_r<id>` URL instead. It also
   means no vocabulary you coined while working the problem out: name the real symbols ("the
@@ -99,7 +100,8 @@ sound like the user typed it, which the `voice` skill's ground truth is for.
   JSDoc?") rather than assert a change. When a finding rests on an assumption about intent or
   coupling you haven't confirmed, default to a question, not an assertion ("Is this meant to…? If
   so…"). That includes removing something that looks unused: ask "Do we need X?" before "Could we
-  drop X?".
+  drop X?", and a gap the repo's other code shares (tests other scripts also leave out of CI): ask
+  whether it's left out on purpose rather than asking for the change.
 - On a product or UX concern, assume the author may already have design input: ask to revisit and
   say which option the user prefers, rather than asking them to loop someone in. When accepting a
   decision, credit its reasoning, not who proposed it.
