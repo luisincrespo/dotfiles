@@ -190,7 +190,9 @@ unlike most findings, and the comment says how it's exploited.
 
 ### 3.5 Second opinion, different model
 Follow `second-opinion.md`, after your own pass and before drafting. Here the payload is:
-- `gh pr diff <N>`, which is already relative to the merge-base, so it carries only this PR;
+- `git diff origin/<base>...refs/pr-review/<N>`, relative to the merge-base so it carries only this
+  PR, and from the same ref as the files: `gh pr diff` reads the live head, which a push mid-review
+  moves away from them;
 - the full text of each changed file from `refs/pr-review/<N>`;
 - the PR's title and description, so it can judge the change against what it claims to do.
 
