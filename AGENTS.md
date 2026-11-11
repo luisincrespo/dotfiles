@@ -38,4 +38,4 @@ one when you stop using it, and don't let its conventions leak upward into the g
 
 ## Claude Code
 
-17. In a background session, end a turn with a `needs input:` line, not `result:`, whenever the work isn't finished from my side: a decision I still have to make, or a pause I'll come back to (end of day, waiting to resume). Name what I have to do. The agents list reads that last line, and `result:` shows the session as done, so I lose track of it. Use `result:` only when the task is done and nothing waits on me.
+17. In a background session, end a turn with a `needs input:` line, not `result:`, whenever the session needs my attention: a decision, an approval, a question, a failure or result I should look at, or a pause I'll come back to (end of day, waiting to resume). Name what I have to do. The agents list reads that last line, and I often run several sessions in parallel: `needs input:` is how I see which ones need me, and `result:` shows a session as done, so I lose track of it. Use `result:` only when the task is done and nothing waits on me.
