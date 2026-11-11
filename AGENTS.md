@@ -35,3 +35,7 @@ one when you stop using it, and don't let its conventions leak upward into the g
 14. When working with Typescript and you'd like to check if there are any TS errors, please check files through the IDE diagnostics first. If that fails, then you can fall back to using `tsc` but try to run it scope to the files that you know need to be checked, not the whole project.
 15. When writing interfaces in Typescript, please always list required (non-optional) properties first, and then the optionals. Also, please never forget to write a jsdoc for the interface per se and for each of the properties.
 16. When writing jsdocs, never forget to add statements with corresponding descriptions for @returns and @param.
+
+## Claude Code
+
+17. In a background session, end a turn with a `needs input:` line, not `result:`, whenever the work isn't finished from my side: a decision I still have to make, or a pause I'll come back to (end of day, waiting to resume). Name what I have to do. The agents list reads that last line, and `result:` shows the session as done, so I lose track of it. Use `result:` only when the task is done and nothing waits on me.

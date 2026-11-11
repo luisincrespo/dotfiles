@@ -43,6 +43,10 @@ Code, say this skill drives Claude Code's loop, cron and messaging tools, and st
    - the next step tomorrow;
    - what was stopped, in a line.
 
+   End with a `needs input:` line saying what brings it back ("say you're back to resume"), never
+   `result:`. The agents list reads that last line, and `result:` shows the session as done, so a
+   paused one drops out of sight.
+
 Then wait. Until the user says they're back, a task notification or a message from another
 session changes nothing: note it for the morning, re-arm nothing, and reply in a line at most.
 
