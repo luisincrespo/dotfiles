@@ -27,6 +27,9 @@ a comment, applying a fix, or repeating it in a commit message or PR description
   of fixing it. Then follow it to whoever else can supply it: a framework hook that reads request
   input before the handler's result lets the caller set the value. A fix offered in passing ("if
   not, we could…") gets the same check as the main ask.
+- **Untested** ("nothing tests X"): an absence claim. Search the test file for calls that set up X's
+  inputs, not for test names: a `^test(` or `it(` grep skips parameterized `test.each(...)`
+  blocks.
 - **Disagreement** ("these two checks disagree on X"): confirm the same value reaches both by
   tracing its path between them. Storage that renames it, or a step that rewrites or fills it in,
   makes the gap unreachable, and "aligning" the checks then only moves where an edge case fails.
