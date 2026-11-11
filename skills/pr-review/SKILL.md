@@ -121,13 +121,14 @@ the next review goes better.
   pattern is often where the best comments come from.
 - If the PR is part of a stack, read every PR in it before claiming something is absent or won't
   exist — grep all branches, not just this one — and check every finding against the top of the
-  stack before drafting: a later PR may already fix it, or move the line it anchors on. Read the
-  existing review threads first (`gh api repos/…/pulls/<N>/comments`): dedupe against them, and note which findings other
-  reviewers already own. Before replying that one of those findings is wrong, check *when* it was
-  made against when the code it describes appeared (`git log -S`, or the per-commit diff). A finding
-  that reads as mistaken against the current file is usually one the author already fixed — a commit
-  named for review updates is the tell — and telling a reviewer they misread costs the review its
-  credibility.
+  stack before drafting: a later PR may already fix it, or move the line it anchors on. An open PR
+  outside the stack that rewrites the same code (one the project page or ticket names) gets the same
+  check. Read the existing review threads first (`gh api repos/…/pulls/<N>/comments`): dedupe
+  against them, and note which findings other reviewers already own. Before replying that one of
+  those findings is wrong, check *when* it was made against when the code it describes appeared
+  (`git log -S`, or the per-commit diff). A finding that reads as mistaken against the current file
+  is usually one the author already fixed — a commit named for review updates is the tell — and
+  telling a reviewer they misread costs the review its credibility.
 
 ### 2. Decide the focus
 Ask the user what to focus on if they didn't say. When they aren't a requested reviewer, ask what
