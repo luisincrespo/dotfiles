@@ -175,6 +175,8 @@ Twice now a skill has landed referencing something that did not exist. Before co
 - a renamed heading or moved file → did every link and doc reference follow?
 - a changed review pass, or a changed `write-code` principle → does the other one still say the
   same thing? Each principle cites its pass, so the two drift apart quietly.
+- a new list item → does it start where the item before it ends? Twice an edit cut an existing
+  item in two, leaving that item's last sentence under the new item's heading: move it back.
 
 Complete it, or say why you left it.
 
