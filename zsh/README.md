@@ -103,7 +103,9 @@ fi
 and, anywhere in the file, make a bare `claude` open the agents dashboard even inside cmux. It
 can't be a plain `claude()` here, because cmux replaces that with its own at the first prompt; a
 one-shot `precmd` hook runs after cmux's and wraps it instead (the why is in
-[`cmux/README.md`](../cmux/README.md)):
+[`cmux/README.md`](../cmux/README.md)). It opens from `~/code`, or wherever your checkouts live,
+once you've trusted that folder: sessions start where the dashboard opens, and Claude Code doesn't
+save trust for your home folder, so a session started there can't restart itself:
 
 ```shell
 autoload -Uz add-zsh-hook
@@ -115,7 +117,9 @@ _claude_default_to_agents() {
   else
     _claude_launch() { command claude "$@"; }
   fi
-  claude() { if (( $# == 0 )); then _claude_launch agents; else _claude_launch "$@"; fi }
+  claude() {
+    if (( $# == 0 )); then (cd ~/code && _claude_launch agents); else _claude_launch "$@"; fi
+  }
 }
 add-zsh-hook precmd _claude_default_to_agents
 ```
