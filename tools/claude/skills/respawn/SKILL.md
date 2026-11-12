@@ -106,8 +106,9 @@ does. The helper's last line says how it went:
   6. Carry on with the task in progress.
 
   Delete the note, then report in one line: the version from the notice, and what you re-armed.
-  When the task continues, say so in that same message and name what's next: a pickup report on
-  its own reads as finished work, and the job list showed the session completed (Nov 12).
+  If the user's agents list then shows the session as completed, check `claude agents --json` and
+  the job's `state.json` before blaming your messages: after a manual respawn (2.1.323, Nov 12)
+  the list said completed while both said `working`, and the classifier's timeline never left it.
 - **`RESPAWN FAILED` or `RESPAWN UNCONFIRMED`**: you're still the old process, and everything
   you had running still is. Re-arm nothing. Quote the line, keep the note for a retry, and stop;
   for a "not trusted" refusal, give the user the manual route from Step 0.
