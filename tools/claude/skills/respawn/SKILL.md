@@ -60,11 +60,13 @@ moved into a repo worktree was still refused, Oct 30). The session's project fol
 `~/.claude/projects/` names the launch directory (`-Users-<name>` is home). Sent from a background
 command, `claude respawn` refuses a session in a workspace Claude Code doesn't trust ("Workspace
 not trusted", seen Oct 26 for a home-launched session). Read whether it's trusted from
-`~/.claude.json`, `projects["<launch dir>"].hasTrustDialogAccepted`, rather than assuming a
-folder is or isn't: the user can accept trust for home. For an untrusted one, skip Step 2: write the
-handoff note, then tell the user to run `claude respawn <id>` from an interactive terminal in that
-directory and, once it's back, to message the session "pick up from the handoff note". A restart
-started that way has no helper to wake it, so that message is what starts Step 3.
+`~/.claude.json`, `projects["<launch dir>"].hasTrustDialogAccepted`, rather than assuming. Home
+never is: Claude Code doesn't save trust for it (accepted Nov 12, still false after the session
+exited), so don't suggest accepting it. For an untrusted one, skip Step 2: write the handoff note,
+then tell the user to run `claude respawn <id>` from an interactive terminal in that directory and,
+once it's back, to message the session "pick up from the handoff note". A restart started that way
+has no helper to wake it, so that message is what starts Step 3. A restart keeps the launch folder,
+so such a session needs this route every time; only one started from a trusted folder avoids it.
 
 ## Step 1 — Write the handoff note
 
