@@ -34,7 +34,7 @@ The skill's own folder is the base dir for the relative paths below.
 | `CronCreate` jobs, fixed-interval `/loop` | Restored | Check `CronList` after; recreate only a missing one |
 | Monitors | Stop. The new process gets a `stopped` notice, which starts no turn; it also lists monitors that had already expired (2.1.319) | Re-arm only the ones the note lists |
 | Self-paced `/loop` wakeup | Restored (2.1.314, 2.1.318), as its one-shot cron under a new ID. One whose fire time passed while no process ran the session never fires, and the loop stays stopped until a message arrives (2.1.321) | Check `CronList`; reschedule only if it's missing, or the loop fires twice |
-| Permission mode | Kept through the helper (auto stayed auto, 2.1.314 to 2.1.321). After a manual `claude respawn` from a terminal it came back in plan mode though the session was in auto and the default is auto (2.1.322), which blocks the re-arms | Check the mode first. If it's plan, do the read-only checks, then tell the user it came back in plan mode and ask them to switch it back: only they can, and the re-arms wait until then |
+| Permission mode | Kept through the helper (auto stayed auto, 2.1.314 to 2.1.321). After a manual `claude respawn` from a terminal it came back in plan mode though the session was in auto and the default is auto (2.1.322), which blocks the re-arms; on 2.1.323 a manual respawn kept auto | Check the mode first. If it's plan, do the read-only checks, then tell the user it came back in plan mode and ask them to switch it back: only they can, and the re-arms wait until then |
 | Workflows | Continue only when relaunched | Relaunch with `resumeFromRunId` |
 | The turn in progress | Cut off | Record the next step |
 
