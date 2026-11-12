@@ -58,8 +58,10 @@ Then check where the session was launched: the trust check uses that directory, 
 `cwd` in `claude agents --json`, which an `EnterWorktree` changes (a session launched in home and
 moved into a repo worktree was still refused, Oct 30). The session's project folder under
 `~/.claude/projects/` names the launch directory (`-Users-<name>` is home). Sent from a background
-command, `claude respawn` refuses a session in a workspace Claude Code doesn't trust, and the home
-directory is one ("Workspace not trusted", seen Oct 26). For such a session, skip Step 2: write the
+command, `claude respawn` refuses a session in a workspace Claude Code doesn't trust ("Workspace
+not trusted", seen Oct 26 for a home-launched session). Read whether it's trusted from
+`~/.claude.json`, `projects["<launch dir>"].hasTrustDialogAccepted`, rather than assuming a
+folder is or isn't: the user can accept trust for home. For an untrusted one, skip Step 2: write the
 handoff note, then tell the user to run `claude respawn <id>` from an interactive terminal in that
 directory and, once it's back, to message the session "pick up from the handoff note". A restart
 started that way has no helper to wake it, so that message is what starts Step 3.
@@ -104,6 +106,8 @@ does. The helper's last line says how it went:
   6. Carry on with the task in progress.
 
   Delete the note, then report in one line: the version from the notice, and what you re-armed.
+  When the task continues, say so in that same message and name what's next: a pickup report on
+  its own reads as finished work, and the job list showed the session completed (Nov 12).
 - **`RESPAWN FAILED` or `RESPAWN UNCONFIRMED`**: you're still the old process, and everything
   you had running still is. Re-arm nothing. Quote the line, keep the note for a retry, and stop;
   for a "not trusted" refusal, give the user the manual route from Step 0.
@@ -137,7 +141,8 @@ once it has reported.
 1. **List the candidates**: the rows of `claude agents --json` with `kind: "background"`, minus this
    session (its `id` is `$CLAUDE_JOB_DIR`'s basename, when that's set). Leave out any the JSON
    reports as idle: the supervisor moves those by itself.
-2. **Sort out the ones in an untrusted workspace**: a `cwd` in the home directory, as in Step 0.
+2. **Sort out the ones in an untrusted workspace**: a launch directory whose trust flag isn't set,
+   read as in Step 0.
    They still need asking, so they write their handoff note, but their restart is yours to run.
 3. **Show the plan and wait for a go-ahead**: each session to be asked, and for the untrusted
    ones, the `claude respawn <id>` to run from an interactive terminal in its `cwd` once it has
