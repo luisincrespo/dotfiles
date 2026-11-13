@@ -53,9 +53,10 @@ a comment, applying a fix, or repeating it in a commit message or PR description
 - **Protection** ("this test guards the fix"): check that it would fail if the bug came back, by
   walking the fixture through the broken version of the code. A bot's "this proves X" is a claim,
   not evidence.
-- **Second-hand facts** (a shutdown, a rollout, a date you took from a note, a memory or a
-  summary): read the source before repeating it. A summary turns "scheduled for Thursday" into
-  "done on Thursday".
+- **Second-hand facts** (a shutdown, a rollout, a date you took from a note, a memory, a summary,
+  another session's report, or your own read of live state such as a flag from earlier in the
+  session): read the source before repeating it. A summary turns "scheduled for Thursday" into
+  "done on Thursday", and live state changes while you work.
 
 A caveat you notice in your own suggestion or fix gets said, even when it looks minor.
 
