@@ -155,9 +155,11 @@ once it has reported.
 
 1. **List the candidates**: the rows of `claude agents --json` with `kind: "background"`, minus this
    session (its `id` is `$CLAUDE_JOB_DIR`'s basename, when that's set). Leave out any the JSON
-   reports as idle, which the supervisor moves by itself, and any already on the installed version
-   (its job's `state.json` `cliVersion` matches `claude --version`): asking one of those cuts off
-   its work for nothing.
+   reports as idle, which the supervisor moves by itself, and any already on the installed version:
+   asking one of those cuts off its work for nothing. Read the version from its process, not its
+   job's `state.json`: `cliVersion` there isn't rewritten by a respawn (still 2.1.323 after a
+   confirmed restart onto 2.1.325, Nov 13). `lsof -p <pid> -a -d txt -Fn`, with the row's `pid`,
+   names the binary (`…/claude/versions/<version>`).
 2. **Sort out the ones in an untrusted workspace**, read as in Step 0. They take Step 2's waiting
    route, so the user runs `claude-catchup` once they're ready.
 3. **Show the plan and wait for a go-ahead**: each session to be asked, and whether `claude-catchup`
