@@ -5,7 +5,7 @@
 > its steps are the shared machinery, and this file is the taste. To review your own way, put your
 > version at this same path in your private companion repo (`install.sh` links it in place of this
 > one), or edit it in your fork. `pr-review`'s self-educate step keeps it current from your
-> corrections. When this file and the skill disagree on taste, this file wins.
+> corrections.
 
 ## What's worth a comment
 
@@ -96,12 +96,11 @@ sound like the user typed it, which the `voice` skill's ground truth is for.
   problem, say in one of them which you'd pick and link the other ("This is the one I'd go with: …
   so the X from [this comment] wouldn't be needed"). A conditional like "if we go this way" leaves
   them reading as two conflicting asks.
-- It's fine to ask a genuine question ("If there's always one per message, can you note that in the
-  JSDoc?") rather than assert a change. When a finding rests on an assumption about intent or
-  coupling you haven't confirmed, default to a question, not an assertion ("Is this meant to…? If
-  so…"). That includes removing something that looks unused: ask "Do we need X?" before "Could we
-  drop X?", and a gap the repo's other code shares (tests other scripts also leave out of CI): ask
-  whether it's left out on purpose rather than asking for the change.
+- When a finding rests on an assumption about intent or coupling you haven't confirmed, default to
+  a question, not an assertion ("Is this meant to…? If so…"). That includes removing something that
+  looks unused: ask "Do we need X?" before "Could we drop X?", and a gap the repo's other code
+  shares (tests other scripts also leave out of CI): ask whether it's left out on purpose rather
+  than asking for the change.
 - On a product or UX concern, assume the author may already have design input: ask to revisit and
   say which option the user prefers, rather than asking them to loop someone in. When accepting a
   decision, credit its reasoning, not who proposed it.

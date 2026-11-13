@@ -33,64 +33,60 @@ allowed-tools:
 
 # pr-review
 
-Reviews a PR in `<repo>` (see Config). The goal is a small set of
-high-signal comments, written so they read like the user wrote them, and
-**never posted without showing them to the user first.**
+Reviews a PR in `<repo>` (see Config). The goal is a small set of high-signal comments that read
+like the user wrote them.
 
-**Read `refs/style.md` before the first round.** It's the user's own review style: what's worth a
-comment, where comments go, how they read, and how drafts are shown to them. This file is the
+**Read `refs/style.md`, the user's own review style, before the first round.** This file is the
 shared machinery; that one is the personal layer, and where the two differ on taste, it wins.
 
 The checks themselves are shared with `self-review`, in its `passes/` folder
 (`../self-review/passes/` from this skill's). This file decides which run on someone else's PR and
 what their findings become.
 
-As you work, keep a light note of anything the user corrects (wording, calibration) or
-anything you had to dig to find out — Step 8 folds those back into this skill at the end so
-the next review goes better.
+As you work, keep a light note of anything the user corrects (wording, calibration) or anything
+you had to dig to find out: Step 8 folds those back in at the end.
 
 ## Config
 
 > **Local overrides.** If `~/.agents/local/config.json` exists, its keys override the defaults
-> below (schema: `~/.agents/local/config.example.json`). `config.json` is machine-local and never committed.
+> below (schema: `~/.agents/local/config.example.json`). `config.json` is machine-local and never
+> committed.
 
 - `<repo>`: resolve in this order, first hit wins — **most specific beats most general**:
   1. An owner/repo named in the invocation: a pasted PR URL (`github.com/<owner>/<repo>/pull/<N>`)
      or an explicit `--repo`.
   2. `<owner>/<repo>` derived from `git remote get-url origin` in the current directory.
   3. `pr_review_default_repo` — the last-resort fallback for when the cwd isn't a git repo (or has
-     no origin), **not** an override. Where you're standing beats a machine-wide default.
+     no origin), **not** an override.
 
   Then always pass the result explicitly as `--repo <repo>` so the review can't drift onto the
   wrong project mid-run.
 - **Review ledger**: `~/.claude/cache/pr-review/<repo-with-slashes-as-dashes>-<N>.json`, holding
-  `{"project_ref":null,"deferred_items":[]}`. An item takes the shape `deliver`'s task ledger uses —
-  `{summary, why_deferred, risk, suggested_owner}` — plus `evidence` (`file:line`, the test or
-  command that shows it) and any `options` the user named, so one settling procedure fits both.
+  `{"project_ref":null,"deferred_items":[]}`. An item takes the shape `deliver`'s task ledger
+  uses — `{summary, why_deferred, risk, suggested_owner}` — plus `evidence` (`file:line`, the test
+  or command that shows it) and any `options` the user named, so one settling procedure fits both.
 
 ## Hard rules (these are why the user uses this skill, not the built-in `/review`)
 
-1. **Always review the draft comments WITH the user before posting.** Present every
-   comment with its `file:line` placement and exact wording, in the same message that asks for
-   the go-ahead — repeat it rather than pointing back, since notification turns push earlier
-   drafts out of view. Wait for explicit go-ahead.
-   Iterate on wording/placement as long as they want. Posting prematurely is the worst failure mode.
-2. **Comments follow `refs/style.md`**, the user's review style: where they go, what's worth one,
-   and how it reads. It binds like these rules.
+1. **Always review the draft comments WITH the user before posting.** Present every comment with
+   its `file:line` placement and exact wording, in the same message that asks for the go-ahead —
+   repeat it rather than pointing back, since notification turns push earlier drafts out of view.
+   Wait for explicit go-ahead. Iterate on wording/placement as long as they want. Posting
+   prematurely is the worst failure mode.
+2. **Comments follow `refs/style.md`.** It binds like these rules.
 3. **Watch after posting, and approve at the end of the watch.** Approval is an outward-facing
    action, but posting a round is the go-ahead for the Step 6 loop: watch the PR, iterate as
    replies and pushes land, and approve once every comment on the PR is addressed, other
    reviewers' included, without asking first or each round. Outside that loop, approve only when
    the user asks. When the PR already has other requested reviewers, ask once, before the first
-   post, whether the user is approving or only helping: a helper comments but never approves,
-   and their watch ends when a requested reviewer approves or the PR merges.
+   post, whether the user is approving or only helping: a helper comments but never approves.
 
 ## Workflow
 
 ### 1. Gather context (do this thoroughly — it's what makes the review good)
 - **Read the repo's own review conventions before anything else**: the `CLAUDE.md` and
-  `REVIEW.md` files `conventions.md` names. Fetch each `REVIEW.md` from the PR's repo, the root one
-  and any in an ancestor directory of a changed file:
+  `REVIEW.md` files `conventions.md` names, the root one and any in an ancestor directory of a
+  changed file. Fetch each `REVIEW.md` from the PR's repo:
   `gh api repos/<repo>/contents/REVIEW.md --jq .content | base64 -d` (404 = the repo has none, move
   on). Treat it as **overriding this skill's review defaults**. Two consequences: if it names PR
   classes to skip and this PR is one, say so and stop rather than reviewing it; and if it marks a
@@ -112,8 +108,8 @@ the next review goes better.
   there.
 - `gh pr view <N> --repo <repo> --json title,body,author,headRefName,baseRefName,files,additions,deletions,state`
 - `gh pr diff <N> --repo <repo>`
-- Fetch the PR and read the **full files**, not just the diff — context outside the diff
-  matters: `git fetch origin pull/<N>/head:refs/pr-review/<N> --force`, then
+- Fetch the PR and read the **full files**, not just the diff:
+  `git fetch origin pull/<N>/head:refs/pr-review/<N> --force`, then
   `git show refs/pr-review/<N>:<path>`. A ref outside `refs/heads` never creates or overwrites a
   local branch, and `pull/<N>/head` also works for PRs from forks.
 - Read what the PR **depends on and mirrors**: the types it consumes (e.g. UI-kit prop
@@ -133,19 +129,18 @@ the next review goes better.
 ### 2. Decide the focus
 Ask the user what to focus on if they didn't say. When they aren't a requested reviewer, ask what
 they need from the PR: it's usually a use of their own that builds on it, and that becomes the
-review's main lens. Each pass file says when it applies; read it when it's in play and apply it to
-the diff.
+review's main lens.
 
 - **Whatever the focus, every pass that applies**: each file in `../self-review/passes/` and its
-  `stack/` folder with a *When it applies* section, by that section's own test, plus
-  `conventions.md` on every PR. Their findings join the rounds like any other. A cost comment says
-  what grows and what it costs; an observability comment, the question nobody could answer or the
-  reader that breaks; a customer-data comment, the data, where it lands and what fails; a docs
-  comment, what to cut and where the reader already gets it; a stack comment, the doc page it rests
-  on. A design or UX comment is a suggestion that names its cost, or a question when it rests on
-  taste, per `refs/style.md` on product and UX concerns; a redesign the PR shouldn't carry goes to
-  the ledger as a follow-up. The UX pass's designer verdict goes to the user with the first round,
-  not into a draft: whether to bring a designer in, and how, is theirs to decide.
+  `stack/` folder with a *When it applies* section, by that section's own test, read when it's in
+  play, plus `conventions.md` on every PR. Their findings join the rounds like any other. A cost
+  comment says what grows and what it costs; an observability comment, the question nobody could
+  answer or the reader that breaks; a customer-data comment, the data, where it lands and what
+  fails; a docs comment, what to cut and where the reader already gets it; a stack comment, the doc
+  page it rests on. A design or UX comment is a suggestion that names its cost, or a question when
+  it rests on taste, per `refs/style.md` on product and UX concerns; a redesign the PR shouldn't
+  carry goes to the ledger as a follow-up. The UX pass's designer verdict goes to the user with the
+  first round, not into a draft: whether to bring a designer in, and how, is theirs to decide.
 - **Reuse / simplification / correctness** — does it reinvent an existing util/pattern? Hold your
   own suggested code to the same bar: when it would repeat a calculation other callers already
   inline, propose the one shared function they'd all call, not another copy.
@@ -159,10 +154,9 @@ moment it leaves the PR — here, when the user moves one out in Step 4, or in a
 Written then, it survives a paused loop or a new session; held in context until the wrap-up, it
 doesn't.
 
-Findings that assert **absence**, **equivalence**, **redundancy**, **detectability** or
-**implementability**, that a type is free to tighten, or how an external engine behaves are where
-reviews go wrong: check each as `claims.md` says before drafting, not after the author pushes back.
-A caveat you notice in your own suggestion goes in your notes to the user even when it looks minor.
+Findings that make one of the claims `claims.md` lists are where reviews go wrong: check each as it
+says before drafting, not after the author pushes back. A caveat in your own suggestion goes in
+your notes to the user.
 
 **A correctness sweep alongside your own.** After your own pass and before drafting, run
 `Skill(code-review)` (bundled with Claude Code) on the PR's diff as a revision range over the Step 1
@@ -190,50 +184,48 @@ unlike most findings, and the comment says how it's exploited.
 
 ### 3.5 Second opinion, different model
 Follow `second-opinion.md`, after your own pass and before drafting. Here the payload is:
-- `git diff origin/<base>...refs/pr-review/<N>`, relative to the merge-base so it carries only this
-  PR, and from the same ref as the files: `gh pr diff` reads the live head, which a push mid-review
-  moves away from them;
+- `git diff origin/<base>...refs/pr-review/<N>`, from the same ref as the files: `gh pr diff` reads
+  the live head, which a push mid-review moves away from them;
 - the full text of each changed file from `refs/pr-review/<N>`;
 - the PR's title and description, so it can judge the change against what it claims to do.
 
-What comes back are candidates, not comments, checked like your own and deduped against the existing
-threads too. In the Step 4 rounds, name the model that ran, and mark the findings only it raised so
-the user can weigh them; the posted comment never says so. It reviews; it never posts or replies.
+What comes back are candidates, not comments, checked like your own and deduped against the
+existing threads too. In the Step 4 rounds, name the model that ran, and mark the findings only it
+raised so the user can weigh them; the posted comment never says so. It reviews; it never posts or
+replies.
 
 On a re-review (Step 6), re-run it only for a push that substantially changes the code, up to the
 entry's `max_rounds`. A one-line fix for one of your comments doesn't need a second pair of eyes.
 
 ### 3.6 Run it end to end, when it's worth it
-Reading the diff tells you what the code says; running it tells you what it does. Most PRs don't
-need it: when the change is logic its unit tests already pin down, CI running them is the
-verification. Run it only when **both** hold:
+Most PRs don't need it: when the change is logic its unit tests already pin down, CI running them
+is the verification. Run it only when **both** hold:
 
 - **It's worth it** — a substantial UI change, or a behavior change built on an involved
   interaction: multi-step flows, state carried across screens, drag and drop, focus and keyboard
   handling, anything whose correctness lives in how the pieces combine rather than in one function
   a test can call.
-- **It can run locally** — the repo has a dev setup you can bring up (`Skill(run)`, the repo's own
-  local-dev skill, its `local_e2e` entry in local config) without infra you lack.
+- **It can run locally** — the repo has a dev setup you can bring up as `exercise.md` says, without
+  infra you lack.
 
 Either fails → skip it, and mention that in one line only if the user might expect a run.
 
 When you do run it:
 - **Check it out in its own worktree**, never by switching the user's checkout — they may have
   work in flight there. Commit and push nothing to the author's branch.
-- **Run it as `exercise.md` says**: the change works as intended, and the neighbouring case still
-  does. A finding you reproduced is one the author can't wave off; a suspicion that doesn't
-  reproduce gets cut before it costs the review credibility.
+- **Run it as `exercise.md` says.** A finding you reproduced is one the author can't wave off; a
+  suspicion that doesn't reproduce gets cut before it costs the review credibility.
 - **A fork, or an author outside the org → ask before running anything.** Running the branch
   executes their code on this machine, install scripts included.
 - With the round's drafts, tell the user which states you exercised and what stayed unverified.
   That's for the user, not a comment — "I ran it and it works" isn't review feedback.
-- Environment broken for reasons unrelated to the PR → say so and review statically; don't sink
-  the review into fixing someone's local setup.
+- Environment broken for reasons unrelated to the PR → as `exercise.md` says, then review
+  statically.
 
 ### 4. Review with the user, in rounds
-Present each round's draft comments with `file:line` + exact text. Let the user cut, reword,
-re-home points between rounds, and request code examples. Lock wording before moving on. Present
-the drafts as `refs/style.md`'s *How drafts are shown to the user* says.
+Present each round's drafts as Hard rule 1 and `refs/style.md`'s *How drafts are shown to the
+user* say. Let the user cut, reword, re-home points between rounds, and request code examples; lock
+wording before moving on.
 
 **Verify any code you hand over the way CI will** (`claims.md`, *Evidence that isn't*). A snippet
 that doesn't compile costs the author a CI round and the comment its credibility.
@@ -274,26 +266,25 @@ that doesn't compile costs the author a CI round and the comment its credibility
   thread replies (`gh api repos/.../pulls/<N>/comments`) — a reasoned "won't do" reply counts as
   addressed; a question back to you is yours to relay, not to silently resolve. A reply that points
   to a discussion elsewhere (a chat thread, a doc) gets read before you relay it: it usually
-  answers what you'd otherwise send back to the author. Judge an
-  ack against the head, not its tense, and give a silent comment one cycle before calling it punted
-  — partial pushes often land ahead of the replies on the rest. Once it's punted, draft a one-line
-  question to the author on that thread rather than waiting longer: an agent's fix round works
-  from the threads it was pointed at, and a comment added later can be left out. A reply that
-  cites a commit SHA gets checked against the remote too: an agent's push can be rejected after a
-  concurrent merge, or a later force-push from the author can drop it while its thread stays
-  resolved, leaving its replies ahead of the code. Before telling the author, confirm it
-  through the remote (`git ls-remote`, the PR's commit list), and word it as a push that may not
-  have landed.
+  answers what you'd otherwise send back to the author. Judge an ack against the head, not its
+  tense, and give a silent comment one cycle before calling it punted — partial pushes often land
+  ahead of the replies on the rest. Once it's punted, draft a one-line question to the author on
+  that thread rather than waiting longer: an agent's fix round works from the threads it was
+  pointed at, and a comment added later can be left out. A reply that cites a commit SHA gets
+  checked against the remote too: an agent's push can be rejected after a concurrent merge, or a
+  later force-push from the author can drop it while its thread stays resolved, leaving its replies
+  ahead of the code. Before telling the author, confirm it through the remote (`git ls-remote`, the
+  PR's commit list), and word it as a push that may not have landed.
 - `git grep` for stale references after renames (the only legit leftover is a domain *type* that
   legitimately keeps the old name).
-- **After a force-push, read the base change too.** A rebase can land upstream work in the very
-  files you commented on, which can moot a finding or change whether a fix is still correct.
-  Re-verify each comment against the new base, not just the author's delta.
-- **Check authorship before crediting the author** — `git log --format='%h %an %s'`. Fixes are often
-  written by a bot agent (`Cursor Agent`, via an AI reviewer's "fix this" button), not the person.
-  That matters beyond attribution: in a bot-fix-bot loop each agent patch draws the next finding, so
-  "every finding got fixed" is not convergence and a quiet bot is not a ready change. Once a shared
-  module has several agent patches, recommend reading the whole delta as one change.
+- **After a force-push, read the base change too, and re-verify each comment against the new
+  base, not just the author's delta.** A rebase can land upstream work in the very files you
+  commented on, which can moot a finding or change whether a fix is still correct.
+- **Check authorship before crediting the author** — `git log --format='%h %an %s'`. Fixes are
+  often written by a bot agent (`Cursor Agent`, via an AI reviewer's "fix this" button), not the
+  person. That matters beyond attribution: in a bot-fix-bot loop each agent patch draws the next
+  finding, so "every finding got fixed" is not convergence and a quiet bot is not a ready change.
+  Once a shared module has several agent patches, recommend reading the whole delta as one change.
 - Report what's done and what (if anything) was missed. Don't invent issues to seem thorough — but
   don't withhold a real one to avoid another round either. If it's worth describing to the user in
   detail, it's worth either raising or explicitly deciding to accept. A detail that could mislead a
@@ -301,30 +292,29 @@ that doesn't compile costs the author a CI round and the comment its credibility
   non-blocking rather than accepting it silently. When you raise a leftover issue, say first
   whether it changes behavior or only weakens a test.
 - **Monitor until every comment is fully addressed, then approve** — don't stop at one re-review,
-  and don't ask whether to start: right after Step 5's last post, wrap in
-  `Skill(loop)` and let it arm a **Monitor** on the PR, as `pr-babysit` does, rather than waking on
-  a timer. A shell loop polls `gh` every couple of minutes and wakes you only when the signature
-  changes, so a push or reply lands within minutes instead of up to an hour later, and quiet
-  stretches cost nothing. Build the signature from `state`, `head_sha`, `reviewDecision`, the
-  requested reviewers, and the review, review-comment and issue-comment counts **taken excluding
-  the account this session posts as**, since your own replies would otherwise wake you on your own
-  previous cycle. A review request for the user changes no count, and it's the author asking them
-  to act, so surface it the moment it lands. Leave CI out (see below). When an API call fails,
-  skip that poll instead of emitting a placeholder, which would fire twice. A Monitor expires after 30 minutes at most, so re-arm it on each expiry — waiting on
-  an answer included, rather than swapping it for a slow timer — and end any interactive turn
-  about this PR by re-arming too: a conversation replaces the turn that would have done it. A
-  Monitor also dies with the session. When resuming, seed the new one with the last signature you
-  saw, not a fresh read, so anything that landed in the gap still fires. On
-  each wake, re-run this step until all comments are resolved, then do Step 7. Surface anything
-  that needs the user (a reply asking a question, a pushback you don't buy, CI gone red) instead
-  of forcing resolution. Stop polling only when approved (by a requested reviewer, when the user
-  is only helping), the user calls it off, or the PR closes; a PR closed as superseded gets each
-  open finding checked against its replacement, so the user can choose to carry over what still
-  applies. Watch commits and comments, not CI state — a red
-  check on an unchanged SHA is noise — and verify any alarm your own tooling raises against the
-  PR before relaying it. If the PR goes quiet for a day or more, say so and offer to stop rather
-  than accruing silent ticks, especially when every prior fix came from one bot answering another:
-  ordinary human-review threads have nothing automated to pick them up.
+  and don't ask whether to start: right after Step 5's last post, wrap in `Skill(loop)` and let it
+  arm a **Monitor** on the PR, as `pr-babysit` does, rather than waking on a timer. A shell loop
+  polls `gh` every couple of minutes and wakes you only when the signature changes, so a push or
+  reply lands within minutes instead of up to an hour later, and quiet stretches cost nothing. Build
+  the signature from `state`, `head_sha`, `reviewDecision`, the requested reviewers, and the review,
+  review-comment and issue-comment counts **taken excluding the account this session posts as**,
+  since your own replies would otherwise wake you on your own previous cycle. A review request for
+  the user changes no count, and it's the author asking them to act, so surface it the moment it
+  lands. Leave CI out: a red check on an unchanged SHA is noise. When an API call fails, skip that
+  poll instead of emitting a placeholder, which would fire twice. A Monitor expires after 30 minutes
+  at most, so re-arm it on each expiry — waiting on an answer included, rather than swapping it for
+  a slow timer — and end any interactive turn about this PR by re-arming too: a conversation
+  replaces the turn that would have done it. A Monitor also dies with the session. When resuming,
+  seed the new one with the last signature you saw, not a fresh read, so anything that landed in the
+  gap still fires. On each wake, re-run this step until all comments are resolved, then do Step 7.
+  Surface anything that needs the user (a reply asking a question, a pushback you don't buy, CI gone
+  red) instead of forcing resolution, and verify any alarm your own tooling raises against the PR
+  before relaying it. Stop polling only when approved (by a requested reviewer, when the user is
+  only helping), the user calls it off, or the PR closes; a PR closed as superseded gets each open
+  finding checked against its replacement, so the user can choose to carry over what still applies.
+  If the PR goes quiet for a day or more, say so and offer to stop rather than accruing silent
+  ticks, especially when every prior fix came from one bot answering another: ordinary human-review
+  threads have nothing automated to pick them up.
 
 ### 7. Approve (when asked, or once Step 6's loop clears every comment)
 `gh pr review <N> --repo <repo> --approve --body "<short note>"`
@@ -340,8 +330,8 @@ what they had seen.
   to approve over the low-impact ones. An approval reads as "ready to merge", and one that
   lands over another reviewer's open suggestion lets it merge unaddressed. A comment you think is
   wrong or stale isn't yours to wave through: raise it with the user rather than approve past it.
-- **Don't gate approval on CI being green.** Once every comment is addressed, approve — CI/checks
-  are the author's to land. Only surface (don't block silently) if CI has gone *red*.
+- **Don't gate approval on CI being green**: checks are the author's to land. If CI has gone *red*,
+  surface it rather than block silently.
 - Then resolve your own threads whose findings are addressed — **in the same step, not later**.
   Where the repo requires all conversations resolved to merge, approving while leaving them open
   blocks the author on you. Never resolve another reviewer's threads. REST can't do it; use
@@ -356,8 +346,8 @@ what they had seen.
   items leave the ledger and un-filed ones stay; delete it only once `deferred_items` is empty.
 - **Then clean up**, here or whenever the user calls the review off: stop any Monitor or pending
   wakeup, delete the Step 1 ref (`git update-ref -d refs/pr-review/<N>`) and the comment body
-  files, and remove anything else the review created locally. Only delete what this review
-  made; check before removing anything. **The ledger is the exception:** calling a review off
+  files, and anything else this review created locally, checking before removing anything. **The
+  ledger is the exception:** calling a review off
   doesn't settle its deferrals, so offer to settle them first, and leave the ledger for whatever
   the user doesn't file — the next review of this PR loads it in Step 1.
 
@@ -368,9 +358,9 @@ better. The aim is *tighter* files over time, not longer ones.
 
 Scan the session for **reusable** signals:
 - **Voice/wording** — anything the user reworded, shortened, or reframed (e.g. "make this a
-  question", "too verbose"). Capture the *rule*, not the one-off phrasing. → `refs/style.md`.
+  question", "too verbose"). Capture the *rule*, not the one-off phrasing.
 - **Calibration** — findings the user cut as not worth it (which nit categories to stop
-  leading with) or pushed harder on (what they want surfaced). → `refs/style.md`.
+  leading with) or pushed harder on (what they want surfaced).
 - **Process** — a check you skipped that would have caught a wrong claim (e.g. verifying a
   component's public-export surface before calling a prop "unused"), or a step that wasted time.
 - **Repo knowledge** — a convention, gotcha, or pattern you had to discover mid-review.
@@ -380,11 +370,11 @@ process lessons go to this skill, where every user of it benefits. A lesson that
 the user wants, that any reviewer would) belongs here.
 
 Then:
-- If something generalizes, **apply the edit and say what you changed** (which section, the
-  new wording), unless it's consequential (global rule 13). A lesson about a check itself goes in
-  its file in `../self-review/passes/`, worded for both skills that read it: what the check looks
-  for, not what a finding becomes here. Prefer refining or replacing an
-  existing line over adding a new one; if an edit grows a section, cut a sentence.
+- If something generalizes, **apply the edit as global rule 13 says**, naming the section and the
+  new wording. A lesson about a check itself goes in its file in `../self-review/passes/`, worded
+  for both skills that read it: what the check looks for, not what a finding becomes here. Prefer
+  refining or replacing an existing line over adding a new one; if an edit grows a section, cut a
+  sentence.
 - Keep the bar high. Skip anything specific to this one PR — that's a fact, not a skill rule,
   and a memory feedback note may fit it better. A review procedure that recurs on one project is
   a project skill (global rule 13). If nothing generalizes, say so and change nothing.
@@ -396,5 +386,3 @@ Then:
 ## Reference
 
 - `gh` for everything GitHub (global rule 5).
-- The conventions a review checks, the user's and the target repo's, are in `conventions.md`. Read
-  the target repo's own before the first round rather than assuming this machine's apply.
