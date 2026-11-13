@@ -88,6 +88,13 @@
     "github/acme-org/example-repo": "xhigh"
   },
 
+  "//risk_reviewers": "Per-repo, keyed by 'github/<owner>/<repo>'. The automated reviewers that each rate a PR's risk or approve it, so pr-merge can tell when they disagree (its condition 10) and ask the user instead of merging. Each entry: name, and verdict (where its rating and its approval are read for the head commit: an approving review by its login, a label it sets, a check's summary). With fewer than two for a repo the condition doesn't apply.",
+  "risk_reviewers": {
+    "github/acme/web": [
+      { "name": "Review bot A", "verdict": "Its review on the head: APPROVED or not, and the 'Risk: LOW|MEDIUM|HIGH' line in its body." },
+      { "name": "Review bot B", "verdict": "The 'Approvals' check on the head: success means it approved; the risk classifier's result in its summary is its rating." }
+    ]
+  },
   "//second_opinion_review": "Per-repo, keyed by 'github/<owner>/<repo>'. Turns on a second correctness pass by a different model (self-review/passes/second-opinion.md), which self-review runs on your own diff and pr-review on someone else's PR. Omit a repo and the step never runs there, unless the map has a '*' entry: the machine-wide fallback, used by any repo without an entry of its own. Set a repo's entry to false to keep it off. It is opt-in because the reviewer is handed your diff, and where that goes is a per-codebase decision, so add '*' only on a machine where every repo you'd clone may go to that vendor (a work laptop under an enterprise agreement, say). command: a non-interactive CLI taking instructions as an argument and reading content on stdin. It is run from a scratch directory, not the repo, so include whatever flag that CLI needs to accept a non-repo working directory (codex needs --skip-git-repo-check). Pin the model and reasoning effort in it too (codex: -m <model> -c model_reasoning_effort=<level>): left bare it runs whatever the CLI defaults to, which for codex was its frontier model at no reasoning at all. Pin the newest generation of a model rather than a previous one. max_rounds: how many times the convergence loop may re-run it after fixes (2 is usually enough; the cap exists because a second model will always find something on a large diff). notes: traps worth remembering.",
   "second_opinion_review": {
     "github/acme-org/example-repo": {
