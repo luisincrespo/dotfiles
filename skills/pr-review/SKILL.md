@@ -225,7 +225,9 @@ When you do run it:
 ### 4. Review with the user, in rounds
 Present each round's drafts as Hard rule 1 and `refs/style.md`'s *How drafts are shown to the
 user* say. Let the user cut, reword, re-home points between rounds, and request code examples; lock
-wording before moving on.
+wording before moving on. When you'd cut some drafts, ask the go-ahead as a choice that names the
+ones to post: "all good" doesn't say whether the ones you'd cut are in, and a permission check can
+refuse a post that rests on it.
 
 **Verify any code you hand over the way CI will** (`claims.md`, *Evidence that isn't*). A snippet
 that doesn't compile costs the author a CI round and the comment its credibility.
