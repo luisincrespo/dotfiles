@@ -32,8 +32,11 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   bare `PR to <what>`) and a sentence or two on what it does for the user (for a UX change, what
   they see, in the words someone in the channel would use: leave command and code names, UI
   component labels, version tags and vendor names to the PR; for several PRs too, never a walk
-  through every case, which the PRs explain). Something not in scope yet goes in a thread reply
-  under the request ("Heads up: this first step only …"). When part of the work already shipped, say
+  through every case, which the PRs explain). For a rename or restructure of something the channel
+  already knows, say that's mostly what it is and what it makes clearer, rather than retelling what
+  the feature does: the retelling undersells the PR and repeats what readers have. Something not in
+  scope yet goes in a thread reply under the request ("Heads up: this first step only …"). When
+  part of the work already shipped, say
   in a word which part ("the form itself (UI component) is already merged"). Members of the project
   pinged in that project's own channel need no reason: the channel is the reason, so the last line
   is just "@Sam @Jordan could you please help review this one when you have some time?". Anywhere
