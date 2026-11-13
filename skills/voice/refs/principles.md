@@ -135,6 +135,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   measured it; don't turn measuring into something the team should do.
 - **Frame the ask honestly.** Don't downplay a real decision/clarification as a "sanity check" or a
   "quick question" — if you're asking someone to decide something, say that.
+- **A fix that's yours isn't an ask.** When a finding's fix lands in your own work, post a heads-up:
+  what you'll change, where, the merge order, and "so nothing's needed here". An ask that holds only
+  in one merge order opens with that condition ("If my PR lands first, could we…?") and closes with
+  who covers the other ("If this one lands first, I'll take care of it on my side").
 - **Leave "optional" to the user.** Don't close a suggestion with "not blocking" or "fine as a
   follow-up" by default. Add that framing only when they call the point optional.
 - **Don't rank your own findings.** Skip "the big one", "the critical thing",
