@@ -46,8 +46,10 @@ lets the next run be easier than this one, so keep them even when the run succee
 
 ## When the environment is broken
 
-For reasons unrelated to the change → say so plainly, and report what stayed unverified. Don't
-count "couldn't run it" as verified, and don't sink the run into fixing someone's local setup.
+A missing setup step (secrets not pulled, stale dependencies, an expired login) isn't a broken
+environment: run it, or ask the user for the one only they can take, naming the command. Broken for
+reasons unrelated to the change → say so plainly, and report what stayed unverified. Don't count
+"couldn't run it" as verified, and don't sink the run into debugging someone's broken setup.
 
 ## Left to the skill running it
 
