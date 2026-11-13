@@ -89,6 +89,30 @@ def pid_alive(pid_file: Path) -> bool:
     return True
 
 
+def process_version(pid: int | None) -> str:
+    """Reads the Claude Code version a running process was started from.
+
+    The job's `state.json` keeps the version the session started on: a respawn onto a newer one
+    doesn't rewrite it (2.1.323 there after a confirmed restart onto 2.1.325, Nov 13).
+
+    Args:
+        pid: the session's process ID, or None when it isn't running.
+
+    Returns:
+        The version in the binary's path (`…/claude/versions/<version>`), or "" when there's no
+        process or the path doesn't say.
+    """
+    if not pid:
+        return ""
+    out = subprocess.run(
+        ["lsof", "-p", str(pid), "-a", "-d", "txt", "-Fn"], capture_output=True, text=True
+    ).stdout
+    for line in out.splitlines():
+        if "/versions/" in line:
+            return line.rsplit("/versions/", 1)[1].split("/")[0]
+    return ""
+
+
 def read_sessions() -> list[Session]:
     """Reads every background session the supervisor lists from its job folder.
 
@@ -111,7 +135,7 @@ def read_sessions() -> list[Session]:
             Session(
                 id=row["id"],
                 name=row.get("name") or row["id"],
-                version=state.get("cliVersion", ""),
+                version=process_version(row.get("pid")) or state.get("cliVersion", ""),
                 launch_dir=state.get("cwd", ""),
                 idle=row.get("status") == "idle",
                 has_note=(job / "tmp" / "respawn-handoff.md").exists(),
@@ -173,7 +197,7 @@ def main(argv: list[str]) -> int:
         if result.returncode != 0:
             failed += 1
         elif not s.waiting:
-            print('  no waiting helper: once it\'s back, message it "pick up from the handoff note"')
+            print("  no waiting helper: once it's back, message it", '"pick up from the handoff note"')
     return 1 if failed else 0
 
 
