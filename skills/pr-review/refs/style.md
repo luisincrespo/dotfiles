@@ -45,7 +45,8 @@
   in CI points there.
 - JSDoc-coverage and import-style nits are low-priority: they tend to get cut, so keep them last and
   brief. A comment the change left saying something false is different: it misleads the next
-  reader, so it earns a short non-blocking one.
+  reader, so it earns a short non-blocking one, when it's false on a path that runs today. One that
+  turns false only once unbuilt code lands gets cut: it reads as a puzzle.
 
 ## Where comments go
 
