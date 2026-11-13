@@ -82,7 +82,8 @@ sound like the user typed it, which the `voice` skill's ground truth is for.
   plainest words available ("Got it, makes sense.") and go straight to the point.
 - No shorthands or jargon. Write the word out ("Is this intended?", not "Q:"), and name the actual
   file or element instead of an acronym or a vague pointer: a permalink to the code you mean, not
-  "like the table does".
+  "like the table does". The PR's own terms count too (a type or test name the author coined): the
+  user has to defend the comment, so say what the term means instead.
 - For a doc-comment suggestion (a `//` line documenting an export or interface member), the reason
   is that code documentation follows the language's own doc-comment format, so keep the suggestion
   even when the text is already good. Not IDE hover (most code is written through agents), and not
