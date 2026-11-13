@@ -332,13 +332,15 @@ A permission check can refuse an approval that rests on a conditional go-ahead. 
 it: ask the user for a direct instruction, or give them the command to run. A finding that lands
 between the user's go-ahead and the approval gets shown before you approve; the go-ahead covered
 what they had seen.
-- **Every comment on the PR counts, not just yours.** Before approving, hold other reviewers'
-  open threads, review summaries and PR comments, bots included, to the bar Step 6 sets for yours:
-  fixed in the code, or answered with a reasoned reply. One still open → keep watching instead of
-  approving, and tell the user whose and what, with your read of each one's impact: they can choose
-  to approve over the low-impact ones. An approval reads as "ready to merge", and one that
-  lands over another reviewer's open suggestion lets it merge unaddressed. A comment you think is
-  wrong or stale isn't yours to wave through: raise it with the user rather than approve past it.
+- **Every comment on the PR counts, not just yours.** Before approving, hold other reviewers' open
+  threads, review summaries and PR comments, bots included, to the bar Step 6 sets for yours: fixed
+  in the code, or answered with a reasoned reply. Judge a thread by its resolution state (GraphQL
+  `reviewThreads`), not by a bot summary's list of open items, which can lag behind the threads it
+  names. One still open → keep watching instead of approving, and tell the user whose and what, with
+  your read of each one's impact: they can choose to approve over the low-impact ones. An approval
+  reads as "ready to merge", and one that lands over another reviewer's open suggestion lets it
+  merge unaddressed. A comment you think is wrong or stale isn't yours to wave through: raise it
+  with the user rather than approve past it.
 - **Don't gate approval on CI being green**: checks are the author's to land. If CI has gone *red*,
   surface it rather than block silently.
 - Then resolve your own threads whose findings are addressed — **in the same step, not later**.
