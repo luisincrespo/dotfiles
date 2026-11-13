@@ -17,7 +17,10 @@
 
 ## Adding a stack pass
 
-`stack/react.md` is the model. A stack pass:
+`stack/official-docs.md` already checks any language or tool without a pass of its own against its
+docs for the version in use. Add one only when there's more to say than the docs, patterns worth
+calling out every time; `stack/react.md` is the model, and `official-docs.md` then skips that stack.
+A stack pass:
 
 - reads the version the repo uses from its manifest or lockfile, and anything that changes the
   rules (a compiler, a framework on top);
