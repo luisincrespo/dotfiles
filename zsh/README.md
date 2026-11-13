@@ -124,6 +124,14 @@ _claude_default_to_agents() {
 add-zsh-hook precmd _claude_default_to_agents
 ```
 
+and an alias that restarts the background sessions waiting for you to restart them: those
+launched in a folder Claude Code doesn't trust, which `claude respawn` refuses to restart from
+inside the session (the `respawn` skill has them wait for it):
+
+```shell
+alias claude-catchup='python3 -I ~/.claude/skills/respawn/catchup.py'
+```
+
 Nothing else is needed. The `autojump`, `pyenv` and `nvm` plugins all locate their own
 installs, so none of the `source` lines from the various install caveats belong here.
 

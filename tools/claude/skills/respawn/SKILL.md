@@ -4,8 +4,9 @@ description: >-
   Restart the current Claude Code background session onto the installed Claude Code binary
   and pick its long-running work back up in the new process. Writes what a restart drops
   (monitors, a self-paced /loop wakeup, workflows, the task in progress) into a handoff note,
-  restarts the session from a background command that outlives the restart, and re-arms
-  everything from the note when that command's completion wakes the new process. Use for
+  restarts the session from a background command that outlives the restart (or, where Claude Code
+  won't let it restart itself, waits for the user to run claude-catchup), and re-arms everything
+  from the note when that command's completion wakes the new process. Use for
   "respawn", "restart this session", "get this session onto the latest version". Background
   sessions only; with --all, asks every other background session to respawn itself.
 ---
@@ -54,20 +55,16 @@ unset, this isn't a Claude Code background session, and `claude respawn` can't r
 interactive Claude Code session, say that exiting and running `claude --continue` resumes it on the
 installed version; in any other agent, say that respawn only applies to Claude Code. Then stop.
 
-Then check where the session was launched: the trust check uses that directory, not its current
-`cwd` in `claude agents --json`, which an `EnterWorktree` changes (a session launched in home and
-moved into a repo worktree was still refused, Oct 30). The session's project folder under
-`~/.claude/projects/` names the launch directory (`-Users-<name>` is home). Sent from a background
-command, `claude respawn` refuses a session in a workspace Claude Code doesn't trust ("Workspace
-not trusted", seen Oct 26 for a home-launched session). Read whether it's trusted from
-`~/.claude.json`, `projects["<launch dir>"].hasTrustDialogAccepted`, rather than assuming. Home
-never is: Claude Code doesn't save trust for it (accepted Nov 12, still false after the session
-exited), so don't suggest accepting it. For an untrusted one, skip Step 2: write the handoff note,
-then tell the user to run `claude respawn <id>` from an interactive terminal in that directory (a
-trusted folder elsewhere doesn't do: it failed from `~/code`, Nov 12) and, once it's back, to
-message the session "pick up from the handoff note". A restart started that way has no helper to
-wake it, so that message is what starts Step 3. A restart keeps the launch folder, so such a
-session needs this route every time; only one started from a trusted folder avoids it.
+Then check where the session was launched: the trust check uses that directory, which the job's
+`state.json` records as `cwd`. The `cwd` in `claude agents --json` follows an `EnterWorktree`, so
+it isn't the one (a session launched in home and moved into a repo worktree was still refused, Oct
+30). Sent from a background command, `claude respawn` refuses a session in a workspace Claude Code
+doesn't trust ("Workspace not trusted", seen Oct 26 for a home-launched session). Read whether it's
+trusted from `~/.claude.json`, `projects["<launch dir>"].hasTrustDialogAccepted`, rather than
+assuming. Home never is: Claude Code doesn't save trust for it (accepted Nov 12, still false after
+the session exited), so don't suggest accepting it. A restart keeps the launch folder, so an
+untrusted session takes Step 2's waiting route every time; only one started from a trusted folder
+avoids it.
 
 ## Step 1 — Write the handoff note
 
@@ -92,10 +89,18 @@ restarts the session, waits for the new process to come up, and only then exits.
 End the turn at once with one line, e.g. `Respawning in ~10s; I'll pick up from the handoff note.`
 Any tool call still running when the restart lands is cut off.
 
+**In an untrusted launch folder**, run `bash <skill folder>/respawn.sh --wait` the same way
+instead. It restarts nothing: it marks the session as waiting and exits once someone else's restart
+has brought up the new process, so its notice still wakes you. End the turn with `needs input: run
+claude-catchup in a terminal to restart this session`. That's `python3 -I <skill folder>/catchup.py`
+(the dotfiles repo's `zsh/README.md` aliases it): it restarts every waiting session from its launch
+folder in the user's terminal, the only place the restart is accepted. A trusted folder elsewhere
+doesn't do: run from `~/code`, it failed (Nov 12).
+
 ## Step 3 — Pick up in the new process
 
-The helper's completion notice starts a turn, or, after a manual respawn, the user's message
-does. The helper's last line says how it went:
+The helper's completion notice starts a turn. A session restarted while no helper ran for it is
+woken by the user's message instead. The helper's last line says how it went:
 
 - **`RESPAWN COMPLETE`**: read the note, then:
   1. Get back into the worktree if you're no longer in it. A session launched outside a repo
@@ -114,7 +119,7 @@ does. The helper's last line says how it went:
   the list said completed while both said `working`, and the classifier's timeline never left it.
 - **`RESPAWN FAILED` or `RESPAWN UNCONFIRMED`**: you're still the old process, and everything
   you had running still is. Re-arm nothing. Quote the line, keep the note for a retry, and stop;
-  for a "not trusted" refusal, give the user the manual route from Step 0.
+  for a "not trusted" refusal, take Step 2's waiting route instead.
 
 ## Step 4 — Capture learnings (self-educate)
 
@@ -144,18 +149,22 @@ once it has reported.
 
 1. **List the candidates**: the rows of `claude agents --json` with `kind: "background"`, minus this
    session (its `id` is `$CLAUDE_JOB_DIR`'s basename, when that's set). Leave out any the JSON
-   reports as idle: the supervisor moves those by itself.
-2. **Sort out the ones in an untrusted workspace**: a launch directory whose trust flag isn't set,
-   read as in Step 0.
-   They still need asking, so they write their handoff note, but their restart is yours to run.
-3. **Show the plan and wait for a go-ahead**: each session to be asked, and for the untrusted
-   ones, the `claude respawn <id>` to run from an interactive terminal in its `cwd` once it has
-   written its note. A restart cuts off whatever each session is doing, so don't send unasked.
+   reports as idle, which the supervisor moves by itself, and any already on the installed version
+   (its job's `state.json` `cliVersion` matches `claude --version`): asking one of those cuts off
+   its work for nothing.
+2. **Sort out the ones in an untrusted workspace**, read as in Step 0. They take Step 2's waiting
+   route, so the user runs `claude-catchup` once they're ready.
+3. **Show the plan and wait for a go-ahead**: each session to be asked, and whether `claude-catchup`
+   will be needed. A restart cuts off whatever each session is doing, so don't send unasked.
 4. **Ask each one**: `SendMessage` to its name from `ListAgents`, with "Run the respawn skill to
    restart this session onto the installed Claude Code version." Each then runs Steps 0–4 itself,
    so every restart gets its own handoff note and pickup.
-5. **Report**: who was asked, and the manual commands still to run. This session isn't among them;
-   if it needs restarting too, run `/respawn` here afterwards.
+5. **Report once the untrusted ones are ready.** `python3 -I <skill folder>/catchup.py --list`
+   shows each as `would restart … it wakes itself once back` when its note is written and its
+   waiting helper runs; watch for that with a Monitor on an until-loop, for up to 10 minutes. Say
+   who was asked. With untrusted ones, end on `needs input: run claude-catchup in a terminal`,
+   naming any not ready by then; with none, end on `result:`. This session isn't among them; if it
+   needs restarting too, run `/respawn` here afterwards.
 
 ## Hard constraints
 
