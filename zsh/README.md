@@ -132,6 +132,14 @@ inside the session (the `respawn` skill has them wait for it):
 alias claude-catchup='python3 -I ~/.claude/skills/respawn/catchup.py'
 ```
 
+and one that lists the background sessions by what their own records say: waiting on you,
+working (and what will wake each one between turns), or done. The agents dashboard can file a
+session waiting on its own background command as completed; this reads past that:
+
+```shell
+alias claude-status='python3 -I ~/.claude/skills/respawn/status.py'
+```
+
 Nothing else is needed. The `autojump`, `pyenv` and `nvm` plugins all locate their own
 installs, so none of the `source` lines from the various install caveats belong here.
 
