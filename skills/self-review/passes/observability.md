@@ -8,7 +8,8 @@ someone else's; the skill that reads it decides what happens to the findings.
 
 When the diff:
 
-- adds a user flow, endpoint, background job, queue consumer, or call to another service;
+- adds a user flow or changes one's steps (a step, choice or way out added or removed), or adds an
+  endpoint, background job, queue consumer, or call to another service;
 - changes how errors are caught, retried or reported;
 - adds, renames, moves or removes an analytics event, log line, metric, span or error report, or
   the code that emits one;
@@ -36,9 +37,11 @@ Say so in one line rather than skipping it silently.
 ## What to look for
 
 - **Blind spots.** A new flow that can't answer what the ticket says to measure: no event where it
-  starts, finishes or fails. A new endpoint, job or consumer with nothing to diagnose it by, when its
-  neighbours have spans, metrics or logs for that purpose. A failure that leaves no trace: an error
-  caught and swallowed, a retry that gives up silently, a fallback that hides what it replaced.
+  starts, finishes or fails. A new or changed user-facing flow that leaves no way to tell whether
+  people use it or where they drop off, when the product's neighbouring flows have usage events for
+  that. A new endpoint, job or consumer with nothing to diagnose it by, when its neighbours have
+  spans, metrics or logs for that purpose. A failure that leaves no trace: an error caught and
+  swallowed, a retry that gives up silently, a fallback that hides what it replaced.
 - **Lost context.** A changed service or queue boundary that drops the trace context, so a job can't
   be tied to the request that started it. Changed error handling that discards the cause, stack or
   correlation fields an existing way of diagnosing relies on.
@@ -84,9 +87,12 @@ name". An unbounded-volume finding names what grows and roughly how much: "one s
 so tens of thousands". Not "this could use more logging": a signal nobody reads is noise.
 
 Without a reader or a reference (the ticket's metric, a named dashboard or alert, a diagnosis the
-team relies on), leave it out. Ask only when one fact you couldn't check decides it, like whether
-anything still reads a renamed event. A secret or an unintended sensitive payload is the exception:
-it's a finding on sight.
+team relies on, or for usage the neighbouring flows' events), leave it out. Ask only when one fact
+you couldn't check decides it, like whether anything still reads a renamed event. Two exceptions. A
+secret or an unintended sensitive payload is a finding on sight. A new user-facing flow with no
+usage signal and nothing to measure it against isn't dropped: it becomes a question for the user,
+what should be tracked for it, since that's their call or the author's (*Left to the skill running
+it*). Most tickets name no metric, so dropping it there leaves product usage unchecked.
 
 ## Why it's a pass of its own
 
