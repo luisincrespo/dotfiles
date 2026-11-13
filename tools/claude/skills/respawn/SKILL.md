@@ -64,10 +64,12 @@ trusted from `~/.claude.json`, `projects["<launch dir>"].hasTrustDialogAccepted`
 assuming. Home never is: Claude Code doesn't save trust for it (accepted Nov 12, still false after
 the session exited), so don't suggest accepting it. A restart keeps the launch folder, so an
 untrusted session takes Step 2's waiting route every time; only one started from a trusted folder
-avoids it. To move one for good, the user stops it and runs `cd <trusted folder> && claude --bg
---resume <its sessionId>`: that continues the conversation there as a new session with a new ID
-(2.1.323, Nov 12), and `claude rm <old id>` then clears the old entry. Nothing it had running comes
-along, so write the handoff note first and have the new session pick up from it.
+avoids it. To move one for good, write the handoff note, stop it (`claude stop <id>`), and run
+`cd <trusted folder> && claude --bg --resume <its sessionId> --fork-session`: that continues the
+conversation there as a new session with a new ID, idle until a message tells it to pick up from
+the note (2.1.323, Nov 12). Without `--fork-session`, run from a background command, it tries to
+continue the old session in home and is refused. Nothing it had running comes along, background
+commands included. `claude rm <old id>` clears the old entry once the copy has picked up.
 
 ## Step 1 — Write the handoff note
 
