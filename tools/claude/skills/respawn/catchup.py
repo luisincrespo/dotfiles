@@ -197,7 +197,8 @@ def main(argv: list[str]) -> int:
         if result.returncode != 0:
             failed += 1
         elif not s.waiting:
-            print("  no waiting helper: once it's back, message it", '"pick up from the handoff note"')
+            note = '"pick up from the handoff note"'
+            print(f"  no waiting helper: once it's back, message it {note}")
     return 1 if failed else 0
 
 
