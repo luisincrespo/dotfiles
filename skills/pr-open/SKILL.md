@@ -70,7 +70,7 @@ Opens **one** MR/PR for the current branch and returns. This is the create stage
 - `PROTECTED_BRANCHES`: `["main", "master", "stage-*"]` + `protected_branches_extra`. Entries are **glob patterns**: a bare name matches exactly, `*` matches any run of characters. A branch is protected if it matches any entry — so `rc-*` covers every dated release candidate, and a literal `prod` still matches only itself.
 - `SCREENSHOT_WIDTH_PX`: `400` (reviewer-friendly default; ~640 for full-page/wide layouts)
 - `SCREENSHOT_MARKER`: `<!-- pr:screenshots:start -->` … `<!-- pr:screenshots:end -->` (skill-owned, delimited region)
-- `REVIEW_REQUEST_CHANNEL`: unset + `review_request_channel` — the Slack channel the Step 7 draft is addressed to.
+- `REVIEW_REQUEST_CHANNEL`: unset + `review_request_channel` — the Slack channel the Step 7 draft is addressed to. A project's own channel in `project_review_channels` (keyed like `project_context`) wins for that project's work.
 - `REVIEW_REQUEST_HANDLE`: unset + `review_request_handle` — the group handle to @-mention there. Unset ⇒ fall back to named reviewers or a placeholder.
 
 ## Step 0: Platform + already-open guard

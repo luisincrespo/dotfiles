@@ -88,6 +88,10 @@
     "github/acme-org/example-repo": "xhigh"
   },
 
+  "//project_review_channels": "Per project, keyed like project_context ('<tracker>:<project id>'). The Slack channel a review request for that project's work goes to, in place of review_request_channel. Each value: name and id (the channel id the Slack tools take).",
+  "project_review_channels": {
+    "linear:00000000-0000-0000-0000-000000000000": { "name": "#project-channel", "id": "C0000000000" }
+  },
   "//risk_reviewers": "Per-repo, keyed by 'github/<owner>/<repo>'. The automated reviewers that each rate a PR's risk or approve it, so pr-merge can tell when they disagree (its condition 10) and ask the user instead of merging. Each entry: name, and verdict (where its rating and its approval are read for the head commit: an approving review by its login, a label it sets, a check's summary). With fewer than two for a repo the condition doesn't apply.",
   "risk_reviewers": {
     "github/acme/web": [
