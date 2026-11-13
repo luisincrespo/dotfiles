@@ -69,7 +69,8 @@ avoids it. To move one for good, write the handoff note, stop it (`claude stop <
 conversation there as a new session with a new ID, idle until a message tells it to pick up from
 the note (2.1.323, Nov 12). Without `--fork-session`, run from a background command, it tries to
 continue the old session in home and is refused. Nothing it had running comes along, background
-commands included. `claude rm <old id>` clears the old entry once the copy has picked up.
+commands included. `claude rm <old id>` clears the old entry and deletes its job folder, note and
+`tmp/` scripts with it, so run it only once the copy has picked up and copied what it still needs.
 
 ## Step 1 — Write the handoff note
 
