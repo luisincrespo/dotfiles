@@ -17,14 +17,14 @@
 
 ## Adding a stack pass
 
-`stack/official-docs.md` already checks any language or tool without a pass of its own against its
-docs for the version in use. Add one only when there's more to say than the docs, patterns worth
-calling out every time; `stack/react.md` is the model, and `official-docs.md` then skips that stack.
-A stack pass:
+`stack/official-docs.md` checks every language or tool in a diff against its docs for the version
+in use. A tool gets a pass of its own only when there's more to say than the docs: patterns worth
+calling out on every change. That pass layers on `official-docs.md`, which still runs for the
+tool, and owns the findings it lists. `stack/react.md` is the model. A stack pass:
 
-- reads the version the repo uses from its manifest or lockfile, and anything that changes the
-  rules (a compiler, a framework on top);
-- checks against the official docs for that version, linked, not against memory;
+- reads the version and docs as `official-docs.md` says, plus anything that changes the rules for
+  this stack (a compiler, a framework on top);
+- lists only what the docs don't settle, each finding linked to the doc page it rests on;
 - leaves out what the repo's linter or type checker already reports;
 - lets the repo's own guidance for the stack win where they differ;
 - carries no taste: the user's own conventions for a stack go in `personal-conventions.md`, under

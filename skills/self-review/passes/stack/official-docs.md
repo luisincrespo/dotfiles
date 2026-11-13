@@ -1,16 +1,16 @@
 # Official docs pass
 
 A check of a diff's code against the official documentation for the version of each language,
-framework or tool it's written in or for, for any of them that has no stack pass of its own.
+framework or tool it's written in or for. A tool with a pass of its own here (`react.md`) gets this
+check too; that pass builds on this one with what the docs don't settle.
 
 ## When it applies
 
-When the diff changes code in or for a specific language, framework, library or tool that no other
-file in this folder covers: a GraphQL schema or operations, SQL migrations, Terraform, a CI
-workflow, a test framework's config, a library's API used in a new way. The repo's main language
-counts only where the change relies on something its version decides (new syntax, a changed
-default, a deprecated API). Everything the diff touches already covered by a stack pass of its own,
-or no tool-specific code at all → it doesn't apply.
+When the diff changes code in or for a specific language, framework, library or tool: a GraphQL
+schema or operations, a React component, SQL migrations, Terraform, a CI workflow, a test
+framework's config, a library's API used in a new way. The repo's main language counts only where
+the change relies on something its version decides (new syntax, a changed default, a deprecated
+API). No tool-specific code at all → it doesn't apply.
 
 ## What to know first
 
@@ -36,6 +36,9 @@ or no tool-specific code at all → it doesn't apply.
 - **Changes the docs call breaking for whoever consumes them**: other services, clients, saved
   queries, existing data.
 
+**Each root cause goes to one pass.** Where a tool has a pass of its own, that pass owns what it
+lists; raise here only what it doesn't cover.
+
 ## The bar for a finding
 
 Each finding links the doc page it rests on, for the repo's version, says what that page says, and
@@ -49,8 +52,8 @@ A review from memory blends versions: a rule from an older release, an API that 
 that was never official. The docs for the version in use settle it, and they say what the code
 can't: which defaults apply, what a change breaks for consumers. One pass covers every tool, so a
 new one needs no file of its own. A tool gets its own stack pass, as React has, only when there's
-more to say than its docs: patterns worth calling out every time, or lint-shaped gaps the docs
-leave.
+more to say than its docs: patterns worth calling out on every change, which that pass lists on
+top of this one.
 
 ## Left to the skill running it
 

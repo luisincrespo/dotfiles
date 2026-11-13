@@ -2,6 +2,8 @@
 
 A check of a diff's React components and hooks for patterns that look right and buy nothing, or
 break the rules React depends on, measured against React's own docs for the version the repo uses.
+It builds on [`official-docs.md`](official-docs.md), which checks React against its docs like any
+other tool: this pass adds the patterns worth checking on every React change.
 
 ## When it applies
 
@@ -14,8 +16,8 @@ When the diff adds or changes a React component or hook. None → it doesn't app
   (`babel-plugin-react-compiler`, or the framework's compiler option). Configured isn't the same as
   covering a given file: compilation can be scoped to some paths, and a component can opt out
   (`"use no memo"`). See [incremental adoption](https://react.dev/learn/react-compiler/incremental-adoption).
-- **The docs for that version, not memory.** Before raising a finding that rests on how React
-  wants something done, read the page it rests on: [Rules of React](https://react.dev/reference/rules),
+- **The docs for that version**, read as `official-docs.md` says. The pages this pass's findings
+  usually rest on: [Rules of React](https://react.dev/reference/rules),
   [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect),
   [React Compiler](https://react.dev/learn/react-compiler), or the hook's or API's entry in the
   [API reference](https://react.dev/reference/react). The framework the app runs in (Next.js,
