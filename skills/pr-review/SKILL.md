@@ -279,9 +279,10 @@ that doesn't compile costs the author a CI round and the comment its credibility
   PR's commit list), and word it as a push that may not have landed.
 - `git grep` for stale references after renames (the only legit leftover is a domain *type* that
   legitimately keeps the old name).
-- **After a force-push, read the base change too, and re-verify each comment against the new
-  base, not just the author's delta.** A rebase can land upstream work in the very files you
-  commented on, which can moot a finding or change whether a fix is still correct.
+- **After a force-push or a merge from the base, read the base change too, and re-verify each
+  comment against the new base, not just the author's delta.** Either can land upstream work in
+  the very files you commented on, or in code a pending draft's claim rests on, which can moot a
+  finding or change whether a fix is still correct.
 - **Check authorship before crediting the author** — `git log --format='%h %an %s'`. Fixes are
   often written by a bot agent (`Cursor Agent`, via an AI reviewer's "fix this" button), not the
   person. That matters beyond attribution: in a bot-fix-bot loop each agent patch draws the next
