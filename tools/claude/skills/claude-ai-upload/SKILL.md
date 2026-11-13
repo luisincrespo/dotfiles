@@ -41,10 +41,12 @@ copy already there.
    + Add, Upload skill) and attach the copy to the page's hidden file input with the file-upload
    tool. Never click the drop zone: it opens the system file picker, which the browser tools
    can't reach. Check the preview's name and description, then Upload.
-3. **A refresh:** open the copy from the skills list (Yours), and use ⋯ › Replace, which keeps
-   the same skill, instead of removing it and uploading again. It opens a page like the upload one,
-   with the same hidden file input, and the previous version stays in use until the new one's scan
-   passes.
+3. **A refresh:** open the copy's own page from the skills list (Yours), and use its ⋯ › Replace,
+   which keeps the same skill, instead of removing it and uploading again; the ⋯ on the list row
+   has no Replace. It opens a page like the upload one, with the same hidden file input, and the
+   previous version stays in use until the new one's scan passes. A "Caution" from an earlier scan
+   ("may send your files or messages to an outside service", for a skill that drafts messages)
+   doesn't block use.
 4. A security scan runs before the copy can be used, and the list shows it as "In review"
    meanwhile; the page says a minute or two, but the first one took over seven. Don't hold the
    session on it: check back later (`maintain-dotfiles`' next round will do). Once it passes, check
