@@ -42,7 +42,8 @@
   fails, a type error in the code the comment is about): they'll notice. Raise it only when nothing
   in CI points there.
 - JSDoc-coverage and import-style nits are low-priority: they tend to get cut, so keep them last and
-  brief.
+  brief. A comment the change left saying something false is different: it misleads the next
+  reader, so it earns a short non-blocking one.
 
 ## Where comments go
 
