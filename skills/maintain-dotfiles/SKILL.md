@@ -4,10 +4,10 @@ description: >-
   Land changes to the dotfiles repo pair — review what's pending, judge whether it belongs in
   the public repo or the private one, group it by concern, commit, push, and resync the tools
   that consume it. Use when changes are sitting uncommitted in the dotfiles repo or its private
-  companion, when a skill has just amended itself, or to keep both repos current: it watches by default, re-checking on
-  an interval (`--once` for a single pass). Knows the public/private split, the leak
-  guard's three entry points, and which surfaces go stale. On idle rounds, trims whichever skill
-  has grown most. Only for this repo pair; for any other repo use deliver.
+  companion, when a skill has just amended itself, or to keep both repos current: it watches by
+  default, re-checking on an interval (`--once` for a single pass). Knows the public/private
+  split, the leak guard's three entry points, and which surfaces go stale. On idle rounds, trims
+  whichever skill has grown most. Only for this repo pair; for any other repo use deliver.
 allowed-tools:
   - Read
   - Grep
@@ -61,7 +61,7 @@ freshness rules. Read the relevant one rather than re-deriving it.
 ## Args
 
 - `--once`: a single pass — land what's pending and stop, no watch.
-- `--_looped`: internal — set by the wrap below so a looped round doesn't wrap again.
+- `--_looped`: internal — set by the wrap below.
 - `--watch`: accepted and ignored; watching is already the default.
 
 **Watches by default, like `pr-babysit`.** Unless args contain `--once` or `--_looped`, invoke
@@ -73,7 +73,7 @@ someone remembered to ask: one backlog of seven files sat uncommitted for three 
 ### Pacing, when watching
 
 Don't arm a Monitor on the repo. A file watcher fires on every save, and the condition here is
-the opposite: Step 2 wants the tree to have been **quiet** for ten minutes. Time is the signal.
+the opposite: Step 2 wants the tree to have been **quiet** for ten minutes.
 
 **Re-arm on every turn, not just loop turns.** The wakeup is scheduled by the turn that ends a
 round, and an interactive exchange replaces that turn — so a conversation silently ends the
@@ -153,10 +153,9 @@ let the user choose. If they say publish, publish.
 Machine-specific values are a separate question with a settled answer: they go in
 `~/.agents/local/`, never in either repo. See the local-overrides section of the Claude README.
 
-So is the user's own taste (how they like it done, not how it must be done). It belongs in the
-personal-layer file the README's *Make it yours* section lists, not the shared skill, so that
-someone who replaces those files gets their way and none of the user's. A self-educate edit that
-puts one in a shared skill is a small fix: move it there before committing.
+So is the user's own taste, which global rule 13 routes to a personal-layer file rather than the
+shared skill, so that someone who replaces those files gets their way and none of the user's. A
+self-educate edit that puts one in a shared skill is a small fix: move it there before committing.
 
 A `skills/voice/refs/examples-*` file in the public checkout is a voice example saved to the wrong
 repo. The pre-commit hook refuses it, so there's no rush: once the companion's copy of that file is
@@ -182,8 +181,8 @@ Complete it, or say why you left it.
 
 ## Step 5 — Commit, one concern at a time
 
-- **Group by concern.** Unrelated changes get separate commits, even in the same file. The
-  commit body carries real rationale; one message cannot do that for two unrelated things.
+- **Group by concern.** Unrelated changes get separate commits, even in the same file: one body
+  cannot carry the real rationale for two unrelated things.
 - **Stage explicitly by path.** Never `git add -A` — it sweeps in whatever another session
   touched thirty seconds ago, and the message will not mention it.
 - **Message style:** imperative subject, then a body saying what was wrong and why the fix
@@ -213,7 +212,7 @@ Ask once whether the round warranted a durable edit. "Nothing to capture" is the
 Route by portability: repo- or employer-specific facts → `~/.agents/local/`; a procedure that
 recurs on one project → a project skill (global rule 13); a lesson that holds anywhere → the
 relevant skill; a durable one-off → a memory. Make the edit yourself unless it needs the user
-(see `## Deciding without asking`), and say what you changed.
+(see `## Deciding without asking`).
 
 ## Step 8 — Trim (the counterweight to Step 7)
 
@@ -249,10 +248,9 @@ see `self-review`'s `passes/second-opinion.md`), hand it the old and new text an
 instruction the old version gives that the new one doesn't. That's a precise question, and a second
 model is better at it than the author of the cut.
 
-Then apply it yourself: a trim the second opinion clears doesn't need the user, and where the check
-flags a cut, keep the text rather than ask. One skill per commit, subject starting `Trim`, with the
-before and after word counts in the body — so the next round can find the last trim and measure
-growth since.
+Then apply it yourself; where the check flags a cut, keep the text rather than ask. One skill per
+commit, subject starting `Trim`, with the before and after word counts in the body — so the next
+round can find the last trim and measure growth since.
 
 ## Deciding without asking
 
