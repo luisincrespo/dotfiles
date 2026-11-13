@@ -39,8 +39,9 @@ class Session:
     """What it asked the user, when it's waiting on them, else ""."""
     background_tasks: int
     """Background commands or monitors still running, whose completion wakes it."""
-    wakeup_armed: bool
-    """Whether a self-paced wakeup is scheduled."""
+    looping: bool
+    """Whether it runs a self-paced `/loop`, whose wakeups bring it back. A one-off wakeup outside
+    a loop isn't recorded (seen on 2.1.323)."""
     updated_at: datetime | None
     """When its record last changed."""
 
@@ -80,11 +81,11 @@ def what_wakes_it(s: Session) -> str:
     armed = []
     if s.background_tasks:
         armed.append(f"{s.background_tasks} background task{'s' if s.background_tasks > 1 else ''}")
-    if s.wakeup_armed:
-        armed.append("a wakeup")
+    if s.looping:
+        armed.append("its loop")
     if armed:
         return "between turns, woken by " + " and ".join(armed)
-    return "between turns with nothing armed to wake it: it may have stalled"
+    return "between turns with nothing recorded to wake it: a one-off wakeup, or stalled"
 
 
 def age(when: datetime | None, now: datetime) -> str:
@@ -135,7 +136,7 @@ def read_sessions() -> list[Session]:
                 activity=str(state.get("detail") or ""),
                 question=str(ask.get("text") or state.get("needs") or ""),
                 background_tasks=int(in_flight.get("tasks") or 0),
-                wakeup_armed=bool(state.get("selfWake")),
+                looping=bool(state.get("selfWake")),
                 updated_at=parse_time(state.get("updatedAt")),
             )
         )
