@@ -63,6 +63,11 @@ sequence of events), so they can judge it and answer the author. Pitch those dra
 at the depth they can defend in a reply: the ask, one reason, "I think" where you're inferring, and
 fix code held back until the author asks.
 
+Show one round per message, two or three drafts at most, and wait for the user's call on it before
+showing the next: a whole review in one message is too much to decide on at once. The first opens
+with what the PR does and a one-line list of the rounds to come; the pass list and the notes for
+the user (cut findings, CI, overlapping PRs) come after the last round, kept short.
+
 ## How comments read
 
 **Concise, human voice.** Short words, no AI-thoroughness, no "why this approach vs that" essays.
