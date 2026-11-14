@@ -11,7 +11,9 @@ open and babysat at once while only one branch is checked out. `pr-babysit`, `pr
 `git checkout <branch>` or `git switch`, inside a `deliver` task or out of one: a cycle that
 checked out its own PR's branch would pull the ground out from under whatever was being changed
 there. Restoring files with `git checkout -- <path>` or `--ours`/`--theirs` during a merge is fine;
-moving `HEAD` is not.
+moving `HEAD` is not. The `deliver` session switches with `git switch --no-guess <branch>`: a plain
+`git switch` to a branch already deleted after its merge quietly recreates it from the stale
+remote-tracking ref and checks out the old code.
 
 ## The checkout lock
 
