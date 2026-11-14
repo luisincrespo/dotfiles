@@ -319,12 +319,13 @@ that doesn't compile costs the author a CI round and the comment its credibility
   landed in the gap still fires. On each wake, re-run this step until all comments are resolved,
   then do Step 7. Surface anything that needs the user (a reply asking a question, a pushback you
   don't buy, CI gone red) instead of forcing resolution, and verify any alarm your own tooling
-  raises against the PR before relaying it. Stop polling only when approved (by a requested
-  reviewer, when the user is only helping), the user calls it off, or the PR closes; a PR closed as
-  superseded gets each open finding checked against its replacement, so the user can choose to carry
-  over what still applies. If the PR goes quiet for a day or more, say so and offer to stop rather
-  than accruing silent ticks, especially when every prior fix came from one bot answering another:
-  ordinary human-review threads have nothing automated to pick them up.
+  raises against the PR before relaying it. Stop polling only when approved (when the user is only
+  helping, by any one requested reviewer, even with another's change request still open), the user
+  calls it off, or the PR closes; a PR closed as superseded gets each open finding checked against
+  its replacement, so the user can choose to carry over what still applies. If the PR goes quiet for
+  a day or more, say so and offer to stop rather than accruing silent ticks, especially when every
+  prior fix came from one bot answering another: ordinary human-review threads have nothing
+  automated to pick them up.
 
 ### 7. Approve (when asked, or once Step 6's loop clears every comment)
 `gh pr review <N> --repo <repo> --approve --body "<short note>"`
