@@ -106,7 +106,9 @@ doesn't do: run from `~/code`, it failed (Nov 12).
 ## Step 3 — Pick up in the new process
 
 The helper's completion notice starts a turn. A session restarted while no helper ran for it is
-woken by the user's message instead. The helper's last line says how it went:
+woken by the user's message instead. The helper's own last line says how it went, even when the
+notice reports exit code -1 and the output ends with a harness line saying the process exited while
+detached (2.1.326, Nov 16):
 
 - **`RESPAWN COMPLETE`**: read the note, then:
   1. Get back into the worktree if you're no longer in it. A session launched outside a repo
