@@ -136,6 +136,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   architecture or better output, rather than a list of visible features. Output they expect to be
   better but hasn't measured is said as their own subjective take, with why, and that they haven't
   measured it; don't turn measuring into something the team should do.
+- **Lead with the general purpose, not the occasion.** When a change serves more than the pilot,
+  deadline or request that prompted it, open with that broader purpose and give the immediate
+  driver one clause near the end. Leading with the occasion undersells the work.
 - **Frame the ask honestly.** Don't downplay a real decision/clarification as a "sanity check" or a
   "quick question" — if you're asking someone to decide something, say that.
 - **A fix that's yours isn't an ask.** When a finding's fix lands in your own work, post a heads-up:
