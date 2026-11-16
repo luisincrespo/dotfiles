@@ -40,8 +40,10 @@ UX judgments are the most subjective of any pass, so anchor each one in somethin
 ## What to look for
 
 - **Every state the change creates**: loading, empty, error, success, disabled, partial. Also long
-  text, many items, zero items, and a slow or failed request. A missing state is the most common
-  finding and the least subjective one.
+  text, many items, zero items, and a slow or failed request. Also every state the flow can start
+  from: an action offered on something already in its target state (sharing what's already shared)
+  is a state of its own. A missing state is the most common finding and the least subjective one;
+  raise the state, not just its first symptom.
 - **Feedback.** After an action, can the user tell it worked, failed, or is still running? Is an
   error message something they can act on?
 - **Safety.** A destructive or expensive action can be undone, or asks first. Work in progress
