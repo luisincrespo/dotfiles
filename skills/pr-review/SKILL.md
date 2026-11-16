@@ -295,7 +295,9 @@ that doesn't compile costs the author a CI round and the comment its credibility
   often written by a bot agent (`Cursor Agent`, via an AI reviewer's "fix this" button), not the
   person. That matters beyond attribution: in a bot-fix-bot loop each agent patch draws the next
   finding, so "every finding got fixed" is not convergence and a quiet bot is not a ready change.
-  Once a shared module has several agent patches, recommend reading the whole delta as one change.
+  Once a shared module has several agent patches, recommend reading the whole delta as one change,
+  and name the mechanism the patches keep working around (state applied twice, say): asking to
+  remove it ends the loop, where reviewing the next patch only draws the next finding.
 - Report what's done and what (if anything) was missed. Don't invent issues to seem thorough — but
   don't withhold a real one to avoid another round either. If it's worth describing to the user in
   detail, it's worth either raising or explicitly deciding to accept. A detail that could mislead a
