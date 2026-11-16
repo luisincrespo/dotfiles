@@ -22,6 +22,8 @@ a comment, applying a fix, or repeating it in a commit message or PR description
   contract.
 - **Detectability** ("this would only show up as X"): follow the bad case down every early return.
   An empty-input path that skips the check makes it silent, not visible as X.
+- **What the user sees** (a claim about rendered UI): find the component the live case mounts before
+  quoting one. A flag or a count can route it to a sibling view that renders differently.
 - **Implementability** ("we could just pass X here"): follow the value to whoever consumes it, since
   threading a field through a command whose only handler ignores it relocates the problem instead
   of fixing it. Then follow it to whoever else can supply it: a framework hook that reads request
