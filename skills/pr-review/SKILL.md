@@ -336,7 +336,8 @@ that doesn't compile costs the author a CI round and the comment its credibility
   automated to pick them up.
 
 ### 7. Approve (when asked, or once Step 6's loop clears every comment)
-`gh pr review <N> --repo <repo> --approve --body "<short note>"`
+`gh pr review <N> --repo <repo> --approve`, with `--body` only when `refs/style.md` wants a
+review body.
 
 A permission check can refuse an approval that rests on a conditional go-ahead. Don't work around
 it: ask the user for a direct instruction, or give them the command to run. A finding that lands
