@@ -44,9 +44,10 @@
   fails, a type error in the code the comment is about): they'll notice. Raise it only when nothing
   in CI points there.
 - JSDoc-coverage and import-style nits are low-priority: they tend to get cut, so keep them last and
-  brief. A comment the change left saying something false is different: it misleads the next
-  reader, so it earns a short non-blocking one, when it's false on a path that runs today. One that
-  turns false only once unbuilt code lands gets cut: it reads as a puzzle.
+  brief. Two kinds aren't nits and earn a short non-blocking comment: a second copy (a new helper
+  that duplicates an existing one, a doc repeating a list the code declares), which drifts; and a
+  comment the change left saying something false on a path that runs today, which misleads the next
+  reader. One that turns false only once unbuilt code lands gets cut: it reads as a puzzle.
 
 ## Where comments go
 
