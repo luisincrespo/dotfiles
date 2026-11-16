@@ -243,7 +243,9 @@ that doesn't compile costs the author a CI round and the comment its credibility
   `gh pr view <N> --repo <repo> --json state,headRefOid`. If the head moved since you drafted,
   re-check that each anchored line still says what the comment describes; a rebase is often the
   last step before a merge, so check `state` is still `OPEN` too, and if it merged, carry the
-  comment to the PR where the fix will land instead.
+  comment to the PR where the fix will land instead. After a pause, re-read the PR's threads too:
+  the user may have posted some drafts themselves, in their own words, and those get dropped rather
+  than posted twice.
 - Write each comment body to a temp file (preserves markdown/newlines). Post one at a time —
   **do not wrap the `gh api` calls in a bash helper function** (it loses `PATH` in this sandbox):
   ```bash
