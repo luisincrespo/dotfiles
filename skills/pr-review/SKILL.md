@@ -83,6 +83,10 @@ you had to dig to find out: Step 8 folds those back in at the end.
 
 ## Workflow
 
+**Name the session first**, as `pr-review-<slug>`, the slug two to four words on what the PR
+does (`pr-review-brand-faster-normalize`). Under Claude Code, set it with the `session-name`
+skill, which leaves a name the user gave alone; elsewhere, skip it.
+
 ### 1. Gather context (do this thoroughly — it's what makes the review good)
 - **Read the repo's own review conventions before anything else**: the `CLAUDE.md` and
   `REVIEW.md` files `conventions.md` names, the root one and any in an ancestor directory of a

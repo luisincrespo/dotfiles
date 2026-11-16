@@ -98,7 +98,7 @@ Set up **one integration worktree per task** if not already working in one, per 
 
 **Ticket → In Progress** (once): before the first unit's `B1` — or, on adoption entering past execute, right away — move the associated ticket forward per `## Ticket status sync`.
 
-**Name the session** (once): at the same point, propose a name derived from the task — the ticket id, or a short kebab slug of the work — and ask the user to run `/rename <name>`. There is no rename tool; `/rename` is a user-only built-in. **Skip the ask when A2's plan checkpoint ran** — accepting a plan re-titles the session from the plan, so suggesting a rename on top of that is noise. Otherwise ask once in a single line, don't gate on it, and don't re-ask on later units or resumes.
+**Name the session** (once): at the same point, name it `<prefix>-<slug>`. The prefix is local config `session_name_prefixes` for the task's project, keyed like `project_context` (none when the project has no entry, and not repeated when the slug already starts with it); the slug is two to four words on the work (`brand-rollout-gate`). Under Claude Code, set it with the `session-name` skill, which leaves a name the user gave alone, so a later accepted plan doesn't override it either. Elsewhere, propose the name and ask the user to rename the session, once, in a line, without gating on it. Don't rename on later units or resumes.
 
 Then, driven by the breakdown:
 
