@@ -137,6 +137,9 @@ counts of **human** reviews and of comments, **taken excluding the account this 
 a reply you post lands under that account (on GitHub a thread reply registers as an empty-bodied
 review), so raw totals wake the loop on its own previous cycle. Tell a bot by the GraphQL author's
 `__typename` (`Bot`), not its login: GraphQL drops the `[bot]` suffix the REST API shows.
+Add, for each of the repo's `RISK_REVIEWERS` (`pr-merge`), whether its verdict is on the current
+head: once `reviewDecision` reads APPROVED, a bot's approval of a new head changes nothing else
+here, so the loop sleeps through the last thing `pr-merge` condition 10 waits on.
 Count open threads rather than every review: a bot reviewer's clean re-review on each push adds a review but no thread, so a raw review
 count wakes the loop on nothing, while a real finding, from a bot or a human, always opens one.
 Don't drop a bot from the signature to quiet it; that hides its findings too. Leave out
