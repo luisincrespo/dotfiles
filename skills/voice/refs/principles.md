@@ -95,8 +95,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   owners themselves: it ends with a cc line and a casual why ("cc @Sam @Jordan just want to make
   sure we're aligned here before I start with any of these changes"), not a closing question.
 - **Name things the way the reader sees them, and don't leave a reference for them to reconstruct.**
-  Internal words (`unfiled`, `chip`, "the PRs") and shorthand that made sense while writing ("merge
-  bottom up", `A → this → C`) read as noise, or as wrong, to someone meeting it once. A design's own
+  Internal words (`unfiled`, `chip`, "the PRs"), shorthand that made sense while writing ("merge
+  bottom up", `A → this → C`) and labels for the work coined in the session ("a design pass") read
+  as noise, or as wrong, to someone meeting it once: say what changed instead. A design's own
   step or component names count too: in a team-wide post, say what each step does in plain words and
   leave the names to the linked doc, or readers read too much into them; a name that says what it
   does on its own ("normalize" into our own format) is fine to use. When a shared proposal is
