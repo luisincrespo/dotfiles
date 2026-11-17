@@ -52,6 +52,10 @@ a comment, applying a fix, or repeating it in a commit message or PR description
   trace the whole path rather than stopping at the one suspect it names. Ruling that suspect out is
   not the same as finding the cause, and a misattributed cause ships as documentation and
   invalidates the test plan built on it.
+- **Rarity** ("this needs the same input twice", "only if X repeats"): walk the recovery path after
+  a failure the change already admits (a wrong pick, a failed call, a user who sees no change and
+  tries again). A retry is how the same input comes back, so the case that looks rare is often the
+  recovery path.
 - **Protection** ("this test guards the fix"): check that it would fail if the bug came back, by
   walking the fixture through the broken version of the code. A bot's "this proves X" is a claim,
   not evidence.
