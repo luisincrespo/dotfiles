@@ -126,13 +126,14 @@ skill, which leaves a name the user gave alone; elsewhere, skip it.
   user's own: compare its files against `gh pr list --author @me`) gets the same check. When a local
   session (`ListAgents`) is working on that PR, ask it for the facts, unpushed work and its plans
   included, before telling the user how their flow behaves. A finding whose fix belongs in that work
-  goes to that session, and its decision settles what this PR is asked for. Read the existing review
-  threads first (`gh api repos/…/pulls/<N>/comments`): dedupe against them, and note which findings
-  other reviewers already own. Before replying that one of those findings is wrong, check *when* it
-  was made against when the code it describes appeared (`git log -S`, or the per-commit diff). A
-  finding that reads as mistaken against the current file is usually one the author already fixed —
-  a commit named for review updates is the tell — and telling a reviewer they misread costs the
-  review its credibility.
+  goes to that session, and its decision settles what this PR is asked for. So does a draft
+  proposing a shape that session's work designs (an event, a span attribute, a schema): ask it
+  before showing the draft. Read the existing review threads first (`gh api
+  repos/…/pulls/<N>/comments`): dedupe against them, and note which findings other reviewers already
+  own. Before replying that one of those findings is wrong, check *when* it was made against when
+  the code it describes appeared (`git log -S`, or the per-commit diff). A finding that reads as
+  mistaken against the current file is usually one the author already fixed — a commit named for
+  review updates is the tell — and telling a reviewer they misread costs the review its credibility.
 
 ### 2. Decide the focus
 Ask the user what to focus on if they didn't say. When they aren't a requested reviewer, ask what
