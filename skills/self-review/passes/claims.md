@@ -16,7 +16,9 @@ a comment, applying a fix, or repeating it in a commit message or PR description
 - **Equivalence** ("this changes nothing observable"): check side-effect ordering separately from
   rendered output. When a change alters how many rows stand for one thing, check every reader that
   iterates them, inside the diff or not: work fanned out per row (a job queued per row's key)
-  shrinks with it.
+  shrinks with it. Offering an existing helper in place of new code is one too: run the change's own
+  cases through it, what it must keep and what it must reject, since a helper built for another
+  input can drop what the change already handles.
 - **Redundancy** ("this buys nothing"): check whether the thing is load-bearing for a documented
   invariant. A `[]` dep array plus an `eslint-disable` is usually protecting a "runs exactly once"
   contract.
