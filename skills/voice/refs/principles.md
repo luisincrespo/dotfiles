@@ -205,6 +205,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   concretely ("I might revisit it soon: after these changes I plan to …"), never a vague "it's on
   our minds". And expertise: keep the reasons to ones they could explain if the reader follows up.
   Analysis of someone else's system that only the drafter worked out gets cut, even when it's right.
+- **Relay a teammate's concern as the question, not as their verdict.** Asking someone else (a
+  designer, another team) to weigh in on a point a reviewer raised, put the tradeoff to them
+  neutrally and leave the reviewer out of it: "Jordan wasn't sure that's OK" casts Jordan as the one
+  who approves the change.
 - **Stay out of their domain.** In someone else's area of ownership, don't assign who does the next
   piece of work, and don't tell them how their own system behaves — even when you've verified it and
   you're right. State your part, ask your question, let them own theirs. If the gap you spotted
