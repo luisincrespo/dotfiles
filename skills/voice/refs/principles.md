@@ -144,7 +144,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   measured it; don't turn measuring into something the team should do.
 - **Lead with the general purpose, not the occasion.** When a change serves more than the pilot,
   deadline or request that prompted it, open with that broader purpose and give the immediate
-  driver one clause near the end. Leading with the occasion undersells the work.
+  driver one clause near the end. Leading with the occasion undersells the work. Work that would
+  serve any vendor or option is framed for all of them, as something they might do one day ("if
+  we ever decide to …, whether that's VendorB, another third party or something in-house"), not
+  for the one the thread is weighing.
 - **Frame the ask honestly.** Don't downplay a real decision/clarification as a "sanity check" or a
   "quick question" — if you're asking someone to decide something, say that.
 - **A fix that's yours isn't an ask.** When a finding's fix lands in your own work, post a heads-up:
