@@ -41,3 +41,7 @@
     → [`customer-data.md`](../../self-review/passes/customer-data.md)
 12. **Comments carry only what the code can't say.** → global rule 4,
     [`personal-conventions.md`](../../self-review/passes/personal-conventions.md)
+13. **When determinism matters, hand the step to a command or script.** A model following
+    instructions decides well but writes exact formats, escapes and state changes unreliably, so
+    give the exact part to code it runs (a CLI subcommand, a script) and keep the judgment in the
+    prompt.
