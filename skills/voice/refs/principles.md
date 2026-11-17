@@ -78,7 +78,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   changes** the reader has to compare or act on, introduced by a short framing sentence: one bullet
   each with a bolded lead-in, written as full conversational sentences, beats a paragraph they have
   to parse serially to find the one they care about. A sentence about one bullet goes in that
-  bullet: after the list, it reads as following from the last one.
+  bullet: after the list, it reads as following from the last one. That exception is for a new
+  post: a follow-up in a thread they're already in stays casual prose, links inline, with no
+  opener, not even "Heads up".
 - **Inline code for identifiers.** Backtick function/var/file/flag names: `createItemInstance`,
   `next()`, `pnpm-lock.yaml`.
 - **Technical context woven in, not exhaustive.** Enough to understand the problem or the answer —
