@@ -243,6 +243,11 @@ ones to post: "all good" doesn't say whether the ones you'd cut are in, and a pe
 refuse a post that rests on it. Say too that a cut finding is dropped, not held back: a round
 labeled "round 1" reads as the first of several.
 
+**When the author can't answer** (they've left, say), comments have no one to act on them: the
+findings become fixes the user makes on the branch. Present them as a plan in the same rounds, and
+once the user approves, apply them in a worktree, verify them as `self-review` would, and push. A
+push needs the same go-ahead a post does, and bot threads get resolved instead of answered.
+
 **Verify any code you hand over the way CI will** (`claims.md`, *Evidence that isn't*). A snippet
 that doesn't compile costs the author a CI round and the comment its credibility.
 
@@ -305,7 +310,9 @@ that doesn't compile costs the author a CI round and the comment its credibility
   finding, so "every finding got fixed" is not convergence and a quiet bot is not a ready change.
   Once a shared module has several agent patches, recommend reading the whole delta as one change,
   and name the mechanism the patches keep working around (state applied twice, say): asking to
-  remove it ends the loop, where reviewing the next patch only draws the next finding.
+  remove it ends the loop, where reviewing the next patch only draws the next finding. An author
+  who has left can still have an agent pushing under their account, so when the user takes over
+  such a branch, fetch right before every push and fold in what landed rather than duplicating it.
 - Report what's done and what (if anything) was missed. Don't invent issues to seem thorough — but
   don't withhold a real one to avoid another round either. If it's worth describing to the user in
   detail, it's worth either raising or explicitly deciding to accept. A detail that could mislead a
