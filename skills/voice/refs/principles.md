@@ -127,7 +127,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   conditions and file lists wait for the replies. A channel heads-up about shipped changes gives
   each change one line with its headline number; methods and benchmark details wait for replies.
   A side capability mentioned along the way gets the claim alone ("It'd also be easy to A/B test
-  providers if we ever want to."); how it would work waits for someone to ask.
+  providers if we ever want to."); how it would work waits for someone to ask. An update that comes
+  with screenshots names what changed in a phrase ("pushed some tweaks for X and Y, see screenshots
+  attached") and lets the screenshots carry the detail, including whose change was whose.
 
 ## Substance
 - **A proposal asks only what it leaves open.** No question it already answers, and none about how
