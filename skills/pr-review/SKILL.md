@@ -275,6 +275,10 @@ that doesn't compile costs the author a CI round and the comment its credibility
   - Multi-line anchor: add `-F start_line=<n>` (with `-f start_side=RIGHT`) alongside `line`.
   - Reply on an existing thread: `-F in_reply_to=<comment_id>`.
 - Edit a posted comment: `gh api -X PATCH "repos/.../pulls/comments/<comment_id>" -f body="$(cat …)"`.
+- Screenshots can't go through `gh api`, and GitHub's comment box only takes them through its own
+  file picker or a drag-and-drop. Put the approved text in the box with the cursor where the images
+  go, open a folder holding just the images, and ask the user to drop them in; crop out anything
+  identifying first, the user's own email included.
 - Capture each returned comment id — you'll need it to edit, and to link comments to each other
   (`…/pull/<N>#discussion_r<comment_id>`).
 - After the first round goes out, add this review's line to the pass log, in the shape
