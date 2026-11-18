@@ -143,6 +143,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   and say you're open to changing it, rather than walking them through the mechanism. That holds
   even when you'd rather keep your way: say you lean towards it, and that you'd change it if they
   feel strongly. Close the door only when the alternative would make the system behave wrongly.
+  When they're about to change it themselves and you agree, the reply is the go-ahead alone, in one
+  line ("Yeah I think we should downgrade it to `edit`"), with no account of how it got that way.
 - **Compare versions on what actually changed.** In "what's different from the old one", claim only
   what the old one couldn't do (check it), and lead with the gains they care about, such as the
   architecture or better output, rather than a list of visible features. Output they expect to be
