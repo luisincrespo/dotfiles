@@ -238,6 +238,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **A heads-up about shipped work opens with what it was for**, then the result: "I wanted to cut
   down how long X takes, so I merged …", before "it came out about 2x faster".
 - **When two things relate, say precisely how.** "overlap but aren't the same" beats "you get both".
+  Agreeing with part of a proposal, narrow the agreement to that part ("reusing what those flows
+  already use to extract"), and when the point is where something should live, name the boundary
+  ("keep X inside Y, instead of spreading into Z"), not a mechanism ("plug them into Y") that could
+  read as agreeing to the rest.
 - **When the author has answered and the outcome is settled, reply with the acknowledgement only.**
   No clarifying what your original comment meant, no restating the mechanism already sitting in the
   thread, no explaining their own code back to them. Their answer plus a plain "yeah, agreed" is the
