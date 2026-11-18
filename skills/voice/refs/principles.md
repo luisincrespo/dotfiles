@@ -178,7 +178,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **When your digging says the premise is wrong, say so and name the disposition.** State the finding
   and what you'll do ("so unless X, I'll mark this one done"), and let the correction come back.
   Handing the reader a menu of possible causes ("was it A, B, or something else?") makes them redo
-  the work you just did.
+  the work you just did. When an author defers a fix on that premise, say plainly it isn't true and
+  isn't a blocker, and accept the deferral only on a reason that still holds ("if it's more that …,
+  I'm fine leaving it there"), never on the false one.
 - **Don't assert specifics you haven't verified.** Naming a concrete thing (a vendor, a URL, a
   system) reads as knowledge of their setup. Either verify it first or describe the shape generically.
   The same goes for your own work: what isn't built yet is what you plan to do ("we plan to
