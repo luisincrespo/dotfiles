@@ -98,25 +98,27 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **Name things the way the reader sees them, and don't leave a reference for them to reconstruct.**
   Internal words (`unfiled`, `chip`, "the PRs"), shorthand that made sense while writing ("merge
   bottom up", `A → this → C`) and labels for the work coined in the session ("a design pass") read
-  as noise, or as wrong, to someone meeting it once: say what changed instead. A design's own
-  step or component names count too: in a team-wide post, say what each step does in plain words and
+  as noise, or as wrong, to someone meeting it once: say what changed instead. A design's own step
+  or component names count too: in a team-wide post, say what each step does in plain words and
   leave the names to the linked doc, or readers read too much into them; a name that says what it
   does on its own ("normalize" into our own format) is fine to use. When a shared proposal is
   renaming a step, name neither the old nor the new one in a review comment; say what it does
   ("anything that reads X as ready"), so the point survives the rename. An implicit comparison has
   the same problem: "before or after" attaches to the nearest thing in the sentence, not the one you
-  meant, so name the baseline. A relative date ("yesterday's run") is a baseline only to you, who
-  knows what changed in between: say "before this change". And watch for names that collide with
-  their context, like "the main list" in a message that also discusses `main`; a proposed component
-  whose name blurs with a generic word (the *item skill* among skills) is bolded each time it
-  appears. When a message points at something (a PR, a stack, a comment, a doc), link it inline;
-  link a stack through its first PR. An example from your own work (a test run, a sample you tried)
-  is said as one, with where it came from, after the general point it shows; a bare name reads as
-  something the reader should already know. A number measured once is that run's result ("in my test
-  run, the board took almost 5 minutes"), never stated as how long something takes in general. An
-  exact tally from your own digging ("57 runs so far") reads machine-written in a casual message:
-  say the pattern ("every run since last night") and leave the count out. Size a gain instead of
-  praising it: "about 2x faster end to end in a few of my own runs", not "a lot faster".
+  meant, so name the baseline. So does an "it" after a sentence naming two things ("could we turn it
+  on" after two flags): name the one you mean, and where it goes. A relative date ("yesterday's
+  run") is a baseline only to you, who knows what changed in between: say "before this change". And
+  watch for names that collide with their context, like "the main list" in a message that also
+  discusses `main`; a proposed component whose name blurs with a generic word (the *item skill*
+  among skills) is bolded each time it appears. When a message points at something (a PR, a stack, a
+  comment, a doc), link it inline; link a stack through its first PR. An example from your own work
+  (a test run, a sample you tried) is said as one, with where it came from, after the general point
+  it shows; a bare name reads as something the reader should already know. A number measured once is
+  that run's result ("in my test run, the board took almost 5 minutes"), never stated as how long
+  something takes in general. An exact tally from your own digging ("57 runs so far") reads
+  machine-written in a casual message: say the pattern ("every run since last night") and leave the
+  count out. Size a gain instead of praising it: "about 2x faster end to end in a few of my own
+  runs", not "a lot faster".
 - **Vary the openers across a batch of replies.** Several replies to one reviewer that all open
   with "Yeah, good catch." read robotic side by side. Mix them ("Good catch!", "That's a good
   point,", "Fair,", "You're right,"), and let one or two open straight with the fix ("Fixed in
