@@ -81,7 +81,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   to parse serially to find the one they care about. A sentence about one bullet goes in that
   bullet: after the list, it reads as following from the last one. That exception is for a new
   post: a follow-up in a thread they're already in stays casual prose, links inline, with no
-  opener, not even "Heads up".
+  opener, not even "Heads up". A reply to one message in a busy thread opens by quoting it (a `>`
+  line with the part being answered), so it reads against that message.
 - **Inline code for identifiers.** Backtick function/var/file/flag names: `createItemInstance`,
   `next()`, `pnpm-lock.yaml`.
 - **Technical context woven in, not exhaustive.** Enough to understand the problem or the answer —
