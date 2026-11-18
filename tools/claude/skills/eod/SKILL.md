@@ -61,7 +61,13 @@ Delete the note, and report in one line what you re-armed.
 With `--all`, from any session or typed in the `claude agents` dashboard (which starts a new
 session to run it):
 
-1. List the background sessions from `ListAgents`, leaving out this one.
+1. List the background sessions from `ListAgents`, leaving out this one. With `--back`, that isn't
+   enough: a paused session's process can stop overnight, and `ListAgents` only shows running ones
+   (three of five were missing, Nov 18). Also take every row of `claude agents --json --all` whose
+   job folder still holds `tmp/eod-resume.md`. One with no `pid` comes back with `cd <its job's
+   state.json cwd> && claude --bg --resume <its sessionId>`, which wakes it under the same ID when
+   that folder is trusted; for an untrusted one, give the user that command to run in a terminal.
+   A finished task's old note (`state` "done") needs nothing: leave it.
 2. Send each one, with `SendMessage`, "Run the eod skill: stop at a good point, stop everything
    until I'm back, and leave your summary." With `--back`: "Run the eod skill with --back: I'm
    back."
