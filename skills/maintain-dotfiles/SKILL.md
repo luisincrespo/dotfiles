@@ -252,6 +252,10 @@ Then apply it yourself; where the check flags a cut, keep the text rather than a
 commit, subject starting `Trim`, with the before and after word counts in the body — so the next
 round can find the last trim and measure growth since.
 
+A draft that cuts under about 5% isn't worth the check or the churn: drop it, and treat that
+skill's growth as behaviour until it has grown again. Two drafts in a week cut 1.7% and 2.4%, both
+of files whose growth was nearly all checks with their reasons.
+
 ## Deciding without asking
 
 Trims and small skill fixes are yours to make. Apply them, commit, and name each in the round's
