@@ -22,8 +22,13 @@ a comment, applying a fix, or repeating it in a commit message or PR description
 - **Redundancy** ("this buys nothing"): check whether the thing is load-bearing for a documented
   invariant. A `[]` dep array plus an `eslint-disable` is usually protecting a "runs exactly once"
   contract.
-- **Detectability** ("this would only show up as X"): follow the bad case down every early return.
-  An empty-input path that skips the check makes it silent, not visible as X.
+- **Detectability** ("this would only show up as X", "this fails quietly"): follow the bad case down
+  every early return. An empty-input path that skips the check makes it silent, not visible as X.
+  The reverse holds too: a miss no test catches isn't silent when its first use fails where people
+  see it, such as a refusal with a clear message.
+- **Reachability** ("a session can still reach X"): name what leads there, such as a listed skill or
+  a pointer in a file that loads. Files merely on disk aren't a path, and an incident an old doc
+  records may rest on a pointer since removed.
 - **What the user sees** (a claim about rendered UI): find the component the live case mounts before
   quoting one. A flag or a count can route it to a sibling view that renders differently.
 - **Implementability** ("we could just pass X here"): follow the value to whoever consumes it, since
