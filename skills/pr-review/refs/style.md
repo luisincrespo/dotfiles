@@ -32,15 +32,20 @@
 - A real speedup with a cheap, verified fix earns a comment, even when the author already planned
   for the slow path: it leaves the code in a better state. Cut only a change that's purely a nicer
   way of writing the same thing. Work out how much it actually changes before deciding which it is.
-- Stay out of a design disagreement between the author and another reviewer. When the
-  implementation is correct either way, help unblock by approving, not by siding or proposing a
-  middle ground.
+- Stay out of a design disagreement between the author and another reviewer. When the implementation
+  is correct either way, help unblock by approving, not by siding or proposing a middle ground.
+  Another reviewer's or bot's open thread holds your approval only when you'd want it fixed yourself
+  to be comfortable with the change (a verified bug, a real authorization gap, red CI); the rest is
+  theirs to settle with the author.
 - Leave the author's deliberate choices alone (one they documented, or rewrote the code to match)
   unless it leaves an obvious risk or hole in the system. A draft that a later push settled that way
   gets dropped, not posted.
-- Leave the author's ticket housekeeping to them (a closing keyword, which ticket tracks a
-  follow-up): asking about it reads as micro-managing. A known gap a backlog ticket already owns (a
-  cleanup nobody has built yet) isn't worth a doc line either: note it against that ticket instead.
+- Leave the author's ticket housekeeping and process steps to them (a closing keyword, which ticket
+  tracks a follow-up, a sign-off a `CLAUDE.md` asks for, like a policy-team review): asking about it
+  reads as micro-managing, and they usually know the house conventions better. Ask for the substance
+  (accurate wording) instead, and the process only when the change is genuinely risky. A known gap a
+  backlog ticket already owns (a cleanup nobody has built yet) isn't worth a doc line either: note
+  it against that ticket instead.
 - A test comment earns its place when it adds coverage that would otherwise let a bug back in, when
   the test doesn't actually verify what it claims to, or when it's prone to flakiness. Cut one that
   polishes an assertion's style or a test's name. For an invariant that breaks silently (an option
