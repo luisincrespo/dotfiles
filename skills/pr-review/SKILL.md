@@ -359,9 +359,12 @@ that doesn't compile costs the author a CI round and the comment its credibility
 review body.
 
 A permission check can refuse an approval that rests on a conditional go-ahead. Don't work around
-it: ask the user for a direct instruction, or give them the command to run. A finding that lands
-between the user's go-ahead and the approval gets shown before you approve; the go-ahead covered
-what they had seen.
+it: ask the user for a direct instruction, or give them the command to run. What lands
+between the user's go-ahead and the approval (a push, a reply, another reviewer's comment) gets
+shown in the message that submits the approval, and the go-ahead stands. Hold the approval and ask
+again only when what landed changes the call: a finding against the user's own comments, a change
+request from another reviewer, or a question only the user can answer. Then say the approval
+hasn't gone out yet: a user who said "approve" reads every later message as coming after it.
 - **Every comment on the PR counts, not just yours.** Before approving, hold other reviewers' open
   threads, review summaries and PR comments, bots included, to the bar Step 6 sets for yours: fixed
   in the code, or answered with a reasoned reply. Judge a thread by its resolution state (GraphQL
