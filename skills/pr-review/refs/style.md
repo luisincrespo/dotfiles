@@ -21,8 +21,10 @@
 - A rare edge case with a cheap, correct fix still earns a comment: correct beats "rare enough".
   Argue it from the rule the code breaks (every other path does X, this one doesn't) and how cheap
   the fix is, not from scenarios, which invite "that's too rare to matter". Keep it to one ask, so
-  it doesn't become a debate with another reviewer. One that only bites if another open PR merges
-  first (both bump the same version) stays in your notes until that PR has merged.
+  it doesn't become a debate with another reviewer. It earns the comment, not a hold on approval:
+  when the author passes on a consistency fix with no reachable harm today, approve and defer it.
+  One that only bites if another open PR merges first (both bump the same version) stays in your
+  notes until that PR has merged.
 - On a flow nobody has designed yet, ask only for correctness and permissions on the paths that
   exist, and leave the behavior open in a sentence ("We haven't really decided how X should work
   yet, so…") instead of proposing it. A ticket's "open" can be behind the user, so ask them for the
