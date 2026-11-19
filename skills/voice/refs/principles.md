@@ -40,7 +40,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   part of the work already shipped, say
   in a word which part ("the form itself (UI component) is already merged"). Members of the project
   pinged in that project's own channel need no reason: the channel is the reason, so the last line
-  is just "@Sam @Jordan could you please help review this one when you have some time?". Anywhere
+  is just "@Sam @Jordan could you please help review this one when you have some time?" (with the
+  reviewer already requested on the PR itself, the post just shares it, with no ping). Anywhere
   else, the requested reviewer is pinged with a reason, never a bare `cc @<reviewer>`: a thread
   reply under it ("@Sam added you as reviewer here", then why them), or a last line of the message
   itself when the reason is short ("cc @Sam the comments you had already left there are now
