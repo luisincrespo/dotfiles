@@ -122,7 +122,7 @@ For each unit:
 ### B3. Open
 - **Final check of the split.** Measure the unit's diff against its base (`git diff --stat <unit base>...HEAD`) and read it for a concern the plan didn't foresee, against `refs/breakdown.md`. Propose a change only for something new: an unforeseen concern, or growth well past what the user approved. Otherwise one line says why the breakdown still holds. A split follows that file's steps for splitting a built branch, and each new unit goes back through B1/B2.
 - Invoke `Skill(pr-open)` with `--target <unit base>` and `--task-slug <slug>`. It creates the PR (ready unless it isn't, per its Step 5) and records `pr_number` / `status:"open"` in the unit. For a **ready** PR it also asks for review (Step 7): reviewers proposed for the PR itself where the repo works that way, else a Slack ping drafted via `voice`. Neither blocks — the PR is already open, so carry straight on to B4 and add reviewers when the user answers. Pass `--no-review-ping` through.
-- **Ticket → In Review** (once per task): when the task's **last** unit has an open PR — right after this `pr-open` returns for a single-unit task; for a breakdown, only once every unit is open, since In Review while units are still being built tells teammates the work is done. On adoption, when A0 found every unit's PR open. Move the ticket forward per `## Ticket status sync`.
+- **Ticket → In Review** (once per task): when every unit's PR has been sent for review (reviewers requested, or the review ping sent), not when the PRs open. A draft, or a PR held back for the user's own test, isn't in review yet, and a ticket in review tells teammates the work is ready for them. On adoption, when A0 found every unit's PR already sent for review. Move the ticket forward per `## Ticket status sync`.
 
 ### B4. Babysit → merge → cleanup
 - **One unit in flight:** invoke `Skill(pr-babysit)` with the unit's PR ref, `--task-slug <slug>` (and `--interval` if set). It loops on CI/comments/keep-current and, when merge-ready, chains `Skill(pr-merge)` → `Skill(post-merge-cleanup)`.
@@ -184,7 +184,7 @@ When the task has an associated tracker ticket (`task_ref`) and `ticket_sync.ena
 
 Three milestones:
 - **→ In Progress** — start of Phase B (first unit's execute begins). Fires once.
-- **→ In Review** — once every unit has an open PR (after the last unit's `pr-open`, or on adoption when A0 finds them all open). Fires once.
+- **→ In Review** — once every unit's PR has been sent for review (reviewers requested or the review ping sent), not merely opened. Fires once.
 - **→ Done** — owned by `post-merge-cleanup`, **not here**: `pr-babysit` self-wraps in `/loop`, so the merge happens detached from this conductor across later turns. `post-merge-cleanup` runs *at* merge completion, on the **last** unit, and does the Done transition there (gated on the same `ticket_sync.enabled`).
 
 Guards (all in the ref): skip silently if no ticket / the tracker MCP is absent this session / `--no-ticket-sync`; never move a ticket backward or fight a manual move (forward-only via a status-rank table); record each transition in `ticket_sync` so it's idempotent across `/loop` cycles and resumes.
