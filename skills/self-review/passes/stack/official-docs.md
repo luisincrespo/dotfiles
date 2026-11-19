@@ -16,7 +16,9 @@ API). No tool-specific code at all → it doesn't apply.
 
 - **The version in use, and what sits on top.** Read it from the manifest, lockfile or toolchain
   file, and note anything layered over the tool that changes its rules: for GraphQL, the server
-  library, a federation spec, the codegen setup; for SQL, the database and its version.
+  library, a federation spec, the codegen setup; for SQL, the database and its version. The
+  defaults the app configures count too (a client's default options decide what an error or a
+  refetch returns): check claims, and the tests, under those, not a test harness's.
 - **The tool's own docs for that version, not memory.** Its reference or spec, and the
   best-practices or migration guide it publishes, where it has one. Read only the pages that bear
   on what the diff uses. Prefer the project's own docs; reach for anything else only where they're
