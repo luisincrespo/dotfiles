@@ -131,9 +131,10 @@ CI passed on the source alone; a semantic conflict with the current target can s
      +165 commits, and its overlap from 2 files to 14, in a single overnight gap.
    - Run the repo's lint, build and test gates against the merged state, scoped to what the merge
      touched. Read the repo's `CLAUDE.md`/docs for the real commands; don't assume a build system.
-     When the target changed a dependency pin or the lockfile, install the merged dependencies
-     first: a stale install reports type errors in code the PR never touched (main's newer SDK
-     against the branch's older installed one), which reads as a semantic conflict that isn't one.
+     When the target changed a dependency pin, the lockfile or a schema a client is generated from
+     (a Prisma schema), install the merged dependencies and regenerate first: a stale install or
+     client reports type errors in code the PR never touched (main's newer SDK, or a model main
+     added, against the branch's older copy), which reads as a semantic conflict that isn't one.
      Where the repo has affected-graph tooling, scope with it — for an nx monorepo (falling back to
      `lint` if `eslint:lint` isn't the target name):
      ```bash
