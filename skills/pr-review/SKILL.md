@@ -336,21 +336,23 @@ that doesn't compile costs the author a CI round and the comment its credibility
   your own previous cycle. A post of yours takes the user off the requested reviewers, so the first
   poll after one can fire on that alone. A review request for the user changes no count, and it's
   the author asking them to act, so surface it the moment it lands. Leave CI out: a red check on an
-  unchanged SHA is noise. When an API call fails, skip that poll instead of emitting a placeholder,
-  which would fire twice. A Monitor expires after 30 minutes at most, so re-arm it on each expiry —
-  waiting on an answer included, rather than swapping it for a slow timer — and end any interactive
-  turn about this PR by re-arming too: a conversation replaces the turn that would have done it. A
-  Monitor also dies with the session. When resuming, seed the new one with the last signature you
-  saw, not a fresh read, so anything that landed in the gap still fires. On each wake, re-run this
-  step until all comments are resolved, then do Step 7. Surface anything that needs the user (a
-  reply asking a question, a pushback you don't buy, CI gone red) instead of forcing resolution, and
-  verify any alarm your own tooling raises against the PR before relaying it. Stop polling only when
-  approved (when the user is only helping, by any one requested reviewer, even with another's change
-  request still open), the user calls it off, or the PR closes; a PR closed as superseded gets each
-  open finding checked against its replacement, so the user can choose to carry over what still
-  applies. If the PR goes quiet for a day or more, say so and offer to stop rather than accruing
-  silent ticks, especially when every prior fix came from one bot answering another: ordinary
-  human-review threads have nothing automated to pick them up.
+  unchanged SHA is noise. The exception is a review bot that gives its verdict as a check rather
+  than a comment (a semantic review that blocks merge): its pass or fail is a reviewer's answer, so
+  it goes in the signature. When an API call fails, skip that poll instead of emitting a
+  placeholder, which would fire twice. A Monitor expires after 30 minutes at most, so re-arm it on
+  each expiry — waiting on an answer included, rather than swapping it for a slow timer — and end
+  any interactive turn about this PR by re-arming too: a conversation replaces the turn that would
+  have done it. A Monitor also dies with the session. When resuming, seed the new one with the last
+  signature you saw, not a fresh read, so anything that landed in the gap still fires. On each wake,
+  re-run this step until all comments are resolved, then do Step 7. Surface anything that needs the
+  user (a reply asking a question, a pushback you don't buy, CI gone red) instead of forcing
+  resolution, and verify any alarm your own tooling raises against the PR before relaying it. Stop
+  polling only when approved (when the user is only helping, by any one requested reviewer, even
+  with another's change request still open), the user calls it off, or the PR closes; a PR closed as
+  superseded gets each open finding checked against its replacement, so the user can choose to carry
+  over what still applies. If the PR goes quiet for a day or more, say so and offer to stop rather
+  than accruing silent ticks, especially when every prior fix came from one bot answering another:
+  ordinary human-review threads have nothing automated to pick them up.
 
 ### 7. Approve (when asked, or once Step 6's loop clears every comment)
 `gh pr review <N> --repo <repo> --approve`, with `--body` only when `refs/style.md` wants a
