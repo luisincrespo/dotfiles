@@ -65,6 +65,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   - **"bolt" / "bolt on"** — not for tacking something onto a change. Say it plainly: "not part of this change", "not something to add here".
   - **"nah"** — reads impolite in an outward message, even when the answer really is no. Open with a plain "I don't think we need it" / "I don't think so" instead.
   - **"agreed on X" / "Agreed, …"** as a way to agree in conversation. They say "yeah, I agree that…" instead.
+  - **"critical path"**, or any framing of a deferral as keeping something off one. Say what you
+    want done ("get this in soon so we can launch as planned") and why today's approach still holds.
   - **Someone else's jargon** ("bench set") picked up from the thread or from the drafter: they
     wouldn't have used it on their own, so say the plain thing instead.
 
