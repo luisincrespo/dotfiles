@@ -98,14 +98,17 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **Technical context woven in, not exhaustive.** Enough to understand the problem or the answer —
   the key finding, the error — not a full change-map.
 - **End a Slack ask with a single open-ended question**, not a checklist of asks; say what you're
-  trying to understand. A second ask smuggled into the same sentence ("who can do X, and what about
-  Y?") is still two asks — pick the one that unblocks you and let the rest come up in the replies. A
-  new ask posted under your own still-unanswered questions says so ("one more, separate from the two
-  questions above"), so it isn't read as part of them. Sharing a view in a peer's design thread
-  isn't an ask: they close it with an open "Let me know what you think!", not a yes/no like "Does
-  that sound right to you?". Nor is a proposal posted to a channel for alignment, when they ping the
-  owners themselves: it ends with a cc line and a casual why ("cc @Sam @Jordan just want to make
-  sure we're aligned here before I start with any of these changes"), not a closing question.
+  trying to understand. Don't ask at all when the reader has no real choice (asking a PM whether a
+  date works when nothing else is possible): say what happens next instead ("so I'll let him know
+  it's most likely Monday"). A second ask smuggled into the same sentence ("who can do X, and what
+  about Y?") is still two asks — pick the one that unblocks you and let the rest come up in the
+  replies. A new ask posted under your own still-unanswered questions says so ("one more, separate
+  from the two questions above"), so it isn't read as part of them. Sharing a view in a peer's
+  design thread isn't an ask: they close it with an open "Let me know what you think!", not a yes/no
+  like "Does that sound right to you?". Nor is a proposal posted to a channel for alignment, when
+  they ping the owners themselves: it ends with a cc line and a casual why ("cc @Sam @Jordan just
+  want to make sure we're aligned here before I start with any of these changes"), not a closing
+  question.
 - **Name things the way the reader sees them, and don't leave a reference for them to reconstruct.**
   Internal words (`unfiled`, `chip`, "the PRs"), shorthand that made sense while writing ("merge
   bottom up", `A → this → C`) and labels for the work coined in the session ("a design pass") read
