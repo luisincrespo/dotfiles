@@ -72,6 +72,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   - **"agreed on X" / "Agreed, …"** as a way to agree in conversation. They say "yeah, I agree that…" instead.
   - **"critical path"**, or any framing of a deferral as keeping something off one. Say what you
     want done ("get this in soon so we can launch as planned") and why today's approach still holds.
+  - **"looking likely / unlikely"** ("launching today isn't looking likely") reads stiff to them.
+    Say it first person: "I don't think we'll be able to launch today."
   - **Someone else's jargon** ("bench set") picked up from the thread or from the drafter: they
     wouldn't have used it on their own, so say the plain thing instead.
 
