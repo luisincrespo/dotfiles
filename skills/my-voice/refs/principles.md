@@ -210,7 +210,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   needed real work I'd agree" names the condition under which the reviewer would be right, which is
   worth saying; an opening concession only cushions. Open by showing you weighed the alternatives
   when the decline turns on *judgment* instead, where the reviewer needs to see they were considered
-  at all.
+  at all. Deferring a reviewer's better design, open by agreeing on the approach, then give the cost
+  that holds today, checked: what it would change for existing behavior, and what still needs a
+  look. A rollout that hasn't started (a flag still at 0%) is no reason to wait.
 - **Don't overstate certainty — argue the cost, not the absolute.** "Impossible", "can't", "never"
   invite a counterexample, and one usually exists: a constant someone can raise, a flag, a server
   change. Say what it would actually take ("the server caps `first` at 50, so a full-window refetch
