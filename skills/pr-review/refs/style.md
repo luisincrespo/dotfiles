@@ -133,7 +133,8 @@ sound like the user typed it, which the `voice` skill's ground truth is for.
   than asking for the change.
 - On a product or UX concern, assume the author may already have design input: ask to revisit and
   say which option the user prefers, rather than asking them to loop someone in. When accepting a
-  decision, credit its reasoning, not who proposed it.
+  decision, credit its reasoning, not who proposed it. A regression of something users rely on is a
+  concern to work around before shipping, worded as one, not a question.
 
 ## Examples of the target style
 
