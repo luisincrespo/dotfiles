@@ -92,6 +92,12 @@
   "session_name_prefixes": {
     "linear:00000000-0000-0000-0000-000000000000": "project"
   },
+  "//project_areas": "Per project, keyed like project_context ('<tracker>:<project id>'). The code areas the project owns, per repo, as path globs: a PR whose changed files fall in them belongs to the project even when it links no ticket in it, so pr-review reads the project's page.",
+  "project_areas": {
+    "linear:00000000-0000-0000-0000-000000000000": {
+      "github/acme-org/example-repo": ["packages/server/src/feature/**", "packages/client/src/feature/**"]
+    }
+  },
   "//project_review_channels": "Per project, keyed like project_context ('<tracker>:<project id>'). The Slack channel a review request for that project's work goes to, in place of review_request_channel. Each value: name and id (the channel id the Slack tools take).",
   "project_review_channels": {
     "linear:00000000-0000-0000-0000-000000000000": { "name": "#project-channel", "id": "C0000000000" }

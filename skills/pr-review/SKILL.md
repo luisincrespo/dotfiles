@@ -103,13 +103,17 @@ skill, which leaves a name the user gave alone; elsewhere, skip it.
 - **The project background**, if the PR belongs to a project: the one page holding its engineering
   background. First hit wins: (1) `--project-ref <url>`, or a link the user gave with the request;
   (2) `project_ref` in the review ledger; (3) local config `project_context`, keyed by the tracker
-  project of the ticket the PR links. Record it in the ledger as `project_ref = {url, title,
-  source}`, read it the way `understand-task` Step 1 says, and check the PR against what it decides
-  or rules out. A departure is a finding like any other, raised as a question, since the author may
-  have agreed a change the page doesn't show yet. A review never edits the page. Nothing resolves
-  but the PR's ticket sits in a tracker project with no `project_context` entry → ask for the page
-  once, with Step 2's focus question when there is one, and save the answer (a link, or `null`)
-  there.
+  project of the ticket the PR links; (4) a PR that links no such ticket still belongs to a project
+  when its changed files fall in that project's `project_areas` in local config, or a sibling
+  session working on the project names it. Record it in the ledger as `project_ref = {url, title,
+  source}` and read the brain whole, as `../understand-task/refs/project-brain.md` says: the big
+  picture is what this review leans on, not only what the page rules out. Check the PR against it:
+  where it sits in the current state, what in-flight work it touches, which decisions, invariants
+  and traps apply, which open question it settles or reopens. What doesn't fit is a finding like
+  any other, raised as a question, since the author may have agreed a change the page doesn't show
+  yet. Nothing resolves but the PR's ticket sits in a tracker project with no `project_context`
+  entry → ask for the page once, with Step 2's focus question when there is one, and save the
+  answer (a link, or `null`) there.
 - `gh pr view <N> --repo <repo> --json title,body,author,headRefName,baseRefName,files,additions,deletions,state`
 - `gh pr diff <N> --repo <repo>`
 - Fetch the PR and read the **full files**, not just the diff:
@@ -141,6 +145,11 @@ Ask the user what to focus on if they didn't say. When they aren't a requested r
 they need from the PR: it's usually a use of their own that builds on it, and that becomes the
 review's main lens.
 
+- **When the PR belongs to a project, how it fits is part of every review**, whatever the focus:
+  where it sits in the project's current state, what in-flight work it collides with, which
+  decisions and invariants it keeps or breaks (Step 1). Those findings are their own group in the
+  first round, ahead of the line-level ones: they're the judgment a reviewer who knows the project
+  brings, and the ones a diff alone doesn't show.
 - **Whatever the focus, every pass that applies**: each file in `../self-review/passes/` and its
   `stack/` folder with a *When it applies* section, by that section's own test, read when it's in
   play, plus `conventions.md` on every PR. Their findings join the rounds like any other, and the
@@ -410,6 +419,11 @@ Scan the session for **reusable** signals:
 - **Process** — a check you skipped that would have caught a wrong claim (e.g. verifying a
   component's public-export surface before calling a prop "unused"), or a step that wasted time.
 - **Repo knowledge** — a convention, gotcha, or pattern you had to discover mid-review.
+- **Project knowledge**, when the PR belongs to a project — a decision the author and the user
+  agreed in the threads, a trap the review found, an open question it raised or settled. Propose
+  each as a line for the project's brain, and write the ones the user OKs, following
+  `../understand-task/refs/project-brain.md` and the page's own rules; never a product decision on
+  your own.
 
 Voice and calibration are the user's taste, so they go to `refs/style.md`, the personal layer;
 process lessons go to this skill, where every user of it benefits. A lesson that's both (a check
