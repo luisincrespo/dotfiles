@@ -41,7 +41,9 @@
   theirs to settle with the author.
 - Leave the author's deliberate choices alone (one they documented, or rewrote the code to match)
   unless it leaves an obvious risk or hole in the system. A draft that a later push settled that way
-  gets dropped, not posted.
+  gets dropped, not posted. A departure from a design the user built (an extension seam of theirs
+  reused the wrong way) is the exception: the ask is the design itself, not a test that guards the
+  departure.
 - Leave the author's ticket housekeeping and process steps to them (a closing keyword, which ticket
   tracks a follow-up, a sign-off a `CLAUDE.md` asks for, like a policy-team review): asking about it
   reads as micro-managing, and they usually know the house conventions better. Ask for the substance
