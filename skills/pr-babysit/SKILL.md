@@ -72,7 +72,7 @@ allowed-tools:
   - Bash(rm -f ~/.claude/cache/deliver/:*)
   - Skill(loop)
   - Skill(pr-merge)
-  - Skill(voice)
+  - Skill(my-voice)
   - Read
   - mcp__playwright__browser_navigate
   - mcp__playwright__browser_wait_for
@@ -315,7 +315,7 @@ Reply/resolve: GitLab reply `glab api --method POST ".../discussions/<thread_id>
 - **ask-user**: skip if in `shown_but_unaddressed_thread_ids`. Else batch `AI reviewer (unclear): <url> — <summary> — why unsure: <reason>`, append to `shown_but_unaddressed_thread_ids`.
 - **ignore-as-noise**: reply (one polite sentence) → resolve → append to `addressed_thread_ids`.
 
-**Voice.** Reply *prose* is in the user's voice — follow the `voice` skill's ground truth (`refs/principles.md` + `refs/examples-pr-comments.md`, the source of truth for their written style). A bounded ack like `Addressed in <sha>.` is fine as-is; apply the voice to anything with latitude (the `ignore-as-noise` sentence, an explanatory reply). These go to a **bot** reviewer → they post autonomously. A reply to a **human** thread is a message to a person → draft it via the full `Skill(voice)` (draft → their approval → post). The keep-current title/description (Phase 2.5) inherits `pr-open`'s voice too.
+**Voice.** Reply *prose* is in the user's voice — follow the `my-voice` skill's ground truth (`refs/principles.md` + `refs/examples-pr-comments.md`, the source of truth for their written style). A bounded ack like `Addressed in <sha>.` is fine as-is; apply the voice to anything with latitude (the `ignore-as-noise` sentence, an explanatory reply). These go to a **bot** reviewer → they post autonomously. A reply to a **human** thread is a message to a person → draft it via the full `Skill(my-voice)` (draft → their approval → post). The keep-current title/description (Phase 2.5) inherits `pr-open`'s voice too.
 
 ### 2b. Human / unfiltered bot comment
 Filter notes with `note_id` not in `state.seen_human_note_ids` and not system. Batch each: `Human (@<author>): <url> — <body trunc 200>`. Append note IDs to `seen_human_note_ids`. **Never reply to or resolve human threads.**

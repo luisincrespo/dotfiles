@@ -1,5 +1,5 @@
 ---
-name: voice
+name: my-voice
 description: >-
   Draft outward-facing content in the user's own voice: Slack messages, PR/MR review comments and
   replies, and PR/MR titles and descriptions. Use whenever composing ANY outward-facing message on
@@ -8,7 +8,7 @@ description: >-
   round of their edits back in so it keeps improving.
 ---
 
-# voice — write the way the user writes
+# my-voice — write the way the user writes
 
 The user has a specific, consistent communication style, and reworks drafts that don't match it.
 This skill exists so messages sound like them on the first pass, and so every correction makes the
@@ -77,7 +77,7 @@ robotic", "you don't say it like that") — capture it **before moving on**:
 fails, end your reply with them as one block the user can paste into a coding session, which
 records it with this step.
 
-1. Append a new entry to the **genre-matching** `refs/examples-*.md` (`examples-slack.md`, `examples-pr-comments.md`, or `examples-pr-descriptions.md`) **in the private companion repo**, never in this public one: they're real messages. The companion is the `dotfiles-private` checkout beside the public one (e.g. `~/code/dotfiles-private` next to `~/code/dotfiles`), or `$DOTFILES_PRIVATE`; write to its `skills/voice/refs/<file>`. Before writing, check that `git -C <that dir> rev-parse --show-toplevel` names the companion, not the public repo: `principles.md` lives in the public checkout, and a session once created a fresh `examples-pr-comments.md` beside it there, one `git add` from publishing a real message. Create a missing file in the companion and re-run `tools/claude/install.sh` so it's linked in. With no companion repo at all, skip the example and keep only the principle (step 2), and say once that examples need one. Each entry has:
+1. Append a new entry to the **genre-matching** `refs/examples-*.md` (`examples-slack.md`, `examples-pr-comments.md`, or `examples-pr-descriptions.md`) **in the private companion repo**, never in this public one: they're real messages. The companion is the `dotfiles-private` checkout beside the public one (e.g. `~/code/dotfiles-private` next to `~/code/dotfiles`), or `$DOTFILES_PRIVATE`; write to its `skills/my-voice/refs/<file>`. Before writing, check that `git -C <that dir> rev-parse --show-toplevel` names the companion, not the public repo: `principles.md` lives in the public checkout, and a session once created a fresh `examples-pr-comments.md` beside it there, one `git add` from publishing a real message. Create a missing file in the companion and re-run `tools/claude/install.sh` so it's linked in. With no companion repo at all, skip the example and keep only the principle (step 2), and say once that examples need one. Each entry has:
    - **Context** — one line on what the message was about.
    - **❌ draft** — the version that missed (verbatim), if there was one.
    - **✅ final** — their approved/edited wording (verbatim — this is the most valuable signal).
@@ -110,7 +110,7 @@ this is the safety net for the runs where they approve as-is and there'd otherwi
 
 ## Notes
 
-- Complements `pr-review` (owns the review workflow) and the `deliver` pipeline (MR/PR lifecycle): use `voice`
+- Complements `pr-review` (owns the review workflow) and the `deliver` pipeline (MR/PR lifecycle): use `my-voice`
   for the *wording* of any message those produce.
 - This skill is the source of truth for the user's written voice; the `feedback_slack_message_style` memory
   is a lightweight pointer to it.

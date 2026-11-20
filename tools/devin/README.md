@@ -55,7 +55,7 @@ sees none of them — `devin mcp list` starts empty even with the flag on.
 
 Skills that name an `mcp__claude_ai_*` tool degrade rather than break: `ticket-status.md`
 treats a missing connector as "skip silently", by design for exactly this case. But under
-Devin, ticket sync doesn't happen and `voice` can't reach Slack. Add what you need with
+Devin, ticket sync doesn't happen and `my-voice` can't reach Slack. Add what you need with
 `devin mcp add`.
 
 ## Cloud sessions do NOT get these skills
@@ -181,7 +181,7 @@ the web UI.
 ```
 
 The upload is personal-scope and visible only to you, so the private overlay can ride along —
-and `voice` is much better with its corpus than without. Opt-in rather than default because an
+and `my-voice` is much better with its corpus than without. Opt-in rather than default because an
 **org-scoped** upload would hand that corpus to everyone in the org; a flag you have to type is
 a decision, a default is an accident waiting to happen.
 

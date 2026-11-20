@@ -4,7 +4,7 @@ description: >-
   Upload a copy of a local skill to claude.ai so regular Claude chats (web, desktop, mobile) can
   use it, or refresh a copy uploaded before. Packages the installed skill, private overlay
   included, as the ZIP claude.ai's skill upload takes, uploads it through Claude in Chrome once
-  the user approves, and records the upload. Use for "upload voice to claude.ai", "refresh the
+  the user approves, and records the upload. Use for "upload my-voice to claude.ai", "refresh the
   claude.ai copy", or when maintain-dotfiles says an uploaded copy is behind. Claude Code only.
 ---
 

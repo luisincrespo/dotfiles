@@ -91,7 +91,7 @@ the user (cut findings, CI, overlapping PRs) come after the last round, kept sho
 
 **Concise, human voice.** Short words, no AI-thoroughness, no "why this approach vs that" essays.
 Phrase as suggestions or questions ("Could we…", "Small thing:", "Worth picking one…"). It should
-sound like the user typed it, which the `voice` skill's ground truth is for.
+sound like the user typed it, which the `my-voice` skill's ground truth is for.
 
 - Lead with the ask, then the problem as someone using it would see it; keep the mechanism (which
   component or query causes it) to a clause, or the comment reads as being about whatever you named

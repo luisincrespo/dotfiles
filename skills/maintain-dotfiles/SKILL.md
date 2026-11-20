@@ -43,7 +43,7 @@ Two repos, split by what can be published, not by what a thing is:
 | | | |
 |---|---|---|
 | this repo | **public** | `AGENTS.md`, `skills/`, `local/` schemas, `tools/<vendor>/` adapters |
-| its companion | **private** | mirrors the public layout; today the `voice` example corpus |
+| its companion | **private** | mirrors the public layout; today the `my-voice` example corpus |
 
 Find both the way `install.sh` does, since neither has a fixed location: this repo is the checkout
 this skill's folder resolves into (`git -C "$(dirname "$(readlink -f <skill folder>)")" rev-parse
@@ -92,8 +92,8 @@ done for the day: the skill works the same when run on demand.
 `git status --porcelain` in both repos, and `git fetch` to see if either is behind. Behind →
 `git pull` (merge, never rebase — global rule 10) before anything else.
 
-**Then fold the voice inbox**, when local config `voice_inbox` is set. Each entry it still marks
-new is a correction that a chat copy of `voice` couldn't write itself. Run `voice` Step 4 on it,
+**Then fold the voice inbox**, when local config `voice_inbox` is set. Each entry it still marks new
+is a correction that a chat copy of `my-voice` couldn't write itself. Run `my-voice` Step 4 on it,
 checking the anonymization again before anything lands, then mark it folded in, or skipped with the
 reason (a duplicate, say). Those writes are this round's own and complete, so Step 2's hold doesn't
 apply to them. Its connector missing this session → say so in a line, and leave the entries for a
@@ -133,14 +133,14 @@ immediately.
 
 The leak guard is mechanical. It catches credentials, real addresses, internal hostnames,
 ticket ids, denylisted employer terms, and commit identities. It cannot catch a change that is
-merely *private* — and the `voice` corpus is the proof: anonymized by design, so it passes
+merely *private* — and the `my-voice` corpus is the proof: anonymized by design, so it passes
 every rule we have, which is exactly why it lives in the other repo.
 
 So flag, don't assume, when a change:
 
 - reads like a personal note, an unresolved opinion about a person, or something written to
   think rather than to publish;
-- names a colleague, even a placeholder, outside `skills/voice/refs/`;
+- names a colleague, even a placeholder, outside `skills/my-voice/refs/`;
 - records a workplace situation rather than a portable lesson — the lesson belongs in the
   public skill, the anecdote may not;
 - describes a private codebase's internals concretely enough to be recognisable, even without
@@ -157,13 +157,13 @@ So is the user's own taste, which global rule 13 routes to a personal-layer file
 shared skill, so that someone who replaces those files gets their way and none of the user's. A
 self-educate edit that puts one in a shared skill is a small fix: move it there before committing.
 
-A `skills/voice/refs/examples-*` file in the public checkout is a voice example saved to the wrong
-repo. The pre-commit hook refuses it, so there's no rush: once the companion's copy of that file is
-quiet, append the entries there, commit them in the companion, and delete the public file. It
-happened three times in one day, all from one long-running session that had started writing to the
-public path, which no skill fix reaches once it's in a session's context. When one recurs, find the
-writer (grep recent transcripts under `~/.claude/projects/` for the public path) and message it the
-companion's path.
+A `skills/my-voice/refs/examples-*` file in the public checkout is a voice example saved to the
+wrong repo. The pre-commit hook refuses it, so there's no rush: once the companion's copy of that
+file is quiet, append the entries there, commit them in the companion, and delete the public file.
+It happened three times in one day, all from one long-running session that had started writing to
+the public path, which no skill fix reaches once it's in a session's context. When one recurs, find
+the writer (grep recent transcripts under `~/.claude/projects/` for the public path) and message it
+the companion's path.
 
 ## Step 4 — Check the change is finished
 

@@ -31,7 +31,7 @@ allowed-tools:
   - Bash(mkdir -p:*)
   - Bash(cat:*)
   - Read
-  - Skill(voice)
+  - Skill(my-voice)
   - mcp__playwright__browser_navigate
   - mcp__playwright__browser_wait_for
   - mcp__playwright__browser_take_screenshot
@@ -92,7 +92,7 @@ Opens **one** MR/PR for the current branch and returns. This is the create stage
 
 ## Step 2: Title (concise — NO ticket prefix)
 
-**Voice — write the title AND the Step 3 description in the user's voice.** Follow the `voice` skill's ground truth (its `refs/principles.md`, `refs/examples-pr-descriptions.md` — the source of truth for their written style): plain, concise, first-person where natural, not robotic or "sophisticated." The template *structure* stays; the *prose within* sounds like them. This is drafting editable PR metadata (kept current by `pr-babysit`), not a message to a person — so no separate send-approval gate.
+**Voice — write the title AND the Step 3 description in the user's voice.** Follow the `my-voice` skill's ground truth (its `refs/principles.md`, `refs/examples-pr-descriptions.md` — the source of truth for their written style): plain, concise, first-person where natural, not robotic or "sophisticated." The template *structure* stays; the *prose within* sounds like them. This is drafting editable PR metadata (kept current by `pr-babysit`), not a message to a person — so no separate send-approval gate.
 
 - Write a concise, imperative one-line summary of the diff (e.g. `Make onboarding progression resilient to storage failures`).
 
@@ -154,7 +154,7 @@ Only for a **ready** PR, stacked or not; a draft gets its request when it's mark
 - **Ask on the PR, not in Slack**, where local config sets `review_request_mechanism` to `github-reviewers`. A Slack ping as well just splits the thread.
 - **Propose reviewers; don't pick them, and don't block on it.** The PR already exists (Step 6), so nothing is gated on this. Name two or three candidates with a one-line reason each, drawn from a CODEOWNERS rule matching the changed paths, recent authorship in those paths (`git log --since`), and whoever reviewed the closest recent PR. Surface them with the open announcement and let the caller carry on to `pr-babysit`. They confirm, substitute, or say no one — **"no one" is a normal answer** and ends the step. No standing list: a default puts the same names on every PR regardless of what it touches.
 - **When the user answers**, add them with `gh pr edit <n> --add-reviewer <each>` (GitLab: `glab mr update <n> --reviewer <each>`), a team as `<org>/<team>`, and report who was added.
-- **Slack only when no mechanism is configured, or the user asks for one.** Invoke `Skill(voice)` to **draft** a Slack review-request in the user's voice, following the review-request template in `AGENTS.md` rule 8 (`PR to …` on GitHub), addressed to `REVIEW_REQUEST_CHANNEL` and opening with `REVIEW_REQUEST_HANDLE`. **Prefer that group handle over naming individuals** — it reaches whoever is free, which is how a claim-by-reaction channel works. With no handle configured, use whoever the user names (an arg or in-conversation), else leave a clear `@<reviewer>` placeholder for them to fill.
+- **Slack only when no mechanism is configured, or the user asks for one.** Invoke `Skill(my-voice)` to **draft** a Slack review-request in the user's voice, following the review-request template in `AGENTS.md` rule 8 (`PR to …` on GitHub), addressed to `REVIEW_REQUEST_CHANNEL` and opening with `REVIEW_REQUEST_HANDLE`. **Prefer that group handle over naming individuals** — it reaches whoever is free, which is how a claim-by-reaction channel works. With no handle configured, use whoever the user names (an arg or in-conversation), else leave a clear `@<reviewer>` placeholder for them to fill.
 - **Announce a stack as a stack**: say so in the first line, then one line per PR in merge order giving what that PR alone handles, its full URL, and a marker on any that are draft — a reviewer has to know which to pick up first.
 - **Generate it, don't send it.** Present the draft for the user to send themselves — that's the default. Send it yourself only if they *explicitly* tell you to this run.
 - Autonomous (`deliver`) run: surface the draft alongside the open announcement (`✅ Opened <web_url> (ready). Review-request draft ready for you to send.`) and let `pr-babysit` proceed — don't wait on it.

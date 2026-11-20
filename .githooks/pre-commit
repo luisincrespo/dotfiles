@@ -20,7 +20,7 @@ source "${REPO_ROOT}/.githooks/leak-checks.sh"
 ROSTER="${REPO_ROOT}/.githooks/placeholder-roster.txt"
 # The owner's own name is personal, so it lives in a machine-local roster, not the shared one.
 LOCAL_ROSTER="${HOME}/.agents/local/placeholder-roster.txt"
-VOICE_REFS="skills/voice/refs/"
+VOICE_REFS="skills/my-voice/refs/"
 FOUND=0
 
 # The hook files carry these patterns as their own source, so scanning them
@@ -54,7 +54,7 @@ scan_identity "author: $(git var GIT_AUTHOR_IDENT | sed -E 's/ [0-9]+ [+-][0-9]{
 # checkout, and only reading the diff before committing caught it.
 if [[ "$(git config --local --get dotfiles.role 2>/dev/null || true)" != "private" ]]; then
   stray="$(git diff --cached --name-only --diff-filter=ACMR \
-    | grep -E '(^|/)skills/voice/refs/examples-[^/]*$' || true)"
+    | grep -E '(^|/)skills/my-voice/refs/examples-[^/]*$' || true)"
   if [[ -n "$stray" ]]; then
     printf '\n  \033[1;31m%s\033[0m\n' "Voice example outside the private companion"
     printf '%s\n' "$stray" | sed 's/^/    /'
@@ -112,7 +112,7 @@ if [[ -r "$ROSTER" ]]; then
       printf '\n  \033[1;31m%s\033[0m\n' "Unrecognized person in the voice corpus"
       printf '%s' "$unknown"
       printf '\n  %s\n  %s\n' \
-        "Every person in skills/voice/refs/ but you must be invented." \
+        "Every person in skills/my-voice/refs/ but you must be invented." \
         "Replace with a placeholder, or add it to .githooks/placeholder-roster.txt if it is one (your own name goes in ~/.agents/local/placeholder-roster.txt)."
       FOUND=1
     fi

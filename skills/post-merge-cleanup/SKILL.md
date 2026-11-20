@@ -41,7 +41,7 @@ allowed-tools:
   - Bash(rm -f ~/.claude/cache/deliver/:*)
   - Read
   - ExitWorktree
-  - Skill(voice)
+  - Skill(my-voice)
   - mcp__claude_ai_Atlassian__getJiraIssue
   - mcp__claude_ai_Atlassian__getTransitionsForJiraIssue
   - mcp__claude_ai_Atlassian__transitionJiraIssue

@@ -85,7 +85,7 @@ Anything that can't be published lives in a private companion repo,
 [`dotfiles-private`](https://github.com/luisincrespo/dotfiles-private), which mirrors this layout.
 `install.sh` overlays the two into `~/.claude` at install time — a skill in both trees is assembled
 file-by-file. Neither checkout ever holds the other's files, so publishing this repo can't leak the
-private half by accident. Without it, everything still installs; only `voice` runs thinner.
+private half by accident. Without it, everything still installs; only `my-voice` runs thinner.
 
 Adding a tool means adding one directory under `tools/` that points it at `AGENTS.md` and
 `skills/`. Nothing in either needs to change, and nothing about them is Claude-specific despite
@@ -107,8 +107,8 @@ replacing those files; nothing else needs editing.
 | Personal-layer file | What it holds |
 |---|---|
 | `AGENTS.md` | The rules every session loads: workflow, git and PR conventions, code style, how much the agent does without asking. The skills cite rules 5, 8, 10, 12 and 13 by number, so keep those, reworded as you like |
-| `skills/voice/refs/principles.md` | How you write. `voice` drafts PR descriptions, review comments and messages in it |
-| `skills/voice/refs/examples-*.md` | Real messages of yours, the voice's ground truth. Private by nature, so they only ever live in the private companion |
+| `skills/my-voice/refs/principles.md` | How you write. `my-voice` drafts PR descriptions, review comments and messages in it |
+| `skills/my-voice/refs/examples-*.md` | Real messages of yours, the voice's ground truth. Private by nature, so they only ever live in the private companion |
 | `skills/pr-review/refs/style.md` | How you review: what's worth a comment, where comments go, how they read, how drafts are shown to you |
 | `skills/write-code/refs/principles.md` | How you want code written, a line per principle, each pointing at the review pass that checks it |
 | `skills/self-review/passes/personal-conventions.md` | Your code conventions beyond what the rules and each repo's `CLAUDE.md` say, grouped by stack |
@@ -132,8 +132,8 @@ them.
 **Then it learns your way.** Every skill's self-educate step routes what it learns: a preference
 that's your own taste goes into the personal-layer file it belongs to, and a lesson anyone using
 the skill would want goes into the shared skill, which is worth sending upstream as a PR. A nearly
-empty voice principles file is a fine start, since `voice` adds a principle each time you correct a
-draft.
+empty voice principles file is a fine start, since `my-voice` adds a principle each time you correct
+a draft.
 
 Two limits. Devin reads this repo through its plugin, so it sees these defaults, not a private
 companion's files. And machine-specific values (repo ids, hosts, the leak guard's denylist, review

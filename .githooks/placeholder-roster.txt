@@ -1,4 +1,4 @@
-# People who are ALLOWED to appear in claude/skills/voice/refs/.
+# People who are ALLOWED to appear in claude/skills/my-voice/refs/.
 #
 # The voice corpus is anonymized by contract: every person in it is invented.
 # So this is an allowlist, not a denylist — the hook flags any person-shaped

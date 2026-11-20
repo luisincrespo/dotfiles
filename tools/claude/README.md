@@ -54,7 +54,7 @@ Claude Code after any of these to pick up the change.
 ### The private overlay
 
 A companion repo mirroring this one's layout supplies content that can't be published — today, the
-`voice` example corpus. It's found as a sibling of this checkout, or at `DOTFILES_PRIVATE`.
+`my-voice` example corpus. It's found as a sibling of this checkout, or at `DOTFILES_PRIVATE`.
 
 A skill present in **both** trees is assembled in `~/.claude/skills/<name>/` as a real directory of
 symlinks, one per file, drawn from each. A skill in this repo alone stays a single directory
@@ -136,7 +136,7 @@ every other agent for the second, and there is one file behind both.
 | `pr-merge` | Re-verifies every merge condition, verifies locally against the merged state, merges |
 | `post-merge-cleanup` | Advances stacked dependents, deletes branch/worktree, closes the ticket |
 | `pr-review` | Reviews someone else's PR, inline, in your voice, never posting without approval |
-| `voice` | Drafts outward-facing writing (Slack, PR comments, descriptions) in your voice |
+| `my-voice` | Drafts outward-facing writing (Slack, PR comments, descriptions) in your voice |
 | `maintain-dotfiles` | Lands changes to this repo pair — judges public vs private, groups by concern, commits, pushes, resyncs |
 
 **Every one of them self-educates.** Each ends by asking whether the run warranted a durable edit,
@@ -154,7 +154,7 @@ skills uploaded to your account, and only claude.ai's own UI can upload one. `cl
 packages an installed skill, private overlay included, and drives that upload through Claude in
 Chrome once you approve it. Three things follow:
 
-- **The copy goes by another name** (`voice-chat` for `voice`). claude.ai skills sync down into
+- **The copy goes by another name** (`voice-chat` for `my-voice`). claude.ai skills sync down into
   Claude Code as `anthropic-skills:<name>`, and a stale copy under the same name could be picked in
   place of the live skill.
 - **It stays as it was until the next upload.** `maintain-dotfiles` flags a copy whose skill has
@@ -236,8 +236,8 @@ drift apart:
 | Internal hostname | `*.internal`/`*.corp`/`*.lan`, and `sonarqube.`/`gitlab.`/`jira.`/`jenkins.`… on a real domain |
 | Real-looking ticket id | any `[A-Z]{2,}-\d+` that isn't the `ABC-1234` placeholder |
 | Denylisted term | anything in `~/.agents/local/commit-denylist.txt` |
-| Unrecognized person | **`pre-commit` only**, in `skills/voice/refs/` — any person not on `.githooks/placeholder-roster.txt` or your local `~/.agents/local/placeholder-roster.txt` |
-| Voice example | **`pre-commit` only**, in any repo but the private companion — a `skills/voice/refs/examples-*` file, whatever it says |
+| Unrecognized person | **`pre-commit` only**, in `skills/my-voice/refs/` — any person not on `.githooks/placeholder-roster.txt` or your local `~/.agents/local/placeholder-roster.txt` |
+| Voice example | **`pre-commit` only**, in any repo but the private companion — a `skills/my-voice/refs/examples-*` file, whatever it says |
 | Commit identity | the author/committer address, when it names an employer or an internal host |
 
 Every check but the last three runs over both a diff and a message. The person and example checks
@@ -306,9 +306,9 @@ than a bare path — a path prefix would exempt that location permanently and sw
 landing there later. It suppresses history findings only; the hooks ignore it. The run prints how
 many exceptions were applied, so nothing is dropped invisibly.
 
-False positive? `git commit --no-verify`. Two self-amending skills — `voice` (Step 4) and `pr-review`
-(Step 8) — are also instructed to anonymize before writing anything to disk, so the hook is the
-backstop rather than the only defence.
+False positive? `git commit --no-verify`. Two self-amending skills — `my-voice` (Step 4) and
+`pr-review` (Step 8) — are also instructed to anonymize before writing anything to disk, so the hook
+is the backstop rather than the only defence.
 
 ## Not in this repo
 
