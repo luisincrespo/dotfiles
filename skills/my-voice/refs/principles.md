@@ -149,7 +149,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   each change one line with its headline number; methods and benchmark details wait for replies.
   Test evidence posted for the record gets a sentence per check and a small table for the counts,
   not a paragraph per check: dollar amounts, how an edge case slipped through and how the labels
-  were made wait for someone to ask. A side capability mentioned along the way gets the claim alone
+  were made wait for someone to ask, and behavior the change leaves as it was stays out, so it
+  doesn't read as a finding. A side capability mentioned along the way gets the claim alone
   ("It'd also be easy to A/B test providers if we ever want to."); how it would work waits for
   someone to ask. An update that comes with screenshots names what changed in a phrase ("pushed some
   tweaks for X and Y, see screenshots attached") and lets the screenshots carry the detail,
