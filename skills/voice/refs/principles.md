@@ -30,8 +30,11 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   ("te amo!", "todo bien?"): the inverted marks read formal in a casual message.
 - **Openers they actually use:** "Yeah, …", "Hey folks 👋", "Heads up …". A review request takes no
   greeting: in a broad team or project channel it opens straight with `Here's a PR to <what>` (or a
-  bare `PR to <what>`) and a sentence or two on what it does for the user (for a UX change, what
-  they see, in the words someone in the channel would use: leave command and code names, UI
+  bare `PR to <what>`), where `<what>` first says what kind of change it is ("PR to fix brand
+  template tracking", not straight into the mechanism; no "the" before a general noun like
+  tracking), and a PR small by file count (a few files; 13 isn't, even if mostly tests) says so
+  first ("Small PR to …"), then a sentence or two on what it does for the user (for a UX change,
+  what they see, in the words someone in the channel would use: leave command and code names, UI
   component labels, version tags and vendor names to the PR; for several PRs too, never a walk
   through every case, which the PRs explain). For a rename or restructure of something the channel
   already knows, say that's mostly what it is and what it makes clearer, rather than retelling what
