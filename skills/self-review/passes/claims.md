@@ -19,6 +19,9 @@ a comment, applying a fix, or repeating it in a commit message or PR description
   shrinks with it. Offering an existing helper in place of new code is one too: run the change's own
   cases through it, what it must keep and what it must reject, since a helper built for another
   input can drop what the change already handles.
+- **Regression** ("this loses what the old provider gave us"): check what the code keeps of the old
+  output today, not only what the old source delivered. A reader that already drops a field means
+  there's nothing to lose.
 - **Redundancy** ("this buys nothing"): check whether the thing is load-bearing for a documented
   invariant. A `[]` dep array plus an `eslint-disable` is usually protecting a "runs exactly once"
   contract.
