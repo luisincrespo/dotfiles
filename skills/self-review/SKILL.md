@@ -94,7 +94,7 @@ Follow `passes/second-opinion.md`. Here the payload is `git diff $(git merge-bas
 ## Step 4 — Triage & fix (loop)
 Triage fix-now vs batch:
 - **Check the claim before acting on it.** A finding that asserts absence, equivalence, redundancy or the like gets checked as `passes/claims.md` says before you fix it: a wrong "this is redundant" becomes a fix that deletes load-bearing code.
-- **Fix now** — clear, bounded, and you can verify the fix (obvious bugs, a missing `const`, a reuse the simplify pass surfaced, a genuine a11y defect, a query hoisted out of a loop). Apply, then re-run the relevant Step-2 check.
+- **Fix now** — clear, bounded, and you can verify the fix (obvious bugs, a missing `const`, a reuse the simplify pass surfaced, a genuine a11y defect, a query hoisted out of a loop). Apply, then re-run the relevant Step-2 check. A finding that two readers of the same value (a flag's targeting attribute, a plan, a cache key) can now disagree is fix-now when one side would offer what the other refuses, however rare: deferring it as "its own change" ships the bug.
 - **Batch** — anything ambiguous, opinion-driven, cross-cutting, or where the "fix" needs a judgment call (including a Sonar/linter rule that fights another). Present these to the user with `file:line` + why-unsure; don't guess.
 - After applying fixes, **re-review the changed areas** — don't stop at one pass; a fix can introduce a new issue. Loop Steps 2–4 until the automated gates are green and no clear findings remain.
 

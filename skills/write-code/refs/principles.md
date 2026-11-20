@@ -21,8 +21,9 @@
    Write it right, say in the PR why it differs, and leave fixing the old code to a follow-up
    (principle 5). → [`design.md`](../../self-review/passes/design.md),
    [`conventions.md`](../../self-review/passes/conventions.md)
-5. **The smallest change that does the job.** No drive-by fixes; those become their own PR or a
-   follow-up. → [`breakdown.md`](../../deliver/refs/breakdown.md)
+5. **The smallest change that does the job.** When the change alters how one reader derives a value
+   that others must agree with, the job includes moving those readers too. No drive-by fixes; those
+   become their own PR or a follow-up. → [`breakdown.md`](../../deliver/refs/breakdown.md)
 6. **Every state the user can reach**, not only the success path.
    → [`ux.md`](../../self-review/passes/ux.md)
 7. **Handle errors where they can be acted on**, and let the rest propagate. Never swallow one
