@@ -46,7 +46,8 @@ copy already there.
    has no Replace. It opens a page like the upload one, with the same hidden file input, and the
    previous version stays in use until the new one's scan passes. A "Caution" from an earlier scan
    ("may send your files or messages to an outside service", for a skill that drafts messages)
-   doesn't block use.
+   doesn't block use. Replace refuses a ZIP under another name ("Skill name mismatch"), so a
+   changed `upload_name` goes through ⋯ › Rename first, which keeps the same skill, then Replace.
 4. A security scan runs before the copy can be used, and the list shows it as "In review"
    meanwhile; the page says a minute or two, but the first one took over seven. Don't hold the
    session on it: check back later (`maintain-dotfiles`' next round will do). Once it passes, check
