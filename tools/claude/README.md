@@ -154,9 +154,9 @@ skills uploaded to your account, and only claude.ai's own UI can upload one. `cl
 packages an installed skill, private overlay included, and drives that upload through Claude in
 Chrome once you approve it. Three things follow:
 
-- **The copy goes by another name** (`voice-chat` for `my-voice`). claude.ai skills sync down into
-  Claude Code as `anthropic-skills:<name>`, and a stale copy under the same name could be picked in
-  place of the live skill.
+- **The copy goes by another name** (`my-voice-chat` for `my-voice`). claude.ai skills sync down
+  into Claude Code as `anthropic-skills:<name>`, and a stale copy under the same name could be
+  picked in place of the live skill.
 - **It stays as it was until the next upload.** `maintain-dotfiles` flags a copy whose skill has
   changed once it's older than its `refresh_after_days`.
 - **It can't write back.** A correction made in a chat goes to the configured `voice_inbox`, and
