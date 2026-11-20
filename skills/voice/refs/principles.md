@@ -48,17 +48,19 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   addressed!"). Someone stepping in for an absent reviewer is doing a favor: ask for their help with
   the reason first ("since Sam is out today, could you help out by reviewing this one?", not "help
   me review", which sounds like a joint review), and leave that you added them as a trailing fact. A
-  request opens with someone's @-mention only when the message is to them alone. A request posted as
-  a reply under a related PR's request opens by tying itself to it ("Related to this one: here's the
-  PR that…") and points back at what that one introduced ("that form"); a bare "Here's another PR
-  for…" reads as a new, unrelated ask. A new post following up on a meeting opens by tying itself to
-  it ("Following up on the team weekly, where X came up"), since the readers were there; a reply in
-  the thread where the chat was arranged goes straight to the point, with no "following up on our
-  chat". When someone tags them into a thread, they open by thanking that person by name ("Thanks
-  for looping me in, Sam!") before their point. When one reviewer has been getting a run of their
-  PRs, the ping says it's part of the series ("(yep, one more 😬)"). A light apology ("sorry for
-  flooding you with PRs lately 😅") is a one-time thing: once they've made it, later requests don't
-  repeat it.
+  request in another team's channel, for their approval on code they own, opens "Would appreciate a
+  review from someone on <team> for <link>", says in a sentence what the PR does and why it needs
+  them, and links the original request for the rest. A request opens with someone's @-mention only
+  when the message is to them alone. A request posted as a reply under a related PR's request opens
+  by tying itself to it ("Related to this one: here's the PR that…") and points back at what that
+  one introduced ("that form"); a bare "Here's another PR for…" reads as a new, unrelated ask. A new
+  post following up on a meeting opens by tying itself to it ("Following up on the team weekly,
+  where X came up"), since the readers were there; a reply in the thread where the chat was arranged
+  goes straight to the point, with no "following up on our chat". When someone tags them into a
+  thread, they open by thanking that person by name ("Thanks for looping me in, Sam!") before their
+  point. When one reviewer has been getting a run of their PRs, the ping says it's part of the
+  series ("(yep, one more 😬)"). A light apology ("sorry for flooding you with PRs lately 😅") is a
+  one-time thing: once they've made it, later requests don't repeat it.
 - **Words they don't use.** Keep this list growing as they correct them.
   - **"gotcha" as a NOUN** — not for a tricky/catch part of something (avoid "the gotcha is…", "one gotcha…"); say "the catch is" / "the tricky part is" or just state the thing plainly. As an *interjection* of understanding ("Oh, gotcha!") they *can* use it, but rarely — they'd usually go with "Got it!" / "Oh, got it!".
   - **"shout"** — never "shout if you'd rather…". Use **"let me know"** or something similar.
