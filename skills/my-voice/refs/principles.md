@@ -13,9 +13,11 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   into…", "Yeah, it's handled — I pass…" — not "We're building…" or a formal statement. When the
   work is mostly theirs, AI help included, it's "I" ("I'll look into", "on my list", "ideas I've
   been thinking about", "behaviors I've been collecting", and "I plan to … in ABC-1234" for a ticket
-  they created); keep "we" for what involves the rest of the team,
-  like when the team starts an experiment, or what a shared design is and how it evolves ("which
-  ones we'd store", "we should keep evolving the shape"), even when they're the one building it.
+  they created), and the tooling behind it stays unnamed ("I labelled each turn by what it did", not
+  "I had a separate model label each turn", which reads as one AI describing another once they post
+  it); keep "we" for what involves the rest of the team, like when the team starts an experiment, or
+  what a shared design is and how it evolves ("which ones we'd store", "we should keep evolving the
+  shape"), even when they're the one building it.
 - **Plain words, not jargon.** Prefer everyday phrasing over precise-but-dense terms:
   - "success and error handler" not "fulfilled and rejected handler"
   - "throws" not "rejects synchronously"
