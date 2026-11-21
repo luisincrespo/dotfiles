@@ -319,8 +319,9 @@ that doesn't compile costs the author a CI round and the comment its credibility
   legitimately keeps the old name).
 - **After a force-push or a merge from the base, read the base change too, and re-verify each
   comment against the new base, not just the author's delta.** Either can land upstream work in
-  the very files you commented on, or in code a pending draft's claim rests on, which can moot a
-  finding or change whether a fix is still correct.
+  the files you commented on, or in code a pending draft rests on, mooting a finding or changing
+  whether a fix still holds. Diff a merge against its base parent (`git diff <merge>^2 <merge>`)
+  for what the author changed inside it: an agent can fold fixes into a commit titled as a merge.
 - **Check authorship before crediting the author** — `git log --format='%h %an %s'`. Fixes are
   often written by a bot agent (`Cursor Agent`, via an AI reviewer's "fix this" button), not the
   person. That matters beyond attribution: in a bot-fix-bot loop each agent patch draws the next
