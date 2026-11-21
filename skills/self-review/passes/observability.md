@@ -32,7 +32,8 @@ Say so in one line rather than skipping it silently.
   Search the repo for its name (other emitters, tests, typed event schemas) and, where the repo's
   observability or analytics tool has a connector, its monitors, dashboards and saved queries. Code
   that only moved, emitting the same signal, needs no search. Where you can't reach a tool, say its
-  readers are unchecked rather than assume there are none.
+  readers are unchecked rather than assume there are none. A doc naming a reader is a claim too: a
+  signal's documented dashboard can be planned, not built, so check it there or ask its owner.
 
 ## What to look for
 
