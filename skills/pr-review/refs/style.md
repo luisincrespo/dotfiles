@@ -79,9 +79,10 @@ someone who knows the domain; and another PR by what it does and how it collides
 never by its number alone, even one of the user's own), what breaks and for whom (walked through as
 one concrete case when it takes a sequence of events), so they can judge it and answer the author.
 Pitch those drafts at the depth they can defend in a reply: the ask, one reason, "I think" where
-you're inferring, and fix code held back until the author asks. A reply draft in a re-review gets
-the same note: what the author's reply said and rests on, in plain words, and what each answer would
-change, since the user hasn't read the thread either.
+you're inferring, and fix code held back until the author asks. A reply draft in a re-review, and a
+decision put to the user, get the same note: what the reply or the earlier call says and rests on
+(whose call, and when), in plain words, what the code does now, and what each answer would change,
+since the user hasn't read the thread either.
 
 Show one round per message, two or three drafts at most, and wait for the user's call on it before
 showing the next: a whole review in one message is too much to decide on at once. The first opens
