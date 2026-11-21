@@ -226,7 +226,9 @@ trim never arrives as a wall of diffs. Leave out growth that is design still arr
 accreting: a skill under two weeks old, or one whose growth is mostly a change the user asked for
 that landed in the last two weeks (`git log` since the last `Trim` shows it). `respawn` grew 81% the
 day it was written, all of it features the user asked for, with under 30 words a trim could cut;
-`pr-babysit` grew 27% in one reviewed change for several PRs sharing a worktree.
+`pr-babysit` grew 27% in one reviewed change for several PRs sharing a worktree. Pass over growth
+that's one new lesson per commit, each carrying its reason, too: that log is the cue, so read it
+before reading the skill whole. Four skills grown that way left under 2% to cut each (Nov 20).
 
 **Cut what doesn't change behaviour:** a rule stated twice, in one skill or restated from
 `AGENTS.md` or a sibling; a rule a later one supersedes; a second or third illustration of one
