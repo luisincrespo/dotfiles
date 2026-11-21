@@ -38,7 +38,8 @@
   is correct either way, help unblock by approving, not by siding or proposing a middle ground.
   Another reviewer's or bot's open thread holds your approval only when you'd want it fixed yourself
   to be comfortable with the change (a verified bug, a real authorization gap, red CI); the rest is
-  theirs to settle with the author.
+  theirs to settle with the author. Once the code fixes their asks, their re-review isn't worth
+  waiting for either.
 - Leave the author's deliberate choices alone (one they documented, or rewrote the code to match)
   unless it leaves an obvious risk or hole in the system. A draft that a later push settled that way
   gets dropped, not posted. A departure from a design the user built (an extension seam of theirs
