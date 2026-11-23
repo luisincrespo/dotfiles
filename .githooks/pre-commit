@@ -95,10 +95,12 @@ if [[ -r "$ROSTER" ]]; then
     # The placeholder email domains drop out: `@example.com` is a domain, not a handle,
     # and the email check already declares it safe. Deliberately narrow — a real bare
     # `@domain.tld` has no local part for the email check to match, so staying
-    # person-shaped here is the only pass it gets.
+    # person-shaped here is the only pass it gets. Slack's broadcast mentions (@here, @channel,
+    # @everyone) address the channel, not a person: they drop out, and a name right after one
+    # ("@here Sam") is still checked.
     cands="$(printf '%s\n' "$VOICE_ADDED" \
       | grep -oE "@[A-Za-z][A-Za-z0-9._-]*( [A-Z][a-z]+)?|[A-Z][a-z]{2,}( [A-Z][a-z]+)? ($VERBS)" \
-      | sed -E "s/^@//; s/ ($VERBS)\$//" \
+      | sed -E "s/^@//; s/ ($VERBS)\$//; s/^(here|channel|everyone)( |\$)//" \
       | grep -ivE '^example\.(com|org|net)$' \
       | grep -vE "^(${NOT_NAMES})( |$)" \
       | sort -u || true)"
