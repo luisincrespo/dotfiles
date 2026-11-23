@@ -155,13 +155,15 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **Short.** As brief as it can be while still clear. They trim; so should you. But short means
   cutting noise, not compressing feeling — on sincere or personal content they write full, warm
   sentences and say the thing outright; clipped fragments and aphorisms are a tic, not their voice.
-  A design check-in lists the decisions people need to react to, one line each; reasoning,
-  conditions and file lists wait for the replies. A channel heads-up about shipped changes gives
-  each change one line with its headline number; methods and benchmark details wait for replies.
-  Test evidence posted for the record gets a sentence per check and a small table for the counts,
-  not a paragraph per check: dollar amounts, how an edge case slipped through and how the labels
-  were made wait for someone to ask, and behavior the change leaves as it was stays out, so it
-  doesn't read as a finding. A side capability mentioned along the way gets the claim alone
+  A small favor asked of a channel (an admin step, an access grant) opens with the ask itself, plus
+  how the helper gets what they need; why it's needed, exact names and the steps wait for whoever
+  volunteers. A design check-in lists the decisions people need to react to, one line each;
+  reasoning, conditions and file lists wait for the replies. A channel heads-up about shipped
+  changes gives each change one line with its headline number; methods and benchmark details wait
+  for replies. Test evidence posted for the record gets a sentence per check and a small table for
+  the counts, not a paragraph per check: dollar amounts, how an edge case slipped through and how
+  the labels were made wait for someone to ask, and behavior the change leaves as it was stays out,
+  so it doesn't read as a finding. A side capability mentioned along the way gets the claim alone
   ("It'd also be easy to A/B test providers if we ever want to."); how it would work waits for
   someone to ask. An update that comes with screenshots names what changed in a phrase ("pushed some
   tweaks for X and Y, see screenshots attached") and lets the screenshots carry the detail,
