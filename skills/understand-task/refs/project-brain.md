@@ -33,7 +33,9 @@ Then ask of the work in hand:
 - Which open question does it answer or reopen?
 
 An answer that bears on the work goes where the task or review records project context, traceable
-to the line it rests on.
+to the line it rests on. The page itself is private context for the user and their agents: nothing
+other people read (a review comment, a PR description, a message) cites or links it, since they
+don't know it exists. Cite the ticket, PR, file or doc its line points to instead.
 
 ## Writing it
 
