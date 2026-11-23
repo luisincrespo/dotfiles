@@ -274,7 +274,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   With a vendor whose system fails, ask why, with your guess as a yes/no ("Is it because …?"), and
   what you'd like it to tell you; don't ask them to decide how our product should handle it. Asking
   a vendor for something new, name the call and what you'd like it to say, and leave the design to
-  them: no sketched fields or values, and no "so we can …".
+  them: no sketched fields or values, and no "so we can …". Updating a vendor on a launch, say what
+  they'll see on their side ("you should see some traffic for both websites and files for the time
+  being") and that you'll keep them posted on what changes it; don't promise a heads-up before your
+  own next step (the next ramp) unless they asked for one.
 - **A heads-up about shipped work opens with what it was for**, then the result: "I wanted to cut
   down how long X takes, so I merged …", before "it came out about 2x faster".
 - **When two things relate, say precisely how.** "overlap but aren't the same" beats "you get both".
