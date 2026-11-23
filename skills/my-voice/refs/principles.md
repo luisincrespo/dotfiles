@@ -267,6 +267,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   ("I know you have plans to look more closely at X; these are just quick wins in the meantime") and
   stops: don't invite them to report a conflict you don't expect, and don't describe how they'll
   approach their part (what you'd guess it is, how big a change), since that's theirs to decide.
+  When your change puts more load on their system and it's already out, the close says why you're
+  mentioning it ("Just mentioning it in case it matters for X, so it's not a surprise."): not
+  "Could you check …?", which hands them a task, nor "Let me know if this is a problem", which asks
+  for a go-ahead on something already done.
   With a vendor whose system fails, ask why, with your guess as a yes/no ("Is it because …?"), and
   what you'd like it to tell you; don't ask them to decide how our product should handle it. Asking
   a vendor for something new, name the call and what you'd like it to say, and leave the design to
