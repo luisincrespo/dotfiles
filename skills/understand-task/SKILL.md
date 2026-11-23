@@ -59,6 +59,8 @@ Trace how the current behavior works and where the change lands. **Prefer launch
 
 When the task names a concrete entity (an id, flag, config key, feature name), grep for it first. If it isn't in the repo, treat "this may not be a code change at all" as the leading hypothesis and establish where the behavior actually lives — DB/admin state, another repo, runtime config — before tracing code or planning. If it *is* there and the behavior already works, that's a finding, not a dead end: date the implementation (`git log -S`, `git blame`) against when the task was filed, so an already-shipped fix is distinguishable from a premise that never held, and report it before scoping. A flag or gate the change will read counts too: look its name up on the project page and in the tracker for a planned replacement, and when one is coming, brief the change to ask one check named for what it answers rather than read the flag itself.
 
+When the task is a bug in behavior that used to work, establish what `../write-code/refs/regressions.md` steps 1–3 ask before forming any theory of the cause (when it broke, whose change it was, whether a gate decides it), and put the answers in the brief's **Problem**.
+
 ## Step 3 — Restate (the brief)
 Produce a crisp, scannable brief:
 - **Problem** — what's wrong / needed and why (1–3 bullets, user impact first).

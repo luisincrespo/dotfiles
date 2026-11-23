@@ -68,7 +68,7 @@ a comment, applying a fix, or repeating it in a commit message or PR description
   recovery path.
 - **Protection** ("this test guards the fix"): check that it would fail if the bug came back, by
   walking the fixture through the broken version of the code. A bot's "this proves X" is a claim,
-  not evidence.
+  not evidence. A bug fix with no test that would fail without it is a finding too.
 - **Second-hand facts** (a shutdown, a rollout, a date you took from a note, a memory, a summary,
   another session's report, or your own read of live state such as a flag from earlier in the
   session): read the source before repeating it. A summary turns "scheduled for Thursday" into

@@ -31,6 +31,9 @@ this setup puts their own principles at the same path in their private companion
    `stack/` folder whose *When it applies* matches what you're about to write. Their *What to look
    for* is what to build in, and the project guidance they point to (the UX pass's design guidance,
    say) binds the code as much as it binds the review.
+4. **Fixing a regression** (behavior that used to work): read `refs/regressions.md` first. When it
+   broke, whose change it was and whether a gate decides it come before the root cause, and the fix
+   comes with a test that fails without it.
 
 Where the repo's own rules disagree with a principle, the repo wins; say so once.
 

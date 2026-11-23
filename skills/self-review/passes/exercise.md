@@ -20,6 +20,10 @@ Drive the actual path, and check two things, not one: **the change works as inte
 neighbouring case still works**. A guard added to fix one path is the likeliest thing to have
 silently disabled another. Name the states you exercised.
 
+**A failure the change didn't cause** (it reproduces without the change) is someone else's
+regression or an old bug: follow `../../write-code/refs/regressions.md` before digging into its
+cause, and report it apart from what the change itself does.
+
 **When the change produces something a later flow consumes** (a saved template, a setting, a file
 another step reads), run that flow on what it produced. The write can be right while the consumer
 drops it: a template saved with the right instructions still made a deck whose plan left them out.
