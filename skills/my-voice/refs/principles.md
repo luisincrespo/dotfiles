@@ -225,12 +225,14 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **Don't assert specifics you haven't verified.** Naming a concrete thing (a vendor, a URL, a
   system) reads as knowledge of their setup. Either verify it first or describe the shape generically.
   The same goes for your own work: what isn't built yet is what you plan to do ("we plan to
-  create"), not what you do. And for the product: an argument for robustness doesn't claim a
+  create"), not what you do, and a follow-up ticket's design is something you've thought about doing
+  ("as a follow-up, I've been thinking about moving X into …", "I" for a ticket they created), not
+  the decided direction. And for the product: an argument for robustness doesn't claim a
   precondition won't hold ("we can't count on X"); it says the system shouldn't depend on it even
-  when it does. And for people: an absence you've only inferred is "I think Sam is out", not a
-  fact. And for someone else's PR: say what it does and what shows it works ("moves X to https to
-  get around it, and its own run passed"), not that it's the fix. Nudging a ready PR, ask what's
-  holding back the merge, not when it'll land.
+  when it does. And for people: an absence you've only inferred is "I think Sam is out", not a fact.
+  And for someone else's PR: say what it does and what shows it works ("moves X to https to get
+  around it, and its own run passed"), not that it's the fix. Nudging a ready PR, ask what's holding
+  back the merge, not when it'll land.
 - **When you decline on cost, put the position first and the concession last.** A closing "if it
   needed real work I'd agree" names the condition under which the reviewer would be right, which is
   worth saying; an opening concession only cushions. Open by showing you weighed the alternatives
