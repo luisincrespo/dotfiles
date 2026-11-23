@@ -17,7 +17,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   "I had a separate model label each turn", which reads as one AI describing another once they post
   it); keep "we" for what involves the rest of the team, like when the team starts an experiment, or
   what a shared design is and how it evolves ("which ones we'd store", "we should keep evolving the
-  shape"), even when they're the one building it.
+  shape"), even when they're the one building it. A step they take themselves inside that shared
+  work is "I", though: "I'll be rolling out the gate to 25% of …", not "we're about to start the
+  pilot", in a heads-up about a rollout they're doing.
 - **Plain words, not jargon.** Prefer everyday phrasing over precise-but-dense terms:
   - "success and error handler" not "fulfilled and rejected handler"
   - "throws" not "rejects synchronously"
