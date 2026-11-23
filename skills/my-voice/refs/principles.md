@@ -112,7 +112,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   like "Does that sound right to you?". Nor is a proposal posted to a channel for alignment, when
   they ping the owners themselves: it ends with a cc line and a casual why ("cc @Sam @Jordan just
   want to make sure we're aligned here before I start with any of these changes"), not a closing
-  question.
+  question. Nor is a launch heads-up: it closes by asking people to report real problems ("If you
+  notice anything that looks obviously wrong with X, please reach out!"), not with a casual "let me
+  know if you see anything weird", which reads as idle curiosity rather than a request.
 - **Name things the way the reader sees them, and don't leave a reference for them to reconstruct.**
   Internal words (`unfiled`, `chip`, "the PRs"), shorthand that made sense while writing ("merge
   bottom up", `A → this → C`) and labels for the work coined in the session ("a design pass") read
