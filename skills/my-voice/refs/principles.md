@@ -186,7 +186,13 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   we ever decide to …, whether that's VendorB, another third party or something in-house"), not
   for the one the thread is weighing.
 - **Frame the ask honestly.** Don't downplay a real decision/clarification as a "sanity check" or a
-  "quick question" — if you're asking someone to decide something, say that.
+  "quick question" — if you're asking someone to decide something, say that. And give the reason
+  itself, what the thing lets us catch or do ("it's how we'd notice a spike in what we give away"),
+  not who asked for it ("which Alex asked for") or the gate it's due for ("needs to be in place
+  before the pilot goes past internal users").
+- **An ask that gets in the way of someone's goal names your fallback**, as what you'll do if
+  they say no ("If that's a hard no, I'll look into … instead"), not as a second option to choose
+  between: the ask stays the ask, so it closes without "Would either work for you?".
 - **A fix that's yours isn't an ask.** When a finding's fix lands in your own work, post a heads-up:
   what you'll change, where, the merge order, and "so nothing's needed here". An ask that holds only
   in one merge order opens with that condition ("If my PR lands first, could we…?") and closes with
