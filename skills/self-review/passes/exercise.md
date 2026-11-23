@@ -30,6 +30,12 @@ brought up to date and still miss everything the change creates. Archived-templa
 a template archived long ago and returned nothing for one archived minutes earlier, because
 archiving never reindexes.
 
+**When scripted input reproduces a failure, rerun it at a person's pace before calling it
+user-facing.** Automation types faster than anyone and can trip timing bugs people never hit, so
+"fails every time" may describe the harness rather than the users. A crash that needed keystrokes
+arriving faster than the page could keep up, with Enter right behind them, was reported as hitting
+every send until a slow-typing run showed people never could.
+
 **When the change is gated on a data migration, exercise both sides of it.** Migrating the
 environment to make the new path reachable destroys the state the change actually ships into, and
 that pre-migration state is what every user sees on day one. Backfilling a column locally so the
