@@ -119,7 +119,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **Name things the way the reader sees them, and don't leave a reference for them to reconstruct.**
   Internal words (`unfiled`, `chip`, "the PRs"), shorthand that made sense while writing ("merge
   bottom up", `A → this → C`) and labels for the work coined in the session ("a design pass") read
-  as noise, or as wrong, to someone meeting it once: say what changed instead. So does "the rest of"
+  as noise, or as wrong, to someone meeting it once: say what changed instead. Worst is a coined
+  label that collides with a term the team already uses: "pilot workspaces" (the ones a rollout
+  picked up) read as the company's customer pilots, so say "the workspaces the 25% rollout picked
+  up". So does "the rest of"
   work the reader never saw in that channel: say how many and what they finish. A word the product
   uses for several things (a bare "import" where there are several kinds) keeps its qualifier every
   time it appears ("brand import"), even when the thread's topic seems to settle it. A design's own
