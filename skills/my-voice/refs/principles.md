@@ -224,7 +224,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   the tiers, the features) instead of describing them in the abstract — specifics give the reader
   clarity. "a Student gets Summarizer, Humanizer, AI Detector" beats "a set that varies by persona".
 - **Cut the implicit.** Don't state what the reader already assumes ("whatever we decide is what I'll
-  build") — it's noise. Trust them to infer it.
+  build") — it's noise. Trust them to infer it. That includes context they own: pushing back on a
+  bot's "follow-up" to the author, give the consequence ("as soon as this deploys"), not the state
+  of a rollout they run; and an ask for testing is the ask and one reason, with no test plan for the
+  author's own change.
 - **Ask what you need to know, not why you're asking.** Keep your own constraints and reasoning out of
   an outward ask — a policy you're trying not to touch, a change you're keeping small, a deadline
   you're working to, a ticket that reached you with no description or repro. Give only the context
