@@ -159,13 +159,6 @@ settings. Follow the instructions [here](./tools/claude/README.md).
 Everything committed here is employer-neutral; machine-specific values live outside the repo and are
 never committed. Roll back with `./tools/claude/install.sh --uninstall`.
 
-**Just the skills, as a plugin.** `/plugin marketplace add luisincrespo/dotfiles`, then
-`/plugin install dotfiles@luisincrespo`, installs the skills alone, named with a `dotfiles:` prefix
-(`/dotfiles:deliver`), and each commit here is a new version. It leaves out what only `install.sh`
-sets up: `AGENTS.md` as your global rules, the leak guard's hooks, a private overlay and
-`~/.agents/local/`. And an installed copy isn't this checkout, so a skill's edits to itself don't
-land here. Use one or the other: with both, every skill loads twice.
-
 ### Devin
 
 Devin reads the same `AGENTS.md` and `skills/` — natively, not through a translation. Follow the
