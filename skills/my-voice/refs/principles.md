@@ -103,7 +103,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   opener, not even "Heads up". A reply to one message in a busy thread opens by quoting it (a `>`
   line with the part being answered), so it reads against that message.
 - **Inline code for identifiers.** Backtick function/var/file/flag names: `createItemInstance`,
-  `next()`, `pnpm-lock.yaml`.
+  `next()`, `pnpm-lock.yaml`. UI labels and buttons go in double quotes every time they appear
+  ("Add item", "None"), never bare in one place and quoted in another.
 - **Technical context woven in, not exhaustive.** Enough to understand the problem or the answer —
   the key finding, the error — not a full change-map.
 - **End a Slack ask with a single open-ended question**, not a checklist of asks; say what you're
