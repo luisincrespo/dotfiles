@@ -19,6 +19,9 @@ Look for these in the plan, and again as the diff takes shape:
   makes the behaviour change easier to review. A small supporting change stays with the behaviour
   it enables.
 - **A drive-by fix or cleanup the task doesn't need.** Its own independent PR, or a deferred item.
+- **A removal someone may rely on, even unofficially** (a command or route that agents or users
+  reach by chance). Its own PR, and the last to touch the code it removes, so reverting that one
+  PR brings it back while a supported replacement is built.
 - **Mechanical churn** (a rename across many files, a bulk reformat), apart from the logic, but only
   when every intermediate state stays valid. Generated artifacts go with the inputs that produce
   them; a migration says how it stays compatible and in which order it deploys.
