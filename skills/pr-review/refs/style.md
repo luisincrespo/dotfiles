@@ -134,7 +134,8 @@ sound like the user typed it, which the `my-voice` skill's ground truth is for.
   a question, not an assertion ("Is this meant to…? If so…"). That includes removing something that
   looks unused: ask "Do we need X?" before "Could we drop X?", and a gap the repo's other code
   shares (tests other scripts also leave out of CI): ask whether it's left out on purpose rather
-  than asking for the change.
+  than asking for the change. Skip the question when the fix is worth having whatever the answer
+  (a shared tool working for every runner it reaches): lead with the ask.
 - On a product or UX concern, assume the author may already have design input: ask to revisit and
   say which option the user prefers, rather than asking them to loop someone in. When accepting a
   decision, credit its reasoning, not who proposed it. A regression of something users rely on is a
