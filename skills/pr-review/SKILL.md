@@ -300,21 +300,23 @@ that doesn't compile costs the author a CI round and the comment its credibility
   change** in a small table (addressed / partially / missed). For a test written in answer to a
   finding, yours or another reviewer's, check that it would fail if the bug came back (`claims.md`,
   *Protection*); for a guard, that it runs before the work it guards, not after the paid or
-  destructive part. Also check thread replies (`gh api repos/.../pulls/<N>/comments`) — a reasoned
-  "won't do" reply counts as addressed once the fact it rests on checks out against the code (an
-  agent's reply can rest on a wrong premise); a question back to you is yours to relay, not to
-  silently resolve. A reply of yours inside another reviewer's thread closes with it when that
-  reviewer resolves it (a bot withdrawing its finding): an ask in it that isn't done gets reposted
-  as its own comment. A reply that points to a discussion elsewhere (a chat thread, a doc) gets read
-  before you relay it: it usually answers what you'd otherwise send back to the author. Judge an ack
-  against the head, not its tense, and give a silent comment one cycle before calling it punted —
-  partial pushes often land ahead of the replies on the rest. Once it's punted, draft a one-line
-  question to the author on that thread rather than waiting longer: an agent's fix round works from
-  the threads it was pointed at, and a comment added later can be left out. A reply that cites a
-  commit SHA gets checked against the remote too: an agent's push can be rejected after a concurrent
-  merge, or a later force-push from the author can drop it while its thread stays resolved, leaving
-  its replies ahead of the code. Before telling the author, confirm it through the remote (`git
-  ls-remote`, the PR's commit list), and word it as a push that may not have landed.
+  destructive part; for a fix in shared setup (seeding, an entrypoint, a base image), that it leaves
+  every other caller of that path as it was, not only the case the finding named. Also check thread
+  replies (`gh api repos/.../pulls/<N>/comments`) — a reasoned "won't do" reply counts as addressed
+  once the fact it rests on checks out against the code (an agent's reply can rest on a wrong
+  premise); a question back to you is yours to relay, not to silently resolve. A reply of yours
+  inside another reviewer's thread closes with it when that reviewer resolves it (a bot withdrawing
+  its finding): an ask in it that isn't done gets reposted as its own comment. A reply that points
+  to a discussion elsewhere (a chat thread, a doc) gets read before you relay it: it usually answers
+  what you'd otherwise send back to the author. Judge an ack against the head, not its tense, and
+  give a silent comment one cycle before calling it punted — partial pushes often land ahead of the
+  replies on the rest. Once it's punted, draft a one-line question to the author on that thread
+  rather than waiting longer: an agent's fix round works from the threads it was pointed at, and a
+  comment added later can be left out. A reply that cites a commit SHA gets checked against the
+  remote too: an agent's push can be rejected after a concurrent merge, or a later force-push from
+  the author can drop it while its thread stays resolved, leaving its replies ahead of the code.
+  Before telling the author, confirm it through the remote (`git ls-remote`, the PR's commit list),
+  and word it as a push that may not have landed.
 - `git grep` for stale references after renames (the only legit leftover is a domain *type* that
   legitimately keeps the old name).
 - **After a force-push or a merge from the base, read the base change too, and re-verify each
