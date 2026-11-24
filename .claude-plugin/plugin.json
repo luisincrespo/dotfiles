@@ -1,0 +1,10 @@
+{
+  "name": "dotfiles",
+  "description": "A PR lifecycle (deliver, pr-open, pr-babysit, pr-merge, post-merge-cleanup), reviews of your own and others' PRs, code-writing principles, and drafting in your own voice.",
+  "author": {
+    "name": "Luis Crespo"
+  },
+  "repository": "https://github.com/luisincrespo/dotfiles",
+  "keywords": ["pr", "review", "delivery", "voice"],
+  "skills": ["./tools/claude/skills/"]
+}

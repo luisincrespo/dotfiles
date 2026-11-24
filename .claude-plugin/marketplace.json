@@ -1,0 +1,14 @@
+{
+  "name": "luisincrespo",
+  "owner": {
+    "name": "Luis Crespo"
+  },
+  "description": "Luis Crespo's agent skills: a PR lifecycle, reviews, code-writing principles and a writing-voice skill.",
+  "plugins": [
+    {
+      "name": "dotfiles",
+      "source": "./",
+      "description": "A PR lifecycle, reviews of your own and others' PRs, code-writing principles, and drafting in your own voice."
+    }
+  ]
+}
