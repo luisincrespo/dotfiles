@@ -250,6 +250,13 @@ Conflicts or a stale base must be fixed first. After resolving, skip Phases 1-2 
 > `push`-triggered ones. Recheck `has_conflicts` (0.5) before investigating
 > workflow config, dropped events or path filters.
 
+> **A setup step failing on a stale branch can be the base's CI, not a flake.**
+> A workflow that checks out the PR head runs the base's workflow file against
+> the branch's older scripts, so a service the base removed or renamed fails
+> setup on every run. When a job fails before its tests and the branch is far
+> behind, check the base's recent CI changes before retrying; merging the base
+> forward is the fix.
+
 ### 1.1 Skip-fast
 - `pipeline_id == state.last_pipeline_id` AND `status` ∈ {success, running, pending} → skip to Phase 2.
 - `status` ∈ {running, pending} → note, skip to Phase 2.
