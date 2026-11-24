@@ -110,7 +110,9 @@ sound like the user typed it, which the `my-voice` skill's ground truth is for.
 - No shorthands or jargon. Write the word out ("Is this intended?", not "Q:"), and name the actual
   file or element instead of an acronym or a vague pointer: a permalink to the code you mean, not
   "like the table does". The PR's own terms count too (a type or test name the author coined): the
-  user has to defend the comment, so say what the term means instead.
+  user has to defend the comment, so say what the term means instead. Where the product is itself
+  an agent, say which agent a point is about: the coding session following a developer skill, or
+  the product's own model.
 - For a doc-comment suggestion (a `//` line documenting an export or interface member), the reason
   is that code documentation follows the language's own doc-comment format, so keep the suggestion
   even when the text is already good. Not IDE hover (most code is written through agents), and not
