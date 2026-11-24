@@ -211,6 +211,11 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   what you'll change, where, the merge order, and "so nothing's needed here". An ask that holds only
   in one merge order opens with that condition ("If my PR lands first, could we…?") and closes with
   who covers the other ("If this one lands first, I'll take care of it on my side").
+- **Give the team's reasons, not inferred ones.** Why a design choice was made comes from what the
+  team decided; a reason read off the code is a guess, and a wrong one gets corrected in front of
+  the people who made the call. An undecided design isn't "the proper fix": say what can still go
+  wrong for users and point at where the options are laid out for discussion, without asking for
+  anyone's input up front.
 - **Leave "optional" to the user.** Don't close a suggestion with "not blocking" or "fine as a
   follow-up" by default. Add that framing only when they call the point optional.
 - **Don't rank your own findings.** Skip "the big one", "the critical thing",
