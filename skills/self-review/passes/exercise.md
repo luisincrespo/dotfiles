@@ -20,6 +20,14 @@ Drive the actual path, and check two things, not one: **the change works as inte
 neighbouring case still works**. A guard added to fix one path is the likeliest thing to have
 silently disabled another. Name the states you exercised.
 
+**Run it through every part the change is meant to affect.** A request checked and then stopped
+before the server shows only what the client sends. When the change exists to make the server (or
+another service) behave differently, the run goes through that service, on a full local stack when
+it can run locally, and checks what it did: a client-only diff whose whole point was the server
+skipping a template's brand was once called verified from its request body alone. When a flag
+decides what the change does, run each value it can take; a value the local environment doesn't
+serve gets run where one does (staging), not skipped.
+
 **A failure the change didn't cause** (it reproduces without the change) is someone else's
 regression or an old bug: follow `../../write-code/refs/regressions.md` before digging into its
 cause, and report it apart from what the change itself does.
