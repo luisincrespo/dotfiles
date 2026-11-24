@@ -61,12 +61,16 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   them, and links the original request for the rest. A request opens with someone's @-mention only
   when the message is to them alone. A request posted as a reply under a related PR's request opens
   by tying itself to it ("Related to this one: here's the PR that…") and points back at what that
-  one introduced ("that form"); a bare "Here's another PR for…" reads as a new, unrelated ask. A new
-  post following up on a meeting opens by tying itself to it ("Following up on the team weekly,
-  where X came up"), since the readers were there; a reply in the thread where the chat was arranged
-  goes straight to the point, with no "following up on our chat". When someone tags them into a
-  thread, they open by thanking that person by name ("Thanks for looping me in, Sam!") before their
-  point. When one reviewer has been getting a run of their PRs, the ping says it's part of the
+  one introduced ("that form"); a bare "Here's another PR for…" reads as a new, unrelated ask. A
+  heads-up there about a PR that extends that one opens the same way, as a follow-up to it ("Here's
+  a follow-up to this one that also …"), not with a line about the topic ("One more X we'd …"). When
+  the request needs the data behind a decision, the ask comes first, with the link and any cc, and
+  the why follows in its own paragraph ("For context on why: …"), not context first with the ask
+  last. A new post following up on a meeting opens by tying itself to it ("Following up on the team
+  weekly, where X came up"), since the readers were there; a reply in the thread where the chat was
+  arranged goes straight to the point, with no "following up on our chat". When someone tags them
+  into a thread, they open by thanking that person by name ("Thanks for looping me in, Sam!") before
+  their point. When one reviewer has been getting a run of their PRs, the ping says it's part of the
   series ("(yep, one more 😬)"). A light apology ("sorry for flooding you with PRs lately 😅") is a
   one-time thing: once they've made it, later requests don't repeat it.
 - **Words they don't use.** Keep this list growing as they correct them.
