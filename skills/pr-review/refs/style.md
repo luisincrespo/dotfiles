@@ -105,8 +105,8 @@ sound like the user typed it, which the `my-voice` skill's ground truth is for.
   your notes to the user, not the comment: a stack of cross-references reads as an audit report, not
   as something the user wrote. After drafting, do a trim pass: cut hedges, qualifiers, and idiom
   doing rhetorical rather than factual work ("that lands", "fair enough", "something smaller
-  underneath", "reads as incidental"). Open an acknowledgement with the plainest words available
-  ("Got it, makes sense.") and go straight to the point.
+  underneath", "reads as incidental"). Open an acknowledgement with the plainest words ("Got it,
+  makes sense.").
 - No shorthands or jargon. Write the word out ("Is this intended?", not "Q:"), and name the actual
   file or element instead of an acronym or a vague pointer: a permalink to the code you mean, not
   "like the table does". The PR's own terms count too (a type or test name the author coined): the
