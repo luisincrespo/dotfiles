@@ -34,6 +34,13 @@ copy already there.
 
 ## Step 3 — Upload through Claude in Chrome
 
+**Since Nov 25, Claude in Chrome refuses claude.ai's Settings, Customize and Plugins pages under any
+permission setting, so the upload is the user's.** Open the copy's page for them (`open <url>`; a
+first upload's is the upload page below), reveal the ZIP with `open -R <zip>` from the build
+folder, give them the clicks the steps below describe, and wait for them to say the scan passed.
+The steps stay as the clicks to give, and as the route should the browser tools reach those pages
+again.
+
 1. The file-upload tool takes only files this session can read, and the build folder isn't one:
    copy the ZIP into the session's scratch folder (a background job's `$CLAUDE_JOB_DIR/tmp`), in a
    subfolder only the user can read, and delete that copy once the upload is done.
