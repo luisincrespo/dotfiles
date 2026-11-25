@@ -126,6 +126,9 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   question. Nor is a launch heads-up: it closes by asking people to report real problems ("If you
   notice anything that looks obviously wrong with X, please reach out!"), not with a casual "let me
   know if you see anything weird", which reads as idle curiosity rather than a request.
+  A heads-up that only informs (a new channel, a broken system's owner told it's broken) ends on
+  its last fact: no "feel free to join" invite, and no line about your own timeline ("no rush,
+  Monday's fine"); the reader decides what to do with it.
 - **Name things the way the reader sees them, and don't leave a reference for them to reconstruct.**
   Internal words (`unfiled`, `chip`, "the PRs"), shorthand that made sense while writing ("merge
   bottom up", `A → this → C`) and labels for the work coined in the session ("a design pass") read
