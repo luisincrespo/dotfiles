@@ -68,7 +68,9 @@ the ZIP with `open -R <zip>`, tell the user the clicks, and wait for them to say
 ## Step 4 — Record it
 
 `python3 package.py mark-uploaded <skill>` once the scan has passed, so staleness is measured from
-it. Never before: a failed upload recorded as done hides a stale copy.
+it. To tell it has passed without the page, look for the copy Claude Code syncs down, under
+`~/.claude/skills/synced/*/<upload_name>/`: a live version syncs there within minutes, so a line
+only the new build has (a rule added since the last upload) shows the scan passed. Never before: a failed upload recorded as done hides a stale copy.
 
 ## Self-educate
 
