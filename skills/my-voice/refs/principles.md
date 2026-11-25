@@ -30,6 +30,8 @@ The user's written voice, distilled. When one of these conflicts with a real exa
     reliability" not "which we count as the user's input": say what an internal classification
     means for the reader's numbers, not the label it has in our data
   - drop filler like "best-effort", "leverage", "utilize", "furthermore", "moreover".
+  - "I shared" not "I'd shared": "I'd" reads as "I would", so write the past tense, or "I had" when
+    the order of events needs it.
 - **Low ceremony, friendly, direct.** A wave-emoji opener ("Hey folks 👋") is a Slack thing. A
   tracker-ticket comment or PR/MR comment takes no greeting at all: lead with the @-mention and go
   straight into the finding.
