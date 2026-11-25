@@ -343,6 +343,10 @@ The user's written voice, distilled. When one of these conflicts with a real exa
 - **Keep process state out of a PR/MR description.** Where a change sits in *your* workflow (waiting
   on someone, why it's a draft, what you'll do if the answer is no) is conversation, not description.
   The description says what the change is and why; the humans handle the rest in Slack.
+- **Text that stays up says what it's for, not what's in it today.** A channel description, a
+  bookmark or a pinned message outlives its contents: name the kind of thing that belongs there
+  and where the details live, not today's list ("alerts on the health, usage and cost of X", not
+  each alert by name). A heads-up posted once can list what's there now.
 - **Before a broadcast, check it hasn't already been said.** When drafting a heads-up for a broad
   channel, search Slack for an existing announcement on the topic first. If there is one, reply in
   its thread with only what it doesn't cover, instead of a new post that repeats it.
