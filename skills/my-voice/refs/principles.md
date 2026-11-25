@@ -153,16 +153,19 @@ The user's written voice, distilled. When one of these conflicts with a real exa
   watch for names that collide with their context, like "the main list" in a message that also
   discusses `main`; a proposed component whose name blurs with a generic word (the *item skill*
   among skills) is bolded each time it appears. When a message points at something (a PR, a stack, a
-  comment, a doc), link it inline; link a stack through its first PR. An example from your own work
-  (a test run, a sample you tried) is said as one, with where it came from, after the general point
-  it shows; a bare name reads as something the reader should already know. A number measured once is
-  that run's result ("in my test run, the board took almost 5 minutes"), never stated as how long
-  something takes in general. An exact tally from your own digging ("57 runs so far") reads
-  machine-written in a casual message: say the pattern ("every run since last night") and leave the
-  count out. Size a gain instead of praising it: "about 2x faster end to end in a few of my own
-  runs", not "a lot faster". Someone else's estimate (a plan's projected volume) isn't theirs to
-  quote as the expected load: unless a number comes from their own data or a calculation they can
-  stand behind, leave it out and say the direction ("more M sandboxes than before").
+  comment, a doc), link it inline; link a stack through its first PR. A monitor or dashboard the
+  reader may not know also gets a few words on what it watches and where it alerts ("this Datadog
+  monitor on the credits we waive, which posts to #alerts past N an hour"), not a bare name. An
+  example from your own work (a test run, a sample you tried) is said as one, with where it came
+  from, after the general point it shows; a bare name reads as something the reader should already
+  know. A number measured once is that run's result ("in my test run, the board took almost 5
+  minutes"), never stated as how long something takes in general. An exact tally from your own
+  digging ("57 runs so far") reads machine-written in a casual message: say the pattern ("every run
+  since last night") and leave the count out. Size a gain instead of praising it: "about 2x faster
+  end to end in a few of my own runs", not "a lot faster". Someone else's estimate (a plan's
+  projected volume) isn't theirs to quote as the expected load: unless a number comes from their own
+  data or a calculation they can stand behind, leave it out and say the direction ("more M sandboxes
+  than before").
 - **Vary the openers across a batch of replies.** Several replies to one reviewer that all open
   with "Yeah, good catch." read robotic side by side. Mix them ("Good catch!", "That's a good
   point,", "Fair,", "You're right,"), and let one or two open straight with the fix ("Fixed in
